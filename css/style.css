@@ -134,6 +134,12 @@
   box-shadow: var(--glow-cyan-sm);
 }
 
+.nav-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 /* Mobile Toggle */
 .nav-toggle {
   display: none;
@@ -1784,10 +1790,44 @@
     padding-bottom: max(120px, calc(110px + env(safe-area-inset-bottom)));
   }
 
+  /* Compact header on mobile */
+  .navbar {
+    height: 64px;
+  }
+
+  .nav-logo-img {
+    height: 38px;
+  }
+
+  .nav-links, .nav-pill-date {
+    display: none !important;
+  }
+
+  /* Do NOT show hamburger icon on mobile, show CTA directly */
+  .nav-toggle {
+    display: none !important;
+  }
+
+  .nav-right-actions {
+    gap: 0;
+  }
+
+  .btn-nav-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    padding: 0.48rem 1.05rem;
+    font-size: 0.82rem;
+    font-weight: 800;
+    line-height: 1;
+    min-height: 36px;
+  }
+
   /* Reset 3D card perspective for mobile view */
   .visual-card {
     transform: none !important;
-    max-width: 340px !important;
+    max-width: 330px !important;
     margin: 0 auto !important;
     padding: 0.65rem !important;
   }
@@ -1796,18 +1836,31 @@
     transform: none !important;
   }
 
-  .sticker-date {
-    font-size: 0.95rem;
-    padding: 0.25rem 0.75rem;
-    top: -10px;
-    left: -8px;
+  .visual-media {
+    aspect-ratio: 4 / 5 !important;
+    max-height: 420px !important;
   }
 
+  .visual-card.reel-active .visual-media {
+    aspect-ratio: 9 / 16 !important;
+    max-height: 540px !important;
+  }
+
+  .sticker-date {
+    font-size: 0.82rem;
+    padding: 0.25rem 0.65rem;
+    top: -10px;
+    left: 8px;
+  }
+
+  /* Pinned to top-right to prevent overlap with floating music player */
   .sticker-limited {
-    font-size: 0.7rem;
-    padding: 0.35rem 0.75rem;
-    bottom: 18px;
-    right: -8px;
+    font-size: 0.72rem;
+    padding: 0.28rem 0.65rem;
+    top: -10px;
+    right: 8px;
+    bottom: auto;
+    left: auto;
   }
 
   .hero-title {
@@ -1815,20 +1868,8 @@
     line-height: 1.15;
   }
 
-  .nav-links, .nav-pill-date {
-    display: none;
-  }
-
-  .nav-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-  }
-
   .hero-section {
-    padding-top: 95px;
+    padding-top: 86px;
   }
 
   .hero-actions {

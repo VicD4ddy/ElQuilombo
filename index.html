@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0814">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>El Quilombo ⚡ Fiesta Temática Argentina en Valencia | Preventa Oficial</title>
+  <meta name="description" content="Apartá tus entradas para El Quilombo en Valencia, Venezuela. 3 de Octubre en Óleo Gastrobar (La Viña). Homenaje al trap y música argentina: Milo J, Trueno, Duki, after party y artistas en vivo.">
+  <meta name="keywords" content="El Quilombo, Valencia Venezuela, Fiesta Argentina, Milo J, Trueno, Duki, Trap Argentino, Óleo Gastrobar, Preventa">
+  <meta name="author" content="El Quilombo Vzla">
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="El Quilombo ⚡ Fiesta Temática Argentina en Valencia">
+  <meta property="og:description" content="¿Una fiesta temática de artistas argentinos en Valencia? ¡Sí que sí! Preventa disponible para el 3 de Octubre en Óleo Gastrobar.">
+  <meta property="og:image" content="assets/img/fondo.png">
+  <meta property="og:url" content="https://elquilombo.vzla">
+
+  <!-- Twitter Meta -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="El Quilombo ⚡ Preventa Oficial Valencia">
+  <meta name="twitter:description" content="3 de Octubre en Óleo Gastrobar, La Viña. Hits de Milo J, Trueno, after party y talento argento en vivo.">
+  <meta name="twitter:image" content="assets/img/fondo.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/img/el-quilombo-logo.png">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/design-system.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Fixed Background Artwork & Atmospheric Overlays -->
+  <div class="page-bg-layer" aria-hidden="true"></div>
+  <div class="page-bg-overlay" aria-hidden="true"></div>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container">
+      <a href="#hero" class="nav-brand">
+        <img src="assets/img/el-quilombo-logo.png" alt="El Quilombo" class="nav-logo-img">
+      </a>
+
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#experiencia" class="nav-link">Experiencia</a></li>
+        <li><a href="#lineup" class="nav-link">Artistas</a></li>
+        <li><a href="#entradas" class="nav-link">Entradas</a></li>
+        <li><a href="#ubicacion" class="nav-link">Ubicación</a></li>
+        <li><a href="#faq" class="nav-link">FAQ</a></li>
+      </ul>
+
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="nav-pill-date">
+          <span class="dot"></span>
+          <span id="nav-cd-pill">3 Oct • Preventa Activa</span>
+        </div>
+        <a href="#entradas" class="btn-nav-cta">Apartar Entrada</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Abrir Menú">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero-section" id="hero">
+      <div class="container">
+        <div class="hero-grid">
+          
+          <!-- Left: Hero Copy & Countdown -->
+          <div class="hero-content">
+            <div class="hero-tags">
+              <span class="tag-badge tag-arg">🇦🇷 Talento Argento</span>
+              <span class="tag-badge tag-loc">📍 Óleo Gastrobar • Valencia</span>
+            </div>
+
+            <div class="hero-brand-logo-wrap">
+              <img src="assets/img/el-quilombo-logo.png" alt="El Quilombo - Fiesta Temática Argentina" class="hero-official-logo">
+            </div>
+
+            <h1 class="hero-title">
+              <span class="title-sub">⚡ LA FIESTA TEMÁTICA ARGENTINA EN VALENCIA 💜</span>
+            </h1>
+
+            <p class="hero-desc">
+              La noche donde Valencia se transforma en Buenos Aires. <strong>Artistas en vivo</strong>, una playlist cargada de trap, cumbia 420 y clásicos argentinos, after party exclusivo y dinámicas en tarima.
+            </p>
+
+            <!-- Live Event Countdown -->
+            <div class="countdown-container">
+              <div class="countdown-header">
+                <span class="countdown-label">⏳ Cuenta Regresiva para el Evento</span>
+                <span class="countdown-date">📅 3 de Octubre • 9:00 PM</span>
+              </div>
+              <div class="countdown-grid">
+                <div class="countdown-unit">
+                  <div class="countdown-number" id="cd-days">00</div>
+                  <div class="countdown-type">Días</div>
+                </div>
+                <div class="countdown-unit">
+                  <div class="countdown-number" id="cd-hours">00</div>
+                  <div class="countdown-type">Horas</div>
+                </div>
+                <div class="countdown-unit">
+                  <div class="countdown-number" id="cd-minutes">00</div>
+                  <div class="countdown-type">Min</div>
+                </div>
+                <div class="countdown-unit">
+                  <div class="countdown-number" id="cd-seconds">00</div>
+                  <div class="countdown-type">Seg</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hero Action Buttons -->
+            <div class="hero-actions">
+              <a href="#entradas" class="btn-primary">
+                <span>🔥 Apartar Preventa</span>
+                <span>→</span>
+              </a>
+              <a href="#lineup" class="btn-secondary">
+                <span>🎧 Ver Lineup</span>
+              </a>
+            </div>
+
+            <!-- Social Proof -->
+            <div class="social-proof">
+              <span class="flame">🔥</span>
+              <span><strong>+360 personas</strong> ya están siguiendo el lanzamiento de la preventa</span>
+            </div>
+          </div>
+
+          <!-- Right: Interactive Visual Card -->
+          <div class="hero-visual">
+            <div class="visual-card">
+              <!-- Slanted Stickers -->
+              <div class="sticker-date">⚡ 3 DE OCTUBRE 💜</div>
+              <div class="sticker-limited">🚨 Aforo Limitado</div>
+
+              <!-- Media Showcase -->
+              <div class="visual-media" id="hero-visual-media">
+                <img src="assets/img/quilombo-hero.jpg" alt="El Quilombo - Arte de la fiesta temática" id="hero-reel-cover">
+                <div class="crt-overlay" id="hero-crt-overlay"></div>
+
+                <!-- Play Button Overlay -->
+                <button type="button" class="btn-reel-play" id="btn-reel-play" aria-label="Reproducir Reel de Instagram">
+                  <span class="play-icon">▶</span>
+                  <span class="play-label">Ver Reel Oficial</span>
+                </button>
+
+                <!-- In-place Reel iframe container -->
+                <div class="reel-iframe-container" id="reel-iframe-container" style="display: none;">
+                  <div class="reel-close-bar">
+                    <button type="button" class="btn-reel-action" id="btn-close-reel">✕ Volver a portada</button>
+                    <a href="https://www.instagram.com/reel/Db4UmR8OuaR/" target="_blank" rel="noopener noreferrer" class="btn-reel-action" id="btn-open-ig-app">
+                      <span>Instagram ↗</span>
+                    </a>
+                  </div>
+                  <iframe id="hero-reel-iframe" src="" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen="true" title="Instagram Reel El Quilombo"></iframe>
+                </div>
+
+                <!-- Interactive Audio Equalizer Bar -->
+                <div class="sound-widget" id="sound-widget" title="Click para pausar/reanudar animación">
+                  <div class="sound-info">
+                    <span class="sound-title">Vibra Quilombo Sound</span>
+                    <span class="sound-sub" id="sound-sub">Sonando: Milo J & Trueno</span>
+                  </div>
+                  <div class="equalizer">
+                    <div class="eq-bar"></div>
+                    <div class="eq-bar"></div>
+                    <div class="eq-bar"></div>
+                    <div class="eq-bar"></div>
+                    <div class="eq-bar"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Marquee Ticker -->
+    <div class="marquee-container" aria-hidden="true">
+      <div class="marquee-track">
+        <span class="marquee-item"><span class="bolt">⚡</span> MILO J</span>
+        <span class="marquee-item"><span class="bolt">⚡</span> TRUENO</span>
+        <span class="marquee-item"><span class="bolt">⚡</span> DUKI</span>
+        <span class="marquee-item"><span class="bolt">⚡</span> BIZARRAP</span>
+        <span class="marquee-item"><span class="bolt">⚡</span> NICKI NICOLE</span>
+        <span class="marquee-item"><span class="bolt">⚡</span> TIAGO PZK</span>
+        <span class="marquee-item"><span class="bolt">⚡</span> MARÍA BECERRA</span>
+        <span class="marquee-item"><span class="bolt">⚡</span> WOS</span>
+        <span class="marquee-item"><span class="bolt">⚡</span> YSY A</span>
+        <span class="marquee-item"><span class="bolt">⚡</span> DILLOM</span>
+        <span class="marquee-item"><span class="highlight">🌙 AFTER PARTY OFICIAL</span></span>
+        <span class="marquee-item"><span class="bolt">⚡</span> CUMBIA 420 & CLÁSICOS ARGENTOS</span>
+        <!-- Repeated for seamless loop -->
+        <span class="marquee-item"><span class="bolt">⚡</span> MILO J</span>
+        <span class="marquee-item"><span class="bolt">⚡</span> TRUENO</span>
+        <span class="marquee-item"><span class="bolt">⚡</span> DUKI</span>
+        <span class="marquee-item"><span class="bolt">⚡</span> BIZARRAP</span>
+        <span class="marquee-item"><span class="bolt">⚡</span> NICKI NICOLE</span>
+        <span class="marquee-item"><span class="bolt">⚡</span> TIAGO PZK</span>
+        <span class="marquee-item"><span class="bolt">⚡</span> MARÍA BECERRA</span>
+        <span class="marquee-item"><span class="bolt">⚡</span> WOS</span>
+        <span class="marquee-item"><span class="bolt">⚡</span> YSY A</span>
+        <span class="marquee-item"><span class="bolt">⚡</span> DILLOM</span>
+        <span class="marquee-item"><span class="highlight">🌙 AFTER PARTY OFICIAL</span></span>
+      </div>
+    </div>
+
+    <!-- Lineup Section -->
+    <section class="section" id="lineup">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-pill">Talento & Sonido</span>
+          <h2 class="section-title">LOS ARTISTAS QUE <span class="text-gradient">VAN A DETONAR</span></h2>
+          <p class="section-subtitle">Lo más pesado del trap, hip-hop, R&B y cumbia villera de la escena argentina sonando en la pista de Óleo Gastrobar.</p>
+        </div>
+
+        <div class="artists-grid">
+          <div class="artist-card">
+            <div class="artist-name">Milo J</div>
+            <div class="artist-style">Trap & Boombap</div>
+          </div>
+          <div class="artist-card">
+            <div class="artist-name">Trueno</div>
+            <div class="artist-style">Freestyle & Hip-Hop</div>
+          </div>
+          <div class="artist-card">
+            <div class="artist-name">Duki</div>
+            <div class="artist-style">Trap Argento</div>
+          </div>
+          <div class="artist-card">
+            <div class="artist-name">Bizarrap</div>
+            <div class="artist-style">BZRP Sessions</div>
+          </div>
+          <div class="artist-card">
+            <div class="artist-name">Nicki Nicole</div>
+            <div class="artist-style">R&B & Pop Urbano</div>
+          </div>
+          <div class="artist-card">
+            <div class="artist-name">Tiago PZK</div>
+            <div class="artist-style">Perreo & Trap</div>
+          </div>
+          <div class="artist-card">
+            <div class="artist-name">María Becerra</div>
+            <div class="artist-style">La Nena de Argentina</div>
+          </div>
+          <div class="artist-card">
+            <div class="artist-name">WOS</div>
+            <div class="artist-style">Rap Conciencia & Rock</div>
+          </div>
+          <div class="artist-card">
+            <div class="artist-name">YSY A</div>
+            <div class="artist-style">Trap de Verdad</div>
+          </div>
+          <div class="artist-card">
+            <div class="artist-name">Dillom</div>
+            <div class="artist-style">Post-Mortem & Hip-Hop</div>
+          </div>
+          <div class="artist-card">
+            <div class="artist-name">L-Gante & Cumbia</div>
+            <div class="artist-style">Cumbia 420</div>
+          </div>
+          <div class="artist-card">
+            <div class="artist-name">Clásicos Argentos</div>
+            <div class="artist-style">Rock & Cuarteto</div>
+          </div>
+        </div>
+
+        <!-- Experience Highlights -->
+        <div class="experience-grid" id="experiencia">
+          <div class="exp-card">
+            <div class="exp-icon">🎤</div>
+            <h3 class="exp-title">Artistas en Vivo & DJs</h3>
+            <p class="exp-desc">Show en vivo con artistas invitados y setlist especial curado por DJs para no parar de cantar y saltar en toda la noche.</p>
+          </div>
+          <div class="exp-card">
+            <div class="exp-icon">🌙</div>
+            <h3 class="exp-title">After Party Oficial</h3>
+            <p class="exp-desc">La fiesta no termina a las 3:00 AM. Contamos con After Party extendido en Óleo Gastrobar para los que aguantan hasta el amanecer.</p>
+          </div>
+          <div class="exp-card">
+            <div class="exp-icon">🎁</div>
+            <h3 class="exp-title">Dinámicas & Premios</h3>
+            <p class="exp-desc">Juegos interactivos, tragos temáticos, ruleta de premios, merch y sorpresas exclusivas para los asistentes de la preventa.</p>
+          </div>
+          <div class="exp-card">
+            <div class="exp-icon">🍸</div>
+            <h3 class="exp-title">Gastronomía & Coctelería</h3>
+            <p class="exp-desc">Carta especial de bebidas y gastronomía de primer nivel en el ambiente exclusivo de Óleo Gastrobar, La Viña.</p>
+          </div>
+        </div>
+
+        <!-- Crowd Showcase Banner -->
+        <div class="crowd-banner-box">
+          <img src="assets/img/QuilomboAnimado.gif" alt="Ambiente animado en El Quilombo" loading="lazy" decoding="async">
+          <div class="crowd-banner-overlay">
+            <h3 class="crowd-banner-title">VIVÍ EL QUILOMBO EN VIVO</h3>
+            <p class="crowd-banner-desc">Música, luces, after party y la energía más picante de Valencia. Asegurá tu preventa antes de que se agoten los cupos.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Ticketing & Reservation Section -->
+    <section class="section ticketing-section" id="entradas">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-pill">Fase de Preventa</span>
+          <h2 class="section-title">ELEGÍ TU <span class="text-gradient">TIPO DE ENTRADA</span></h2>
+          <p class="section-subtitle">Precios especiales de Preventa 1. Seleccioná tu pase para calcular el total y apartar tu entrada al instante.</p>
+        </div>
+
+        <!-- Pricing Cards Grid -->
+        <div class="pricing-grid">
+          
+          <!-- Tier 1: General -->
+          <div class="ticket-card" data-tier="general">
+            <div class="ticket-header">
+              <h3 class="ticket-name">Pase General</h3>
+              <div class="ticket-sub">⚡ Preventa 1 (Early Bird)</div>
+            </div>
+            <div class="ticket-price-box">
+              <span class="ticket-currency">$</span>
+              <span class="ticket-amount">10</span>
+              <span class="ticket-period">USD</span>
+            </div>
+            <ul class="ticket-features">
+              <li class="ticket-feature-item"><span class="check">✓</span> <span>Acceso completo al evento</span></li>
+              <li class="ticket-feature-item"><span class="check">✓</span> <span><strong>Trago de bienvenida</strong> temático</span></li>
+              <li class="ticket-feature-item"><span class="check">✓</span> <span>Sticker Pack de El Quilombo</span></li>
+              <li class="ticket-feature-item"><span class="check">✓</span> <span>Participación en rifas y dinámicas</span></li>
+            </ul>
+            <button type="button" class="btn-select-tier">Seleccionar Pase</button>
+          </div>
+
+          <!-- Tier 2: VIP (Popular) -->
+          <div class="ticket-card popular selected" data-tier="vip">
+            <div class="badge-popular">🔥 MÁS POPULAR</div>
+            <div class="ticket-header">
+              <h3 class="ticket-name">Pase VIP Quilombo</h3>
+              <div class="ticket-sub">⚡ Experiencia Completa + After</div>
+            </div>
+            <div class="ticket-price-box">
+              <span class="ticket-currency">$</span>
+              <span class="ticket-amount">20</span>
+              <span class="ticket-period">USD</span>
+            </div>
+            <ul class="ticket-features">
+              <li class="ticket-feature-item"><span class="check">✓</span> <span><strong>Acceso Fast Pass</strong> (sin fila en puerta)</span></li>
+              <li class="ticket-feature-item"><span class="check">✓</span> <span>Zona VIP preferencial frente a tarima</span></li>
+              <li class="ticket-feature-item"><span class="check">✓</span> <span><strong>2 Tragos de cortesía</strong> / copa temátizada</span></li>
+              <li class="ticket-feature-item"><span class="check">✓</span> <span><strong>Pase directo al After Party</strong> oficial</span></li>
+              <li class="ticket-feature-item"><span class="check">✓</span> <span>Brazalete y merch coleccionable</span></li>
+            </ul>
+            <button type="button" class="btn-select-tier">✓ Seleccionado</button>
+          </div>
+
+        </div>
+
+        <!-- Reservation & Checkout Form Box -->
+        <div class="reservation-box" id="reserva">
+          <div class="res-header">
+            <h3 class="res-title">APARTÁ TU ENTRADA EN PREVENTA</h3>
+            <p class="res-subtitle">Completá tus datos para generar tu <strong>Ticket Digital con Código QR</strong> y confirmar tu reserva directamente por WhatsApp.</p>
+          </div>
+
+          <!-- Live Calculator Bar -->
+          <div class="calculator-bar">
+            <div class="calc-tier-info">
+              <span class="calc-tier-name" id="calc-tier-name">Pase VIP Quilombo</span>
+              <span class="calc-tier-unit" id="calc-tier-unit">$20 USD c/u</span>
+            </div>
+
+            <div class="calc-qty-control">
+              <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">CANTIDAD:</span>
+              <button type="button" class="btn-qty" id="btn-qty-minus" aria-label="Disminuir cantidad">−</button>
+              <span class="qty-display" id="calc-qty">1</span>
+              <button type="button" class="btn-qty" id="btn-qty-plus" aria-label="Aumentar cantidad">+</button>
+            </div>
+
+            <div class="calc-total-box">
+              <div class="calc-total-usd" id="calc-total-usd">$20 USD</div>
+              <div class="calc-total-ref" id="calc-total-ref">Ref. aprox: Bs. 850,00</div>
+            </div>
+          </div>
+
+          <!-- Form Fields -->
+          <form class="res-form" id="reservation-form">
+            <input type="hidden" id="res-tier-input" value="vip">
+
+            <div class="form-group">
+              <label for="buyer-name" class="form-label">Nombre y Apellido *</label>
+              <input type="text" id="buyer-name" class="form-input" placeholder="Ej: Santiago Pérez" required autocomplete="name">
+              <span class="form-hint">El nombre que aparecerá en tu boleto digital</span>
+            </div>
+
+            <div class="form-group">
+              <label for="buyer-dni" class="form-label">Cédula o DNI *</label>
+              <input type="text" id="buyer-dni" class="form-input" placeholder="Ej: V-28123456" required inputmode="numeric" autocomplete="off">
+              <span class="form-hint">Para verificación de aforo en la puerta</span>
+            </div>
+
+            <div class="form-group">
+              <label for="buyer-phone" class="form-label">WhatsApp de Contacto *</label>
+              <input type="tel" id="buyer-phone" class="form-input" placeholder="Ej: 0412 1234567" required autocomplete="tel" inputmode="tel">
+              <span class="form-hint">Para enviarte la confirmación y datos de pago</span>
+            </div>
+
+            <div class="form-group">
+              <label for="buyer-email" class="form-label">Correo Electrónico *</label>
+              <input type="email" id="buyer-email" class="form-input" placeholder="tucorreo@ejemplo.com" required autocomplete="email">
+              <span class="form-hint">Para respaldo de tu boleto y código QR</span>
+            </div>
+
+            <div class="form-group">
+              <label for="buyer-payment" class="form-label">Método de Pago Preferido *</label>
+              <select id="buyer-payment" class="form-select" required>
+                <option value="Pago Móvil">Pago Móvil (Banesco, Mercantil, Venezuela, etc.)</option>
+                <option value="Zelle">Zelle (USD)</option>
+                <option value="Binance Pay (USDT)">Binance Pay (USDT)</option>
+                <option value="Efectivo en Óleo Gastrobar">Efectivo (USD en puerta / local)</option>
+              </select>
+              <span class="form-hint">Te daremos los datos según tu método elegido</span>
+            </div>
+
+            <div class="form-group form-full">
+              <label for="buyer-artist" class="form-label">¿Qué tema o artista argentino no puede faltar en la fiesta? 🗣️</label>
+              <input type="text" id="buyer-artist" class="form-input" placeholder="Ej: Milo J - Rara Vez / Trueno - Dance Crip / Duki">
+              <span class="form-hint">¡Los temas más pedidos sonarán en vivo!</span>
+            </div>
+
+            <div class="form-full">
+              <button type="submit" class="btn-checkout">
+                <span>⚡ Generar Boleto Digital & Apartar por WhatsApp</span>
+                <span>→</span>
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Venue & Location Section -->
+    <section class="section" id="ubicacion">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-pill">Punto de Encuentro</span>
+          <h2 class="section-title">EL LUGAR: <span class="text-gradient">ÓLEO GASTROBAR</span></h2>
+          <p class="section-subtitle">Uno de los spots más top de La Viña en Valencia, acondicionado especialmente con sonido y ambientación para El Quilombo.</p>
+        </div>
+
+        <div class="venue-grid">
+          <div class="venue-card">
+            <div class="venue-tag">📍 Ubicación Oficial</div>
+            <h3 class="venue-name">Óleo Gastrobar</h3>
+            <p class="venue-address">Urb. La Viña, Valencia, Estado Carabobo, Venezuela.</p>
+
+            <ul class="venue-details-list">
+              <li class="v-item">
+                <span class="v-item-icon">⏰</span>
+                <div>
+                  <strong>Hora de inicio:</strong> 9:00 PM (Apertura de puertas)
+                </div>
+              </li>
+              <li class="v-item">
+                <span class="v-item-icon">🌙</span>
+                <div>
+                  <strong>After Party:</strong> Hasta el amanecer con zona lounge
+                </div>
+              </li>
+              <li class="v-item">
+                <span class="v-item-icon">🛡️</span>
+                <div>
+                  <strong>Seguridad & Estacionamiento:</strong> Vigilancia privada garantizada
+                </div>
+              </li>
+              <li class="v-item">
+                <span class="v-item-icon">👟</span>
+                <div>
+                  <strong>Dress Code:</strong> Streetwear, aesthetic urbano o camisetas de Argentina
+                </div>
+              </li>
+            </ul>
+
+            <a href="https://maps.google.com/?q=Oleo+Gastrobar+La+Viña+Valencia+Venezuela" target="_blank" rel="noopener noreferrer" class="btn-maps">
+              <span>📍 Abrir en Google Maps</span>
+              <span>↗</span>
+            </a>
+          </div>
+
+          <div class="venue-map-frame">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.986795415712!2d-68.0125434!3d10.222384!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e804368142ff6c5%3A0x6b772099f6ec36e6!2sLa%20Vi%C3%B1a%2C%20Valencia%2C%20Carabobo!5e0!3m2!1ses!2sve!4v1700000000000!5m2!1ses!2sve" 
+              allowfullscreen="" 
+              loading="lazy" 
+              referrerpolicy="no-referrer-when-downgrade"
+              title="Mapa de Óleo Gastrobar, La Viña">
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Accordion Section -->
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-pill">Resolvemos tus Dudas</span>
+          <h2 class="section-title">PREGUNTAS <span class="text-gradient">FRECUENTES</span></h2>
+          <p class="section-subtitle">Todo lo que necesitás saber antes de llegar al Quilombo.</p>
+        </div>
+
+        <div class="faq-container">
+          <details class="faq-item" open>
+            <summary class="faq-summary">
+              <span>¿Cómo funciona el proceso de reserva y pago?</span>
+              <span class="faq-arrow">+</span>
+            </summary>
+            <div class="faq-content">
+              Al llenar el formulario en esta web, se generará tu <strong>Boleto Digital con código QR</strong>. Luego serás redirigido directamente a nuestro WhatsApp oficial con los datos de tu reserva listos para que el equipo de El Quilombo te envíe los datos de transferencia (Pago Móvil, Zelle, Binance o Efectivo) y confirme tu lugar.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-summary">
+              <span>¿Cuál es el horario del evento y del After Party?</span>
+              <span class="faq-arrow">+</span>
+            </summary>
+            <div class="faq-content">
+              Las puertas abren a las <strong>9:00 PM</strong> con ambientación y primeros sets musicales. El show principal y dinámicas se desarrollan a lo largo de la medianoche, y a partir de las 2:30 AM arranca el <strong>After Party oficial</strong> extendido.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-summary">
+              <span>¿Cuál es el código de vestimenta (Dress Code)?</span>
+              <span class="faq-arrow">+</span>
+            </summary>
+            <div class="faq-content">
+              ¡La consigna es urbana! Podés venir con tu mejor outfit streetwear, zapatillas, estilo trap o incluso camisetas de la Selección Argentina / equipos de fútbol. Lo importante es venir con actitud y comodidad para romper la pista.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-summary">
+              <span>¿El evento es para mayores de edad?</span>
+              <span class="faq-arrow">+</span>
+            </summary>
+            <div class="faq-content">
+              Sí, evento exclusivo para mayores de 18 años (+18). Se solicitará cédula de identidad laminada en la entrada del local.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-summary">
+              <span>¿Qué pasa si compro en la entrada el día del evento?</span>
+              <span class="faq-arrow">+</span>
+            </summary>
+            <div class="faq-content">
+              El aforo de Óleo Gastrobar es limitado. El precio en puerta será significativamente mayor y estará sujeto a disponibilidad de cupos. Recomendamos asegurar tu entrada en esta preventa para garantizar acceso y precio preferencial.
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Digital Ticket Native Modal Dialog -->
+  <dialog class="ticket-dialog" id="ticket-dialog">
+    <div class="ticket-pass">
+      
+      <!-- Pass Header -->
+      <div class="ticket-pass-header">
+        <div class="ticket-pass-brand">
+          <img src="assets/img/el-quilombo-logo.png" alt="El Quilombo" class="ticket-pass-logo">
+          <div style="font-size: 0.72rem; opacity: 0.95; font-weight: 700; letter-spacing: 0.5px;">FIESTA ARGENTINA</div>
+        </div>
+        <div class="ticket-pass-badge">PRE-RESERVA ACTIVA</div>
+      </div>
+
+      <!-- Pass Body -->
+      <div class="ticket-pass-body">
+        <div class="ticket-info-grid">
+          <div class="ticket-info-item">
+            <span class="t-label">Titular de la Entrada</span>
+            <span class="t-value" id="t-buyer-name">Santiago Pérez</span>
+          </div>
+          <div class="ticket-info-item">
+            <span class="t-label">Fecha & Hora</span>
+            <span class="t-value">03 OCT • 9:00 PM</span>
+          </div>
+          <div class="ticket-info-item">
+            <span class="t-label">Tipo de Boleto</span>
+            <span class="t-value neon-highlight" id="t-tier-name">1x Pase VIP Quilombo</span>
+          </div>
+          <div class="ticket-info-item">
+            <span class="t-label">Lugar del Evento</span>
+            <span class="t-value">Óleo Gastrobar</span>
+          </div>
+          <div class="ticket-info-item">
+            <span class="t-label">Total a Pagar</span>
+            <span class="t-value neon-highlight" id="t-total-usd">$20 USD</span>
+            <span style="font-size: 0.75rem; color: var(--text-subtle);" id="t-total-ref">(Ref: Bs. 850,00)</span>
+          </div>
+          <div class="ticket-info-item">
+            <span class="t-label">Método Elegido</span>
+            <span class="t-value" id="t-payment-method">Pago Móvil</span>
+          </div>
+        </div>
+
+        <!-- Perforation Tear Cut -->
+        <div class="ticket-perforation">
+          <div class="perforation-line"></div>
+        </div>
+
+        <!-- QR & Serial Area -->
+        <div class="ticket-qr-section">
+          <div class="qr-canvas-box">
+            <canvas id="ticket-qr-canvas" width="110" height="110"></canvas>
+          </div>
+          <div class="ticket-code-info">
+            <span class="t-label">Código de Reserva</span>
+            <span class="ticket-code-num" id="t-code-display">#QLB-26-4821</span>
+            <span style="font-size: 0.7rem; color: var(--text-muted); text-align: right; margin-top: 4px;">Presentá este código por WhatsApp para validar tu pago</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pass Actions -->
+      <div class="ticket-pass-footer">
+        <a href="#" id="btn-whatsapp-confirm" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-confirm">
+          <span>📲 Confirmar y Pagar por WhatsApp</span>
+          <span>→</span>
+        </a>
+        <button type="button" class="btn-close-modal" id="btn-close-modal">Cerrar Ventana</button>
+      </div>
+
+    </div>
+  </dialog>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        
+        <div class="footer-brand">
+          <img src="assets/img/el-quilombo-logo.png" alt="El Quilombo" class="footer-logo-img">
+          <p class="footer-desc">
+            La fiesta temática que une a los amantes del trap, freestyle, cumbia y la cultura urbana argentina en Valencia, Venezuela.
+          </p>
+          <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+            <a href="https://www.instagram.com/elquilombo.vzla/" target="_blank" rel="noopener noreferrer" class="tag-badge tag-arg" style="text-decoration: none;">
+              @elquilombo.vzla
+            </a>
+            <a href="https://www.instagram.com/oleo.gastrobar/" target="_blank" rel="noopener noreferrer" class="tag-badge tag-loc" style="text-decoration: none;">
+              @oleo.gastrobar
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Navegación</h4>
+          <ul class="footer-links">
+            <li><a href="#hero" class="footer-link">Inicio</a></li>
+            <li><a href="#experiencia" class="footer-link">Experiencia</a></li>
+            <li><a href="#lineup" class="footer-link">Artistas</a></li>
+            <li><a href="#entradas" class="footer-link">Preventa</a></li>
+            <li><a href="#ubicacion" class="footer-link">Ubicación</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Créditos Oficiales</h4>
+          <ul class="footer-links">
+            <li><a href="https://www.instagram.com/belleamar_/" target="_blank" rel="noopener noreferrer" class="footer-link">Creadora: @belleamar_</a></li>
+            <li><a href="https://www.instagram.com/andrea_calanche/" target="_blank" rel="noopener noreferrer" class="footer-link">Diseño Gráfico: @andrea_calanche</a></li>
+            <li><a href="https://www.instagram.com/Vicdaddy.js/" target="_blank" rel="noopener noreferrer" class="footer-link" style="color: var(--neon-cyan); font-weight: 700;">Diseñador Web: @Vicdaddy.js</a></li>
+            <li><a href="https://www.instagram.com/oleo.gastrobar/" target="_blank" rel="noopener noreferrer" class="footer-link">Venue: @oleo.gastrobar</a></li>
+            <li><span style="color: var(--text-subtle); font-size: 0.85rem;">Valencia, Edo. Carabobo 🇻🇪</span></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 El Quilombo Vzla. Todos los derechos reservados.</span>
+        <span>Diseño & Desarrollo Web por <a href="https://www.instagram.com/Vicdaddy.js/" target="_blank" rel="noopener noreferrer" style="color: var(--neon-cyan); font-weight: 700; text-decoration: none;">@Vicdaddy.js</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating Quilombo Music Player (Milo J, Duki & Trueno) -->
+  <aside class="quilombo-player-dock" id="quilombo-music-player" aria-label="Reproductor de música oficial">
+    
+    <!-- Autoplay Activation Notice (displays if browser requires first touch) -->
+    <div class="player-autoplay-prompt" id="player-autoplay-prompt">
+      <span class="prompt-pulse">🔊</span>
+      <span class="prompt-text"><strong>¡Música de Milo J, Duki & Trueno lista!</strong> Haz clic aquí para activar el sonido</span>
+      <span class="prompt-action">ACTIVAR ▶</span>
+    </div>
+
+    <!-- Collapsible Playlist Drawer -->
+    <div class="player-playlist-drawer" id="player-playlist-drawer">
+      <div class="playlist-header">
+        <div class="playlist-header-title">
+          <span class="bolt">⚡</span>
+          <span>PLAYLIST OFICIAL • MILO J, DUKI & TRUENO</span>
+        </div>
+        <div class="playlist-filter-pills">
+          <button type="button" class="player-filter-pill active" data-filter="all">Todos</button>
+          <button type="button" class="player-filter-pill" data-filter="milo">Milo J</button>
+          <button type="button" class="player-filter-pill" data-filter="duki">Duki</button>
+          <button type="button" class="player-filter-pill" data-filter="trueno">Trueno</button>
+        </div>
+      </div>
+      <div class="player-playlist-items" id="player-playlist-items">
+        <!-- Injected dynamically by player.js -->
+      </div>
+    </div>
+
+    <!-- Main Player Bar -->
+    <div class="player-main-bar">
+      
+      <!-- Track Visual & Info -->
+      <div class="player-track-wrap">
+        <div class="player-art-box">
+          <img src="assets/img/tracks/gil.jpg" alt="Portada de la pista actual" class="player-track-cover" id="player-track-cover">
+          <div class="player-disc-hole"></div>
+        </div>
+        <div class="player-track-details">
+          <div class="player-track-topline">
+            <span class="player-badge" id="player-track-badge">🇦🇷 Milo J & Trueno</span>
+            <div class="player-mini-eq">
+              <span class="peq-bar"></span>
+              <span class="peq-bar"></span>
+              <span class="peq-bar"></span>
+            </div>
+          </div>
+          <h4 class="player-track-title" id="player-track-title">Gil</h4>
+          <span class="player-track-artist" id="player-track-artist">Milo J & Trueno</span>
+        </div>
+      </div>
+
+      <!-- Playback Timeline & Center Controls -->
+      <div class="player-center-controls">
+        <div class="player-buttons-row">
+          <button type="button" class="btn-player-ctl" id="player-btn-shuffle" title="Modo aleatorio" aria-label="Modo aleatorio">
+            🔀
+          </button>
+          <button type="button" class="btn-player-ctl" id="player-btn-prev" title="Pista anterior" aria-label="Pista anterior">
+            ⏮
+          </button>
+          <button type="button" class="btn-player-play" id="player-btn-play" title="Reproducir / Pausar" aria-label="Reproducir música">
+            <span id="player-play-icon">▶</span>
+          </button>
+          <button type="button" class="btn-player-ctl" id="player-btn-next" title="Pista siguiente" aria-label="Pista siguiente">
+            ⏭
+          </button>
+          <button type="button" class="btn-player-ctl btn-playlist-toggle" id="player-btn-playlist" title="Ver lista de canciones" aria-label="Lista de canciones">
+            <span>☰</span>
+            <span class="btn-playlist-label">Playlist</span>
+          </button>
+        </div>
+
+        <div class="player-timeline-row">
+          <span class="time-label" id="player-current-time">0:00</span>
+          <div class="timeline-bar-wrap">
+            <input type="range" class="player-range-bar" id="player-progress-bar" min="0" max="100" value="0" aria-label="Progreso de la pista">
+          </div>
+          <span class="time-label" id="player-duration-time">0:30</span>
+        </div>
+      </div>
+
+      <!-- Right Actions: Volume & Minimize -->
+      <div class="player-right-actions">
+        <div class="player-volume-wrap">
+          <button type="button" class="btn-player-mute" id="player-btn-mute" title="Silenciar / Activar sonido" aria-label="Silenciar">
+            🔊
+          </button>
+          <input type="range" class="player-volume-slider" id="player-volume-slider" min="0" max="1" step="0.05" value="0.85" aria-label="Control de volumen">
+        </div>
+
+        <button type="button" class="btn-player-minimize" id="player-btn-minimize" title="Minimizar reproductor" aria-label="Minimizar">
+          ✕
+        </button>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- Minimized Floating Launcher Pill (shown when minimized) -->
+  <button type="button" class="player-mini-launcher" id="player-mini-launcher" title="Abrir reproductor de música" aria-label="Abrir reproductor de música">
+    <span class="launcher-icon">📻</span>
+    <span class="launcher-text">Quilombo Sound</span>
+    <div class="launcher-eq">
+      <span></span><span></span><span></span>
+    </div>
+  </button>
+
+  <!-- Scripts -->
+  <script src="js/countdown.js"></script>
+  <script src="js/ticketing.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

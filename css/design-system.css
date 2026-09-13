@@ -93,6 +93,9 @@ html {
   scroll-behavior: smooth;
   color-scheme: dark;
   font-size: 16px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 body {
@@ -100,7 +103,9 @@ body {
   color: var(--text-main);
   font-family: var(--font-body);
   line-height: 1.6;
-  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
   position: relative;
   min-height: 100vh;
 }
@@ -186,6 +191,13 @@ body::before {
   max-width: var(--container-max);
   margin-inline: auto;
   padding-inline: 1.5rem;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding-inline: 1rem;
+  }
 }
 
 /* Utility Animations */

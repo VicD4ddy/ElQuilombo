@@ -3,6 +3,20 @@
 import React from 'react';
 import { useAudioPlayer } from '../../context/AudioPlayerContext';
 
+const ARTIST_FILTERS = [
+  { id: 'all', label: 'Todos' },
+  { id: 'milo', label: 'Milo J' },
+  { id: 'duki', label: 'Duki' },
+  { id: 'trueno', label: 'Trueno' },
+  { id: 'bizarrap', label: 'Bizarrap' },
+  { id: 'wos', label: 'WOS' },
+  { id: 'ysy-a', label: 'YSY A' },
+  { id: 'dillom', label: 'Dillom' },
+  { id: 'nicki', label: 'Nicki Nicole' },
+  { id: 'tiago', label: 'Tiago PZK' },
+  { id: 'maria-becerra', label: 'María Becerra' },
+];
+
 export default function PlaylistDrawer() {
   const {
     tracks,
@@ -24,37 +38,27 @@ export default function PlaylistDrawer() {
       <div className="playlist-header">
         <div className="playlist-header-title">
           <span className="bolt">⚡</span>
-          <span>PLAYLIST OFICIAL • MILO J, DUKI & TRUENO</span>
+          <span>PLAYLIST OFICIAL • LINEUP EL QUILOMBO ({tracks.length} TEMAS)</span>
         </div>
-        <div className="playlist-filter-pills">
-          <button
-            type="button"
-            className={`player-filter-pill ${activeFilter === 'all' ? 'active' : ''}`}
-            onClick={() => setActiveFilter('all')}
-          >
-            Todos
-          </button>
-          <button
-            type="button"
-            className={`player-filter-pill ${activeFilter === 'milo' ? 'active' : ''}`}
-            onClick={() => setActiveFilter('milo')}
-          >
-            Milo J
-          </button>
-          <button
-            type="button"
-            className={`player-filter-pill ${activeFilter === 'duki' ? 'active' : ''}`}
-            onClick={() => setActiveFilter('duki')}
-          >
-            Duki
-          </button>
-          <button
-            type="button"
-            className={`player-filter-pill ${activeFilter === 'trueno' ? 'active' : ''}`}
-            onClick={() => setActiveFilter('trueno')}
-          >
-            Trueno
-          </button>
+        <div
+          className="playlist-filter-pills"
+          style={{
+            overflowX: 'auto',
+            whiteSpace: 'nowrap',
+            paddingBottom: '2px',
+            scrollbarWidth: 'none',
+          }}
+        >
+          {ARTIST_FILTERS.map((filter) => (
+            <button
+              key={filter.id}
+              type="button"
+              className={`player-filter-pill ${activeFilter === filter.id ? 'active' : ''}`}
+              onClick={() => setActiveFilter(filter.id)}
+            >
+              {filter.label}
+            </button>
+          ))}
         </div>
       </div>
 

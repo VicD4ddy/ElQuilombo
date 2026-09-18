@@ -54,7 +54,7 @@ export default function MusicPlayer() {
           >
             <span className="prompt-pulse">🔊</span>
             <span className="prompt-text">
-              <strong>¡Música de Milo J, Duki & Trueno lista!</strong> Haz clic aquí para activar el sonido
+              <strong>¡Playlist Oficial del Lineup (14 canciones)!</strong> Haz clic aquí para activar el sonido
             </span>
             <span className="prompt-action">ACTIVAR ▶</span>
           </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { TICKET_TIERS, REF_EXCHANGE_RATE } from '../../data/ticketing';
 import { TicketTier, TicketOrder } from '../../types/ticket';
@@ -23,6 +23,37 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
     paymentMethod: 'Pago Móvil',
     favoriteArtist: '',
   });
+
+  const fahAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    try {
+      const audio = new Audio('/assets/audio/fah.mp3');
+      audio.preload = 'auto';
+      fahAudioRef.current = audio;
+    } catch (e) {}
+  }, []);
+
+  const playFahSound = () => {
+    try {
+      if (fahAudioRef.current) {
+        fahAudioRef.current.currentTime = 0;
+        fahAudioRef.current.volume = 1.0;
+        const playPromise = fahAudioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((err) => {
+            console.warn('[Ticketing] Audio play failed:', err);
+          });
+        }
+      } else {
+        const audio = new Audio('/assets/audio/fah.mp3');
+        audio.volume = 1.0;
+        audio.play().catch(() => {});
+      }
+    } catch (e) {
+      console.warn('[Ticketing] Audio error:', e);
+    }
+  };
 
   const [bcvRate, setBcvRate] = useState<number>(REF_EXCHANGE_RATE);
   const [isRateLive, setIsRateLive] = useState<boolean>(false);
@@ -70,11 +101,7 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
     if (!formData.name || !formData.phone || !formData.email || !formData.dni) return;
 
     // 1. Play viral meme audio "FAHHHHHH"
-    try {
-      const fahAudio = new Audio('/assets/audio/fah.mp3');
-      fahAudio.volume = 0.95;
-      fahAudio.play().catch(() => {});
-    } catch (err) {}
+    playFahSound();
 
     // 2. Explode party neon confetti
     try {
@@ -392,6 +419,29 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
                   </>
                 )}
               </button>
+              <div style={{ textAlign: 'center', marginTop: '0.65rem' }}>
+                <button
+                  type="button"
+                  id="btn-preview-fah"
+                  onClick={playFahSound}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    border: '1px dashed var(--border-neon-purple)',
+                    borderRadius: 'var(--radius-pill)',
+                    color: 'var(--neon-purple-light)',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    padding: '0.45rem 1rem',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <span>🔊 Probar audio "FAHHHHHH"</span>
+                </button>
+              </div>
             </div>
           </form>
         </div>

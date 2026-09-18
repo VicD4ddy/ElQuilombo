@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { TICKET_TIERS, REF_EXCHANGE_RATE } from '../../data/ticketing';
 import { TicketTier, TicketOrder } from '../../types/ticket';
@@ -24,9 +24,39 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
     favoriteArtist: '',
   });
 
+  const [bcvRate, setBcvRate] = useState<number>(REF_EXCHANGE_RATE);
+  const [isRateLive, setIsRateLive] = useState<boolean>(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch('/api/bcv')
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted && data?.rate && typeof data.rate === 'number' && data.rate > 0) {
+          setBcvRate(data.rate);
+          setIsRateLive(Boolean(data.isLive));
+        }
+      })
+      .catch((err) => {
+        console.warn('[Ticketing] Error fetching live BCV rate:', err);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const selectedTier: TicketTier = TICKET_TIERS[selectedTierId];
   const totalUSD = selectedTier.priceUSD * quantity;
-  const totalRefBs = (totalUSD * REF_EXCHANGE_RATE).toFixed(2);
+  const rawTotalBs = totalUSD * bcvRate;
+  const totalRefBs = rawTotalBs.toLocaleString('es-VE', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+  const formattedBcvRate = bcvRate.toLocaleString('es-VE', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 
   const handleQtyChange = (delta: number) => {
     setQuantity((prev) => {
@@ -214,7 +244,33 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
                 ${totalUSD} USD
               </div>
               <div className="calc-total-ref" id="calc-total-ref">
-                Ref. aprox: Bs. {totalRefBs}
+                Ref. Bs: {totalRefBs}
+              </div>
+              <div
+                id="bcv-rate-indicator"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  fontSize: '0.74rem',
+                  color: isRateLive ? 'var(--neon-cyan)' : 'var(--text-subtle)',
+                  marginTop: '0.35rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.2px',
+                }}
+              >
+                <span
+                  style={{
+                    display: 'inline-block',
+                    width: '7px',
+                    height: '7px',
+                    borderRadius: '50%',
+                    background: isRateLive ? '#00f0ff' : '#888',
+                    boxShadow: isRateLive ? '0 0 8px #00f0ff' : 'none',
+                    flexShrink: 0,
+                  }}
+                />
+                <span>Tasa BCV oficial: Bs. {formattedBcvRate}</span>
               </div>
             </div>
           </div>

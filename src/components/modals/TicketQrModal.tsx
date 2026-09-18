@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { toPng } from 'html-to-image';
 import { TicketOrder } from '../../types/ticket';
+import { OFFICIAL_WHATSAPP_NUMBER } from '../../data/ticketing';
 
 interface TicketQrModalProps {
   order: TicketOrder | null;
@@ -83,7 +84,7 @@ export default function TicketQrModal({ order, onClose }: TicketQrModalProps) {
 
   if (!order) return null;
 
-  const whatsappNumber = '584120000000';
+  const whatsappNumber = OFFICIAL_WHATSAPP_NUMBER;
   const memeText = order.meme ? `Sticker: ${order.meme.emoji} ${order.meme.name}` : '';
   const waMessage = `⚡ *RESERVA PREVENTA - EL QUILOMBO* 💜
 ¡Hola equipo de @elquilombo.vzla! Quiero confirmar mi entrada:

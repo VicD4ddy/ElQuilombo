@@ -1,6 +1,9 @@
 import { TicketTier } from '../types/ticket';
 
-export const REF_EXCHANGE_RATE = 42.5;
+export const OFFICIAL_WHATSAPP_NUMBER = '58412882460';
+
+// Fallback de referencia en caso de fallo temporal de la API BCV
+export const REF_EXCHANGE_RATE = 847.44;
 
 export const TICKET_TIERS: Record<'general' | 'vip', TicketTier> = {
   general: {

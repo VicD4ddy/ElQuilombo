@@ -77,7 +77,10 @@ export async function processReservation(
         paymentMethod: existing.payment_method,
         favoriteArtist: existing.favorite_artist || '',
         totalUSD: Number(existing.total_usd),
-        totalRefBs: Number(existing.total_ref_bs).toFixed(2),
+        totalRefBs: Number(existing.total_ref_bs).toLocaleString('es-VE', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }),
         ticketCode: existing.ticket_code,
         createdAt: existing.created_at,
       };
@@ -94,6 +97,12 @@ export async function processReservation(
     const randomCode = Math.floor(1000 + Math.random() * 9000);
     const newTicketCode = `QLB-26-${randomCode}`;
 
+    // Safely parse number whether it uses dot or comma separators (es-VE)
+    const cleanedRefBs = typeof orderData.totalRefBs === 'string'
+      ? parseFloat(orderData.totalRefBs.replace(/\./g, '').replace(',', '.'))
+      : Number(orderData.totalRefBs);
+    const parsedRefBs = isNaN(cleanedRefBs) ? 0 : cleanedRefBs;
+
     const newRecord: ReservationRecord = {
       ticket_code: newTicketCode,
       buyer_name: orderData.buyerName,
@@ -104,7 +113,7 @@ export async function processReservation(
       tier_name: orderData.tier.name,
       quantity: orderData.quantity,
       total_usd: orderData.totalUSD,
-      total_ref_bs: parseFloat(orderData.totalRefBs),
+      total_ref_bs: parsedRefBs,
       payment_method: orderData.paymentMethod,
       favorite_artist: orderData.favoriteArtist,
       meme_sticker_used: selectedMeme.id,

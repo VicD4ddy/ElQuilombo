@@ -46,3 +46,45 @@ ON public.reservations
 FOR SELECT
 TO anon, authenticated
 USING (true);
+
+-- Permitir actualizar estado de pago desde el panel de organizador
+CREATE POLICY "Permitir actualización de estado de pago"
+ON public.reservations
+FOR UPDATE
+TO anon, authenticated
+USING (true)
+WITH CHECK (true);
+
+-- ==============================================================================
+-- TABLA DE CONFIGURACIÓN DEL EVENTO Y PLAYLIST DINÁMICA
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.event_settings (
+    id VARCHAR(32) PRIMARY KEY DEFAULT 'default_config',
+    updated_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+    event_date VARCHAR(64) DEFAULT '03 OCT • 9:00 PM' NOT NULL,
+    venue_name VARCHAR(120) DEFAULT 'Óleo Gastrobar (La Viña)' NOT NULL,
+    venue_address VARCHAR(200) DEFAULT 'Valencia, Carabobo - Venezuela' NOT NULL,
+    official_whatsapp VARCHAR(32) DEFAULT '58412882460' NOT NULL,
+    organizer_pin VARCHAR(32) DEFAULT '1984' NOT NULL,
+    price_general NUMERIC(10, 2) DEFAULT 10.00 NOT NULL,
+    price_vip NUMERIC(10, 2) DEFAULT 20.00 NOT NULL,
+    max_capacity INTEGER DEFAULT 350 NOT NULL,
+    ticket_subtitle VARCHAR(120) DEFAULT 'FIESTA ARGENTINA' NOT NULL,
+    ticket_door_instructions TEXT DEFAULT 'Mostrá este código por WhatsApp o en la entrada de Óleo Gastrobar' NOT NULL,
+    custom_tracks JSONB DEFAULT '[]'::jsonb NOT NULL
+);
+
+ALTER TABLE public.event_settings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Permitir lectura de configuración"
+ON public.event_settings
+FOR SELECT
+TO anon, authenticated
+USING (true);
+
+CREATE POLICY "Permitir gestión de configuración"
+ON public.event_settings
+FOR ALL
+TO anon, authenticated
+USING (true)
+WITH CHECK (true);

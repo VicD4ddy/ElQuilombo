@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { Track } from '../types/track';
 import { PLAYLIST } from '../data/playlist';
+import { getEventSettings } from '../lib/settings';
 
 interface AudioPlayerContextType {
   tracks: Track[];
@@ -37,6 +38,8 @@ interface AudioPlayerContextType {
 const AudioPlayerContext = createContext<AudioPlayerContextType | null>(null);
 
 export function AudioPlayerProvider({ children }: { children: React.ReactNode }) {
+  const [tracks, setTracks] = useState<Track[]>(PLAYLIST);
+  const tracksRef = useRef<Track[]>(PLAYLIST);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -50,8 +53,44 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
   const [activeFilter, setActiveFilter] = useState('all');
   const [showAutoplayPrompt, setShowAutoplayPrompt] = useState(false);
 
+  useEffect(() => {
+    tracksRef.current = tracks;
+  }, [tracks]);
+
+  // Load custom tracks from event settings
+  const refreshTracks = useCallback(async () => {
+    try {
+      const settings = await getEventSettings();
+      if (settings && Array.isArray(settings.customTracks) && settings.customTracks.length > 0) {
+        const existingIds = new Set(PLAYLIST.map((t) => t.id));
+        const customUnique = settings.customTracks.filter((t) => !existingIds.has(t.id));
+        setTracks([...PLAYLIST, ...customUnique]);
+      } else {
+        setTracks(PLAYLIST);
+      }
+    } catch (e) {
+      console.warn('Error loading custom tracks:', e);
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshTracks();
+
+    const handleUpdate = () => {
+      refreshTracks();
+    };
+
+    window.addEventListener('quilombo_settings_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+
+    return () => {
+      window.removeEventListener('quilombo_settings_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, [refreshTracks]);
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const currentTrack = PLAYLIST[currentIndex] || PLAYLIST[0];
+  const currentTrack = tracks[currentIndex] || tracks[0] || PLAYLIST[0];
 
   // Helper to sync Media Session API on mobile devices
   const updateMediaSession = useCallback((track: Track) => {
@@ -101,7 +140,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
 
     const onEnded = () => {
       // Auto next
-      setCurrentIndex((prev) => (prev + 1) % PLAYLIST.length);
+      setCurrentIndex((prev) => (prev + 1) % (tracksRef.current.length || 1));
     };
 
     audio.addEventListener('timeupdate', onTimeUpdate);
@@ -199,23 +238,25 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
   }, [isPlaying, pauseAudio, playTrack]);
 
   const nextTrack = useCallback(() => {
+    const list = tracksRef.current;
     if (isShuffle) {
       let nextIdx: number;
       do {
-        nextIdx = Math.floor(Math.random() * PLAYLIST.length);
-      } while (nextIdx === currentIndex && PLAYLIST.length > 1);
+        nextIdx = Math.floor(Math.random() * list.length);
+      } while (nextIdx === currentIndex && list.length > 1);
       setCurrentIndex(nextIdx);
     } else {
-      setCurrentIndex((prev) => (prev + 1) % PLAYLIST.length);
+      setCurrentIndex((prev) => (prev + 1) % list.length);
     }
     setIsPlaying(true);
   }, [isShuffle, currentIndex]);
 
   const prevTrack = useCallback(() => {
+    const list = tracksRef.current;
     if (audioRef.current && audioRef.current.currentTime > 3) {
       audioRef.current.currentTime = 0;
     } else {
-      setCurrentIndex((prev) => (prev - 1 + PLAYLIST.length) % PLAYLIST.length);
+      setCurrentIndex((prev) => (prev - 1 + list.length) % list.length);
     }
     setIsPlaying(true);
   }, []);
@@ -265,7 +306,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
   return (
     <AudioPlayerContext.Provider
       value={{
-        tracks: PLAYLIST,
+        tracks,
         currentTrack,
         currentIndex,
         isPlaying,

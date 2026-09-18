@@ -1,9 +1,11 @@
+import { MemeSticker } from '../data/memes';
+
 export interface TicketTier {
-  id: 'general' | 'vip';
+  id: 'general' | 'vip' | string;
   name: string;
   priceUSD: number;
-  badge: string;
-  description: string;
+  badge?: string;
+  description?: string;
   features: string[];
 }
 
@@ -20,4 +22,7 @@ export interface TicketOrder {
   totalRefBs: string;
   ticketCode: string;
   createdAt?: string;
+  meme?: MemeSticker;
+  isExisting?: boolean;
+  noticeMessage?: string;
 }

@@ -1,8 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
+import confetti from 'canvas-confetti';
 import { TICKET_TIERS, REF_EXCHANGE_RATE } from '../../data/ticketing';
 import { TicketTier, TicketOrder } from '../../types/ticket';
+import { getRandomMemeSticker } from '../../data/memes';
+import { processReservation } from '../../lib/reservations';
 
 interface TicketingSectionProps {
   onGenerateTicket: (order: TicketOrder) => void;
@@ -11,6 +14,7 @@ interface TicketingSectionProps {
 export default function TicketingSection({ onGenerateTicket }: TicketingSectionProps) {
   const [selectedTierId, setSelectedTierId] = useState<'general' | 'vip'>('vip');
   const [quantity, setQuantity] = useState<number>(1);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     name: '',
     dni: '',
@@ -31,29 +35,58 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.phone || !formData.email) return;
+    if (!formData.name || !formData.phone || !formData.email || !formData.dni) return;
 
-    const randomCode = Math.floor(1000 + Math.random() * 9000);
-    const ticketCode = `QLB-26-${randomCode}`;
+    // 1. Play viral meme audio "FAHHHHHH"
+    try {
+      const fahAudio = new Audio('/assets/audio/fah.mp3');
+      fahAudio.volume = 0.95;
+      fahAudio.play().catch(() => {});
+    } catch (err) {}
 
-    const order: TicketOrder = {
-      tier: selectedTier,
-      quantity,
-      buyerName: formData.name.trim(),
-      buyerDni: formData.dni.trim() || 'N/A',
-      buyerPhone: formData.phone.trim(),
-      buyerEmail: formData.email.trim(),
-      paymentMethod: formData.paymentMethod,
-      favoriteArtist: formData.favoriteArtist.trim() || 'Milo J / Trueno',
-      totalUSD,
-      totalRefBs,
-      ticketCode,
-      createdAt: new Date().toISOString(),
-    };
+    // 2. Explode party neon confetti
+    try {
+      confetti({
+        particleCount: 90,
+        spread: 75,
+        origin: { y: 0.65 },
+        colors: ['#a855f7', '#00f0ff', '#ff007f', '#ffd600', '#ffffff'],
+      });
+    } catch (err) {}
 
-    onGenerateTicket(order);
+    setIsSubmitting(true);
+
+    try {
+      const meme = getRandomMemeSticker();
+      const result = await processReservation(
+        {
+          tier: selectedTier,
+          quantity,
+          buyerName: formData.name.trim(),
+          buyerDni: formData.dni.trim(),
+          buyerPhone: formData.phone.trim(),
+          buyerEmail: formData.email.trim(),
+          paymentMethod: formData.paymentMethod,
+          favoriteArtist: formData.favoriteArtist.trim() || 'Milo J / Trueno',
+          totalUSD,
+          totalRefBs,
+        },
+        meme
+      );
+
+      const finalOrder: TicketOrder = {
+        ...result.order,
+        meme,
+        isExisting: result.isExisting,
+        noticeMessage: result.message,
+      };
+
+      onGenerateTicket(finalOrder);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -293,9 +326,15 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
             </div>
 
             <div className="form-full">
-              <button type="submit" className="btn-checkout">
-                <span>⚡ Generar Boleto Digital & Apartar por WhatsApp</span>
-                <span>→</span>
+              <button type="submit" id="btn-submit-reservation" className="btn-checkout" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <span>⚡ Guardando en Supabase y Generando Boleto...</span>
+                ) : (
+                  <>
+                    <span>⚡ Generar Boleto Digital & Apartar por WhatsApp</span>
+                    <span>→</span>
+                  </>
+                )}
               </button>
             </div>
           </form>

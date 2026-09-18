@@ -7,6 +7,12 @@ Desktop.ini
 .vscode/
 .idea/
 
+# Next.js and Dependencies
+node_modules/
+/.next/
+/out/
+.env*.local
+
 # Logs and scratch
 *.log
 scratch/

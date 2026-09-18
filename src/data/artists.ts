@@ -1,0 +1,82 @@
+import { Artist } from '../types/artist';
+
+export const ARTISTS: Artist[] = [
+  {
+    id: 'milo-j',
+    name: 'Milo J',
+    style: 'Trap & Boombap',
+    hits: 'Hits: "Rara Vez", "Milo J: BZRP #57", "Dispara"',
+    photo: '/assets/img/artists/milo-j.jpg',
+  },
+  {
+    id: 'trueno',
+    name: 'Trueno',
+    style: 'Freestyle & Hip-Hop',
+    hits: 'Hits: "Dance Crip", "Mamichula", "Tranky Funky"',
+    photo: '/assets/img/artists/trueno.jpg',
+  },
+  {
+    id: 'duki',
+    name: 'Duki',
+    style: 'Trap Argento',
+    hits: 'Hits: "Goteo", "She Don\'t Give a FO", "Givenchy"',
+    photo: '/assets/img/artists/duki.jpg',
+  },
+  {
+    id: 'bizarrap',
+    name: 'Bizarrap',
+    style: 'BZRP Sessions',
+    hits: 'Hits: "Quevedo #52", "Nathy Peluso #36", "Villano #51"',
+    photo: '/assets/img/artists/bizarrap.jpg',
+  },
+  {
+    id: 'nicki-nicole',
+    name: 'Nicki Nicole',
+    style: 'R&B & Pop Urbano',
+    hits: 'Hits: "Wapo Traketero", "Colocao", "Dispara"',
+    photo: '/assets/img/artists/nicki-nicole.jpg',
+  },
+  {
+    id: 'tiago-pzk',
+    name: 'Tiago PZK',
+    style: 'Perreo & Trap',
+    hits: 'Hits: "Entre Nosotros", "Salimo de Noche", "Traductor"',
+    photo: '/assets/img/artists/tiago-pzk.jpg',
+  },
+  {
+    id: 'maria-becerra',
+    name: 'María Becerra',
+    style: 'La Nena de Argentina',
+    hits: 'Hits: "Automático", "Corazón Vacío", "Ojalá"',
+    photo: '/assets/img/artists/maria-becerra.jpg',
+  },
+  {
+    id: 'wos',
+    name: 'WOS',
+    style: 'Rap Conciencia & Rock',
+    hits: 'Hits: "Canguro", "Arrancármelo", "Melón Vino"',
+    photo: '/assets/img/artists/wos.jpg',
+  },
+  {
+    id: 'ysy-a',
+    name: 'YSY A',
+    style: 'Trap de Verdad',
+    hits: 'Hits: "Tamo Loco", "Silbando", "Cómo Chilla Ella"',
+    photo: '/assets/img/artists/ysy-a.jpg',
+  },
+  {
+    id: 'dillom',
+    name: 'Dillom',
+    style: 'Post-Mortem & Hip-Hop',
+    hits: 'Hits: "Opa", "Pelotuda", "Cirugía", "La Primera"',
+    photo: '/assets/img/artists/dillom.jpg',
+  },
+  {
+    id: 'cumbia-420',
+    name: 'Cumbia 420 & Clásicos',
+    style: 'Cumbia & Rock Nacional',
+    hits: 'L-Gante, Damas Gratis, Rodrigo, Los Palmeras & Rock Nacional para cantar abrazados.',
+    photo: '',
+    isSpecial: true,
+  },
+];

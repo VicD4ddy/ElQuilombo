@@ -1,0 +1,58 @@
+import { Track } from '../types/track';
+
+export const PLAYLIST: Track[] = [
+  {
+    id: 'gil',
+    title: 'Gil',
+    artist: 'Milo J & Trueno',
+    badge: '🇦🇷 Milo J & Trueno',
+    src: '/assets/audio/gil.m4a',
+    cover: '/assets/img/tracks/gil.jpg',
+    category: 'milo trueno',
+  },
+  {
+    id: 'goteo',
+    title: 'Goteo',
+    artist: 'Duki',
+    badge: '⚡ Duki',
+    src: '/assets/audio/goteo.m4a',
+    cover: '/assets/img/tracks/goteo.jpg',
+    category: 'duki',
+  },
+  {
+    id: 'mamichula',
+    title: 'Mamichula',
+    artist: 'Trueno, Nicki Nicole & Bizarrap',
+    badge: '🎤 Trueno',
+    src: '/assets/audio/mamichula.m4a',
+    cover: '/assets/img/tracks/mamichula.jpg',
+    category: 'trueno',
+  },
+  {
+    id: 'mai',
+    title: 'M.A.I',
+    artist: 'Milo J',
+    badge: '🇦🇷 Milo J',
+    src: '/assets/audio/mai.m4a',
+    cover: '/assets/img/tracks/mai.jpg',
+    category: 'milo',
+  },
+  {
+    id: 'she-dont-give-a-fo',
+    title: "She Don't Give a Fo",
+    artist: 'Duki & KHEA',
+    badge: '⚡ Duki',
+    src: '/assets/audio/she-dont-give-a-fo.m4a',
+    cover: '/assets/img/tracks/she-dont-give-a-fo.jpg',
+    category: 'duki',
+  },
+  {
+    id: 'nino',
+    title: 'Niño',
+    artist: 'Milo J',
+    badge: '🇦🇷 Milo J',
+    src: '/assets/audio/nino.m4a',
+    cover: '/assets/img/tracks/nino.jpg',
+    category: 'milo',
+  },
+];

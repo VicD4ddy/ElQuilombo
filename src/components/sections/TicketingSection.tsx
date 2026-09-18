@@ -24,11 +24,12 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
     favoriteArtist: '',
   });
 
+  const FAH_AUDIO_SRC = '/assets/audio/fah.mp3?v=2';
   const fahAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     try {
-      const audio = new Audio('/assets/audio/fah.mp3');
+      const audio = new Audio(FAH_AUDIO_SRC);
       audio.preload = 'auto';
       fahAudioRef.current = audio;
     } catch (e) {}
@@ -46,7 +47,7 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
           });
         }
       } else {
-        const audio = new Audio('/assets/audio/fah.mp3');
+        const audio = new Audio(FAH_AUDIO_SRC);
         audio.volume = 1.0;
         audio.play().catch(() => {});
       }

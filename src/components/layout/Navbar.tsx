@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 
 export default function Navbar() {
   const [daysLeft, setDaysLeft] = useState<number>(16);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const targetDate = new Date('2026-10-03T21:00:00');
@@ -28,45 +29,70 @@ export default function Navbar() {
       const elem = document.querySelector(href);
       if (elem) {
         elem.scrollIntoView({ behavior: 'smooth' });
+        setIsMobileMenuOpen(false);
       }
     }
   };
 
   return (
-    <header className="site-header">
-      <div className="container header-inner">
-        <a href="#hero" className="brand" onClick={(e) => handleSmoothScroll(e, '#hero')}>
+    <header className="navbar">
+      <div className="container">
+        <a href="#hero" className="nav-brand" onClick={(e) => handleSmoothScroll(e, '#hero')}>
           <img
-            src="/recursos/El Quilombo.png"
-            alt="Logo El Quilombo"
-            className="brand-logo"
-            width={120}
-            height={48}
+            src="/assets/img/el-quilombo-logo.png"
+            alt="El Quilombo"
+            className="nav-logo-img"
           />
         </a>
 
-        <div className="date-badge">
-          <span className="pulsing-dot" />
-          <span>FALTAN {daysLeft} DÍAS • 3 DE OCT</span>
-        </div>
+        <ul className={`nav-links ${isMobileMenuOpen ? 'mobile-open' : ''}`} id="nav-links">
+          <li>
+            <a href="#experiencia" className="nav-link" onClick={(e) => handleSmoothScroll(e, '#experiencia')}>
+              Experiencia
+            </a>
+          </li>
+          <li>
+            <a href="#lineup" className="nav-link" onClick={(e) => handleSmoothScroll(e, '#lineup')}>
+              Artistas
+            </a>
+          </li>
+          <li>
+            <a href="#entradas" className="nav-link" onClick={(e) => handleSmoothScroll(e, '#entradas')}>
+              Entradas
+            </a>
+          </li>
+          <li>
+            <a href="#ubicacion" className="nav-link" onClick={(e) => handleSmoothScroll(e, '#ubicacion')}>
+              Ubicación
+            </a>
+          </li>
+          <li>
+            <a href="#faq" className="nav-link" onClick={(e) => handleSmoothScroll(e, '#faq')}>
+              FAQ
+            </a>
+          </li>
+        </ul>
 
-        <nav className="nav-links">
-          <a href="#experiencia" onClick={(e) => handleSmoothScroll(e, '#experiencia')}>Experiencia</a>
-          <a href="#lineup" onClick={(e) => handleSmoothScroll(e, '#lineup')}>Lineup</a>
-          <a href="#entradas" onClick={(e) => handleSmoothScroll(e, '#entradas')}>Entradas</a>
-          <a href="#ubicacion" onClick={(e) => handleSmoothScroll(e, '#ubicacion')}>Ubicación</a>
-          <a href="#faq" onClick={(e) => handleSmoothScroll(e, '#faq')}>FAQ</a>
-        </nav>
-
-        <div className="header-actions">
+        <div className="nav-right-actions">
+          <div className="nav-pill-date">
+            <span className="dot" />
+            <span id="nav-cd-pill">3 Oct • Preventa Activa ({daysLeft}d)</span>
+          </div>
           <a
             href="#entradas"
-            className="btn-header-cta"
+            className="btn-nav-cta"
             onClick={(e) => handleSmoothScroll(e, '#entradas')}
           >
-            <span>Apartar Entrada</span>
-            <span className="arrow">→</span>
+            Apartar Entrada
           </a>
+          <button
+            className="nav-toggle"
+            id="nav-toggle"
+            aria-label="Abrir Menú"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            ☰
+          </button>
         </div>
       </div>
     </header>

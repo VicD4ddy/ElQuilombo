@@ -47,38 +47,35 @@ export default function CountdownTimer() {
   const format2Digits = (num: number) => (num < 10 ? `0${num}` : `${num}`);
 
   return (
-    <div className="countdown-widget" aria-label="Cuenta regresiva para El Quilombo">
+    <div className="countdown-container" aria-label="Cuenta regresiva para El Quilombo">
       <div className="countdown-header">
-        <span className="live-dot" />
-        <span className="countdown-title">INICIO DEL EVENTO • 3 DE OCTUBRE, 9:00 PM</span>
+        <span className="countdown-label">⏳ Cuenta Regresiva para el Evento</span>
+        <span className="countdown-date">📅 3 de Octubre • 9:00 PM</span>
       </div>
       <div className="countdown-grid">
         <div className="countdown-unit">
-          <span className="number" id="cd-days">
+          <div className="countdown-number" id="cd-days">
             {isClient ? format2Digits(timeLeft.days) : '16'}
-          </span>
-          <span className="label">DÍAS</span>
+          </div>
+          <div className="countdown-type">Días</div>
         </div>
-        <div className="countdown-separator">:</div>
         <div className="countdown-unit">
-          <span className="number" id="cd-hours">
+          <div className="countdown-number" id="cd-hours">
             {isClient ? format2Digits(timeLeft.hours) : '04'}
-          </span>
-          <span className="label">HORAS</span>
+          </div>
+          <div className="countdown-type">Horas</div>
         </div>
-        <div className="countdown-separator">:</div>
         <div className="countdown-unit">
-          <span className="number" id="cd-minutes">
+          <div className="countdown-number" id="cd-minutes">
             {isClient ? format2Digits(timeLeft.minutes) : '32'}
-          </span>
-          <span className="label">MIN</span>
+          </div>
+          <div className="countdown-type">Min</div>
         </div>
-        <div className="countdown-separator">:</div>
         <div className="countdown-unit">
-          <span className="number" id="cd-seconds">
+          <div className="countdown-number" id="cd-seconds">
             {isClient ? format2Digits(timeLeft.seconds) : '10'}
-          </span>
-          <span className="label">SEG</span>
+          </div>
+          <div className="countdown-type">Seg</div>
         </div>
       </div>
     </div>

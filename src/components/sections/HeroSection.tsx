@@ -15,22 +15,31 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
     <section className="hero-section" id="hero">
       <div className="container">
         <div className="hero-grid">
-          {/* Left: Content */}
+          {/* Left: Hero Copy & Countdown */}
           <div className="hero-content">
-            <div className="hero-pill">
-              <span className="sparkle">⚡</span>
-              <span>La Fiesta Temática Argentina en Valencia</span>
+            <div className="hero-tags">
+              <span className="tag-badge tag-arg">🇦🇷 Talento Argento</span>
+              <span className="tag-badge tag-loc">📍 Óleo Gastrobar • Valencia</span>
+            </div>
+
+            <div className="hero-brand-logo-wrap">
+              <img
+                src="/assets/img/el-quilombo-logo.png"
+                alt="El Quilombo - Fiesta Temática Argentina"
+                className="hero-official-logo"
+              />
             </div>
 
             <h1 className="hero-title">
-              VIVÍ LA NOCHE MÁS PICANTE DEL <span className="text-gradient">TRAP & CULTURA ARGENTA</span>
+              <span className="title-sub">⚡ LA FIESTA TEMÁTICA ARGENTINA EN VALENCIA 💜</span>
             </h1>
 
-            <p className="hero-subtitle">
-              Milo J, Trueno, Duki, Bizarrap, Nicki Nicole y los mejores clásicos de cumbia villera retumbando en una experiencia audiovisual única en Óleo Gastrobar.
+            <p className="hero-desc">
+              La noche donde Valencia se transforma en Buenos Aires.{' '}
+              <strong>Artistas en vivo</strong>, una playlist cargada de trap, cumbia 420 y clásicos argentinos, after party exclusivo y dinámicas en tarima.
             </p>
 
-            {/* Countdown Widget */}
+            {/* Live Event Countdown */}
             <CountdownTimer />
 
             {/* Hero Action Buttons */}

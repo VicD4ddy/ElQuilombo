@@ -16,7 +16,7 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
     dni: '',
     phone: '',
     email: '',
-    paymentMethod: 'Pago Móvil (Bolívares)',
+    paymentMethod: 'Pago Móvil',
     favoriteArtist: '',
   });
 
@@ -57,101 +57,117 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
   };
 
   return (
-    <section className="section" id="entradas">
+    <section className="section ticketing-section" id="entradas">
       <div className="container">
         <div className="section-header">
-          <span className="section-pill">Fase 1 • Cupos Limitados</span>
+          <span className="section-pill">Fase de Preventa</span>
           <h2 className="section-title">
-            ASEGURÁ TU ENTRADA EN <span className="text-gradient">PREVENTA OFICIAL</span>
+            ELEGÍ TU <span className="text-gradient">TIPO DE ENTRADA</span>
           </h2>
           <p className="section-subtitle">
-            Seleccioná tu tipo de entrada, calculá tu monto en USD o Bolívares y completá tu reserva para recibir tu boleto digital con código QR.
+            Precios especiales de Preventa 1. Seleccioná tu pase para calcular el total y apartar tu entrada al instante.
           </p>
         </div>
 
-        {/* Pricing Cards Grid (2 Centered Columns) */}
+        {/* Pricing Cards Grid */}
         <div className="pricing-grid">
           {/* General Pass */}
           <div
-            className={`pricing-card ${selectedTierId === 'general' ? 'active' : ''}`}
+            className={`ticket-card ${selectedTierId === 'general' ? 'selected' : ''}`}
+            data-tier="general"
             onClick={() => setSelectedTierId('general')}
           >
-            <div className="tier-badge-wrap">
-              <span className="tier-badge">{TICKET_TIERS.general.badge}</span>
+            <div className="ticket-header">
+              <h3 className="ticket-name">{TICKET_TIERS.general.name}</h3>
+              <div className="ticket-sub">⚡ Preventa 1 (Early Bird)</div>
             </div>
-            <h3 className="tier-name">{TICKET_TIERS.general.name}</h3>
-            <div className="tier-price-box">
-              <span className="price-currency">$</span>
-              <span className="price-amount">{TICKET_TIERS.general.priceUSD}</span>
-              <span className="price-period">USD</span>
+            <div className="ticket-price-box">
+              <span className="ticket-currency">$</span>
+              <span className="ticket-amount">{TICKET_TIERS.general.priceUSD}</span>
+              <span className="ticket-period">USD</span>
             </div>
-            <p className="tier-desc">{TICKET_TIERS.general.description}</p>
-            <ul className="tier-features-list">
+            <ul className="ticket-features">
               {TICKET_TIERS.general.features.map((feat, idx) => (
-                <li key={idx}><span className="check">✓</span> {feat}</li>
+                <li key={idx} className="ticket-feature-item">
+                  <span className="check">✓</span> <span>{feat}</span>
+                </li>
               ))}
             </ul>
-            <button
-              type="button"
-              className={`btn-select-tier ${selectedTierId === 'general' ? 'selected' : ''}`}
-            >
-              {selectedTierId === 'general' ? '✓ Seleccionado' : 'Elegir Pase General'}
+            <button type="button" className="btn-select-tier">
+              {selectedTierId === 'general' ? '✓ Seleccionado' : 'Seleccionar Pase'}
             </button>
           </div>
 
           {/* VIP Pass */}
           <div
-            className={`pricing-card featured ${selectedTierId === 'vip' ? 'active' : ''}`}
+            className={`ticket-card popular ${selectedTierId === 'vip' ? 'selected' : ''}`}
+            data-tier="vip"
             onClick={() => setSelectedTierId('vip')}
           >
-            <div className="tier-badge-wrap">
-              <span className="tier-badge highlight">{TICKET_TIERS.vip.badge}</span>
+            <div className="badge-popular">🔥 MÁS POPULAR</div>
+            <div className="ticket-header">
+              <h3 className="ticket-name">{TICKET_TIERS.vip.name}</h3>
+              <div className="ticket-sub">⚡ Experiencia Completa + After</div>
             </div>
-            <h3 className="tier-name">{TICKET_TIERS.vip.name}</h3>
-            <div className="tier-price-box">
-              <span className="price-currency">$</span>
-              <span className="price-amount">{TICKET_TIERS.vip.priceUSD}</span>
-              <span className="price-period">USD</span>
+            <div className="ticket-price-box">
+              <span className="ticket-currency">$</span>
+              <span className="ticket-amount">{TICKET_TIERS.vip.priceUSD}</span>
+              <span className="ticket-period">USD</span>
             </div>
-            <p className="tier-desc">{TICKET_TIERS.vip.description}</p>
-            <ul className="tier-features-list">
+            <ul className="ticket-features">
               {TICKET_TIERS.vip.features.map((feat, idx) => (
-                <li key={idx}><span className="check">✓</span> {feat}</li>
+                <li key={idx} className="ticket-feature-item">
+                  <span className="check">✓</span> <span>{feat}</span>
+                </li>
               ))}
             </ul>
-            <button
-              type="button"
-              className={`btn-select-tier ${selectedTierId === 'vip' ? 'selected' : ''}`}
-            >
-              {selectedTierId === 'vip' ? '✓ Seleccionado' : 'Elegir Pase VIP'}
+            <button type="button" className="btn-select-tier">
+              {selectedTierId === 'vip' ? '✓ Seleccionado' : 'Seleccionar Pase'}
             </button>
           </div>
         </div>
 
-        {/* Live Calculation Banner */}
-        <div className="calculator-box">
-          <div className="calc-details">
-            <span className="calc-label">Pase Seleccionado:</span>
-            <strong className="calc-value">{selectedTier.name}</strong>
-            <span className="calc-unit">(${selectedTier.priceUSD} c/u)</span>
+        {/* Reservation Box */}
+        <div className="reservation-box" id="reserva">
+          <div className="res-header">
+            <h3 className="res-title">APARTÁ TU ENTRADA EN PREVENTA</h3>
+            <p className="res-subtitle">
+              Completá tus datos para generar tu <strong>Ticket Digital con Código QR</strong> y confirmar tu reserva directamente por WhatsApp.
+            </p>
           </div>
 
-          <div className="calc-qty-control">
-            <span className="calc-label">Cantidad:</span>
-            <div className="qty-picker">
+          {/* Live Calculator Bar */}
+          <div className="calculator-bar">
+            <div className="calc-tier-info">
+              <span className="calc-tier-name" id="calc-tier-name">
+                {selectedTier.name}
+              </span>
+              <span className="calc-tier-unit" id="calc-tier-unit">
+                ${selectedTier.priceUSD} USD c/u
+              </span>
+            </div>
+
+            <div className="calc-qty-control">
+              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+                CANTIDAD:
+              </span>
               <button
                 type="button"
                 className="btn-qty"
+                id="btn-qty-minus"
                 onClick={() => handleQtyChange(-1)}
                 disabled={quantity <= 1}
                 aria-label="Disminuir cantidad"
               >
-                -
+                −
               </button>
-              <span className="qty-display">{quantity}</span>
+              <span className="qty-display" id="calc-qty">
+                {quantity}
+              </span>
               <button
                 type="button"
                 className="btn-qty"
+                id="btn-qty-plus"
                 onClick={() => handleQtyChange(1)}
                 disabled={quantity >= 10}
                 aria-label="Aumentar cantidad"
@@ -159,134 +175,128 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
                 +
               </button>
             </div>
+
+            <div className="calc-total-box">
+              <div className="calc-total-usd" id="calc-total-usd">
+                ${totalUSD} USD
+              </div>
+              <div className="calc-total-ref" id="calc-total-ref">
+                Ref. aprox: Bs. {totalRefBs}
+              </div>
+            </div>
           </div>
 
-          <div className="calc-total">
-            <span className="calc-label">Total Estimado:</span>
-            <div className="total-amount-box">
-              <strong className="total-usd">${totalUSD} USD</strong>
-              <span className="total-ref">(Ref: Bs. {totalRefBs})</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Reservation Form */}
-        <div className="form-container">
-          <div className="form-header">
-            <h3 className="form-title">COMPLETA TUS DATOS DE RESERVA</h3>
-            <p className="form-subtitle">
-              Generá tu comprobante digital y te pondremos en contacto directo con nuestro canal oficial de WhatsApp para procesar tu pago.
-            </p>
-          </div>
-
-          <form className="booking-form" onSubmit={handleSubmit}>
-            <div className="form-row-2">
-              <div className="form-group">
-                <label htmlFor="buyer-name" className="form-label">
-                  Nombre y Apellido <span className="req">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="buyer-name"
-                  className="form-input"
-                  required
-                  placeholder="Ej: Santiago Pérez"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="buyer-dni" className="form-label">
-                  Cédula / DNI <span className="req">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="buyer-dni"
-                  className="form-input"
-                  required
-                  inputMode="numeric"
-                  placeholder="Ej: 28.123.456"
-                  value={formData.dni}
-                  onChange={(e) => setFormData({ ...formData, dni: e.target.value })}
-                />
-              </div>
+          {/* Form Fields */}
+          <form className="res-form" id="reservation-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="buyer-name" className="form-label">
+                Nombre y Apellido *
+              </label>
+              <input
+                type="text"
+                id="buyer-name"
+                className="form-input"
+                placeholder="Ej: Santiago Pérez"
+                required
+                autoComplete="name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              />
+              <span className="form-hint">El nombre que aparecerá en tu boleto digital</span>
             </div>
 
-            <div className="form-row-2">
-              <div className="form-group">
-                <label htmlFor="buyer-phone" className="form-label">
-                  WhatsApp / Teléfono <span className="req">*</span>
-                </label>
-                <input
-                  type="tel"
-                  id="buyer-phone"
-                  className="form-input"
-                  required
-                  inputMode="tel"
-                  placeholder="Ej: 0412-1234567"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="buyer-email" className="form-label">
-                  Correo Electrónico <span className="req">*</span>
-                </label>
-                <input
-                  type="email"
-                  id="buyer-email"
-                  className="form-input"
-                  required
-                  placeholder="Ej: santiago@gmail.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                />
-              </div>
+            <div className="form-group">
+              <label htmlFor="buyer-dni" className="form-label">
+                Cédula o DNI *
+              </label>
+              <input
+                type="text"
+                id="buyer-dni"
+                className="form-input"
+                placeholder="Ej: V-28123456"
+                required
+                inputMode="numeric"
+                autoComplete="off"
+                value={formData.dni}
+                onChange={(e) => setFormData({ ...formData, dni: e.target.value })}
+              />
+              <span className="form-hint">Para verificación de aforo en la puerta</span>
             </div>
 
-            <div className="form-row-2">
-              <div className="form-group">
-                <label htmlFor="buyer-payment" className="form-label">
-                  Método de Pago Preferido <span className="req">*</span>
-                </label>
-                <select
-                  id="buyer-payment"
-                  className="form-input"
-                  value={formData.paymentMethod}
-                  onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
-                >
-                  <option value="Pago Móvil (Bolívares)">Pago Móvil (Bolívares al cambio)</option>
-                  <option value="Zelle (USD)">Zelle (USD)</option>
-                  <option value="Binance Pay (USDT)">Binance Pay (USDT)</option>
-                  <option value="Efectivo USD en Óleo">Efectivo USD en puerta de Óleo</option>
-                  <option value="Transferencia Bancaria">Transferencia Bancaria Nacional</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="buyer-artist" className="form-label">
-                  ¿Qué tema o artista no puede faltar?
-                </label>
-                <input
-                  type="text"
-                  id="buyer-artist"
-                  className="form-input"
-                  placeholder="Ej: Rara Vez de Milo J / Goteo de Duki"
-                  value={formData.favoriteArtist}
-                  onChange={(e) => setFormData({ ...formData, favoriteArtist: e.target.value })}
-                />
-              </div>
+            <div className="form-group">
+              <label htmlFor="buyer-phone" className="form-label">
+                WhatsApp de Contacto *
+              </label>
+              <input
+                type="tel"
+                id="buyer-phone"
+                className="form-input"
+                placeholder="Ej: 0412 1234567"
+                required
+                autoComplete="tel"
+                inputMode="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              />
+              <span className="form-hint">Para enviarte la confirmación y datos de pago</span>
             </div>
 
-            <button type="submit" className="btn-submit-booking">
-              <span>🎟️ Generar Boleto QR & Reservar (${totalUSD} USD)</span>
-              <span>→</span>
-            </button>
+            <div className="form-group">
+              <label htmlFor="buyer-email" className="form-label">
+                Correo Electrónico *
+              </label>
+              <input
+                type="email"
+                id="buyer-email"
+                className="form-input"
+                placeholder="tucorreo@ejemplo.com"
+                required
+                autoComplete="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              />
+              <span className="form-hint">Para respaldo de tu boleto y código QR</span>
+            </div>
 
-            <div className="form-guarantee">
-              <span>🔒 Reserva segura y directa • Sin intermediarios • Confirmación inmediata por WhatsApp</span>
+            <div className="form-group">
+              <label htmlFor="buyer-payment" className="form-label">
+                Método de Pago Preferido *
+              </label>
+              <select
+                id="buyer-payment"
+                className="form-select"
+                required
+                value={formData.paymentMethod}
+                onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
+              >
+                <option value="Pago Móvil">Pago Móvil (Banesco, Mercantil, Venezuela, etc.)</option>
+                <option value="Zelle">Zelle (USD)</option>
+                <option value="Binance Pay (USDT)">Binance Pay (USDT)</option>
+                <option value="Efectivo en Óleo Gastrobar">Efectivo (USD en puerta / local)</option>
+              </select>
+              <span className="form-hint">Te daremos los datos según tu método elegido</span>
+            </div>
+
+            <div className="form-group form-full">
+              <label htmlFor="buyer-artist" className="form-label">
+                ¿Qué tema o artista argentino no puede faltar en la fiesta? 🗣️
+              </label>
+              <input
+                type="text"
+                id="buyer-artist"
+                className="form-input"
+                placeholder="Ej: Milo J - Rara Vez / Trueno - Dance Crip / Duki"
+                value={formData.favoriteArtist}
+                onChange={(e) => setFormData({ ...formData, favoriteArtist: e.target.value })}
+              />
+              <span className="form-hint">¡Los temas más pedidos sonarán en vivo!</span>
+            </div>
+
+            <div className="form-full">
+              <button type="submit" className="btn-checkout">
+                <span>⚡ Generar Boleto Digital & Apartar por WhatsApp</span>
+                <span>→</span>
+              </button>
             </div>
           </form>
         </div>

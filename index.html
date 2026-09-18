@@ -150,17 +150,6 @@
                   <span class="play-label">Ver Reel Oficial</span>
                 </button>
 
-                <!-- In-place Reel iframe container -->
-                <div class="reel-iframe-container" id="reel-iframe-container" style="display: none;">
-                  <div class="reel-close-bar">
-                    <button type="button" class="btn-reel-action" id="btn-close-reel">✕ Volver a portada</button>
-                    <a href="https://www.instagram.com/reel/Db4UmR8OuaR/" target="_blank" rel="noopener noreferrer" class="btn-reel-action" id="btn-open-ig-app">
-                      <span>Instagram ↗</span>
-                    </a>
-                  </div>
-                  <iframe id="hero-reel-iframe" src="" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen="true" title="Instagram Reel El Quilombo"></iframe>
-                </div>
-
                 <!-- Interactive Audio Equalizer Bar -->
                 <div class="sound-widget" id="sound-widget" title="Click para pausar/reanudar animación">
                   <div class="sound-info">
@@ -222,54 +211,161 @@
           <p class="section-subtitle">Lo más pesado del trap, hip-hop, R&B y cumbia villera de la escena argentina sonando en la pista de Óleo Gastrobar.</p>
         </div>
 
-        <div class="artists-grid">
-          <div class="artist-card">
-            <div class="artist-name">Milo J</div>
-            <div class="artist-style">Trap & Boombap</div>
+        <!-- Artists & Lineup Swipeable Carousel -->
+        <div class="artists-carousel-wrapper" id="artists-carousel-wrapper">
+          <div class="carousel-nav-bar">
+            <div class="carousel-hint">
+              <span class="swipe-hand">👈 Desliza para explorar</span>
+            </div>
+            <div class="carousel-nav-btns">
+              <button type="button" class="btn-carousel-nav" id="btn-artists-prev" aria-label="Artistas anteriores">‹</button>
+              <button type="button" class="btn-carousel-nav" id="btn-artists-next" aria-label="Artistas siguientes">›</button>
+            </div>
           </div>
-          <div class="artist-card">
-            <div class="artist-name">Trueno</div>
-            <div class="artist-style">Freestyle & Hip-Hop</div>
-          </div>
-          <div class="artist-card">
-            <div class="artist-name">Duki</div>
-            <div class="artist-style">Trap Argento</div>
-          </div>
-          <div class="artist-card">
-            <div class="artist-name">Bizarrap</div>
-            <div class="artist-style">BZRP Sessions</div>
-          </div>
-          <div class="artist-card">
-            <div class="artist-name">Nicki Nicole</div>
-            <div class="artist-style">R&B & Pop Urbano</div>
-          </div>
-          <div class="artist-card">
-            <div class="artist-name">Tiago PZK</div>
-            <div class="artist-style">Perreo & Trap</div>
-          </div>
-          <div class="artist-card">
-            <div class="artist-name">María Becerra</div>
-            <div class="artist-style">La Nena de Argentina</div>
-          </div>
-          <div class="artist-card">
-            <div class="artist-name">WOS</div>
-            <div class="artist-style">Rap Conciencia & Rock</div>
-          </div>
-          <div class="artist-card">
-            <div class="artist-name">YSY A</div>
-            <div class="artist-style">Trap de Verdad</div>
-          </div>
-          <div class="artist-card">
-            <div class="artist-name">Dillom</div>
-            <div class="artist-style">Post-Mortem & Hip-Hop</div>
-          </div>
-          <div class="artist-card">
-            <div class="artist-name">L-Gante & Cumbia</div>
-            <div class="artist-style">Cumbia 420</div>
-          </div>
-          <div class="artist-card">
-            <div class="artist-name">Clásicos Argentos</div>
-            <div class="artist-style">Rock & Cuarteto</div>
+
+          <div class="artists-carousel-track" id="artists-carousel-track" tabindex="0" aria-label="Carrusel de artistas de El Quilombo">
+            <!-- 1. Milo J -->
+            <article class="artist-card-slide">
+              <div class="artist-photo-box">
+                <img src="assets/img/artists/milo-j.jpg" alt="Milo J en El Quilombo" loading="lazy">
+                <div class="artist-photo-overlay"></div>
+                <span class="artist-genre-pill">Trap & Boombap</span>
+              </div>
+              <div class="artist-info-bar">
+                <h3 class="artist-name">Milo J</h3>
+                <p class="artist-hit">Hits: "Rara Vez", "Milo J: BZRP #57", "Dispara"</p>
+              </div>
+            </article>
+
+            <!-- 2. Trueno -->
+            <article class="artist-card-slide">
+              <div class="artist-photo-box">
+                <img src="assets/img/artists/trueno.jpg" alt="Trueno en El Quilombo" loading="lazy">
+                <div class="artist-photo-overlay"></div>
+                <span class="artist-genre-pill">Freestyle & Hip-Hop</span>
+              </div>
+              <div class="artist-info-bar">
+                <h3 class="artist-name">Trueno</h3>
+                <p class="artist-hit">Hits: "Dance Crip", "Mamichula", "Tranky Funky"</p>
+              </div>
+            </article>
+
+            <!-- 3. Duki -->
+            <article class="artist-card-slide">
+              <div class="artist-photo-box">
+                <img src="assets/img/artists/duki.jpg" alt="Duki en El Quilombo" loading="lazy">
+                <div class="artist-photo-overlay"></div>
+                <span class="artist-genre-pill">Trap Argento</span>
+              </div>
+              <div class="artist-info-bar">
+                <h3 class="artist-name">Duki</h3>
+                <p class="artist-hit">Hits: "Goteo", "She Don't Give a FO", "Givenchy"</p>
+              </div>
+            </article>
+
+            <!-- 4. Bizarrap -->
+            <article class="artist-card-slide">
+              <div class="artist-photo-box">
+                <img src="assets/img/artists/bizarrap.jpg" alt="Bizarrap en El Quilombo" loading="lazy">
+                <div class="artist-photo-overlay"></div>
+                <span class="artist-genre-pill">BZRP Sessions</span>
+              </div>
+              <div class="artist-info-bar">
+                <h3 class="artist-name">Bizarrap</h3>
+                <p class="artist-hit">Hits: "Quevedo #52", "Nathy Peluso #36", "Villano #51"</p>
+              </div>
+            </article>
+
+            <!-- 5. Nicki Nicole -->
+            <article class="artist-card-slide">
+              <div class="artist-photo-box">
+                <img src="assets/img/artists/nicki-nicole.jpg" alt="Nicki Nicole en El Quilombo" loading="lazy">
+                <div class="artist-photo-overlay"></div>
+                <span class="artist-genre-pill">R&B & Pop Urbano</span>
+              </div>
+              <div class="artist-info-bar">
+                <h3 class="artist-name">Nicki Nicole</h3>
+                <p class="artist-hit">Hits: "Wapo Traketero", "Colocao", "Dispara"</p>
+              </div>
+            </article>
+
+            <!-- 6. Tiago PZK -->
+            <article class="artist-card-slide">
+              <div class="artist-photo-box">
+                <img src="assets/img/artists/tiago-pzk.jpg" alt="Tiago PZK en El Quilombo" loading="lazy">
+                <div class="artist-photo-overlay"></div>
+                <span class="artist-genre-pill">Perreo & Trap</span>
+              </div>
+              <div class="artist-info-bar">
+                <h3 class="artist-name">Tiago PZK</h3>
+                <p class="artist-hit">Hits: "Entre Nosotros", "Salimo de Noche", "Traductor"</p>
+              </div>
+            </article>
+
+            <!-- 7. María Becerra -->
+            <article class="artist-card-slide">
+              <div class="artist-photo-box">
+                <img src="assets/img/artists/maria-becerra.jpg" alt="María Becerra en El Quilombo" loading="lazy">
+                <div class="artist-photo-overlay"></div>
+                <span class="artist-genre-pill">La Nena de Argentina</span>
+              </div>
+              <div class="artist-info-bar">
+                <h3 class="artist-name">María Becerra</h3>
+                <p class="artist-hit">Hits: "Automático", "Corazón Vacío", "Ojalá"</p>
+              </div>
+            </article>
+
+            <!-- 8. WOS -->
+            <article class="artist-card-slide">
+              <div class="artist-photo-box">
+                <img src="assets/img/artists/wos.jpg" alt="WOS en El Quilombo" loading="lazy">
+                <div class="artist-photo-overlay"></div>
+                <span class="artist-genre-pill">Rap Conciencia & Rock</span>
+              </div>
+              <div class="artist-info-bar">
+                <h3 class="artist-name">WOS</h3>
+                <p class="artist-hit">Hits: "Canguro", "Arrancármelo", "Melón Vino"</p>
+              </div>
+            </article>
+
+            <!-- 9. YSY A -->
+            <article class="artist-card-slide">
+              <div class="artist-photo-box">
+                <img src="assets/img/artists/ysy-a.jpg" alt="YSY A en El Quilombo" loading="lazy">
+                <div class="artist-photo-overlay"></div>
+                <span class="artist-genre-pill">Trap de Verdad</span>
+              </div>
+              <div class="artist-info-bar">
+                <h3 class="artist-name">YSY A</h3>
+                <p class="artist-hit">Hits: "Tamo Loco", "Silbando", "Cómo Chilla Ella"</p>
+              </div>
+            </article>
+
+            <!-- 10. Dillom -->
+            <article class="artist-card-slide">
+              <div class="artist-photo-box">
+                <img src="assets/img/artists/dillom.jpg" alt="Dillom en El Quilombo" loading="lazy">
+                <div class="artist-photo-overlay"></div>
+                <span class="artist-genre-pill">Post-Mortem & Hip-Hop</span>
+              </div>
+              <div class="artist-info-bar">
+                <h3 class="artist-name">Dillom</h3>
+                <p class="artist-hit">Hits: "Opa", "Pelotuda", "Cirugía", "La Primera"</p>
+              </div>
+            </article>
+
+            <!-- 11. Cumbia 420 & Clásicos -->
+            <article class="artist-card-slide special-after-card">
+              <div class="artist-photo-box special-after-box">
+                <div class="special-after-glow"></div>
+                <span class="artist-genre-pill special-badge-pill">⚡ NOCHE ARGENTA</span>
+                <div class="special-after-content">
+                  <span class="special-icon">🌙</span>
+                  <h3 class="artist-name">Cumbia 420 & Clásicos</h3>
+                  <p class="special-desc">L-Gante, Damas Gratis, Rodrigo, Los Palmeras & Rock Nacional para cantar abrazados.</p>
+                </div>
+              </div>
+            </article>
           </div>
         </div>
 
@@ -806,6 +902,34 @@
       <span></span><span></span><span></span>
     </div>
   </button>
+
+  <!-- Fullscreen Instagram Reel Modal (Story / TikTok Mode) -->
+  <div class="reel-fullscreen-modal" id="reel-fullscreen-modal" style="display: none;" role="dialog" aria-modal="true" aria-label="Reel Oficial de El Quilombo">
+    <div class="reel-modal-backdrop" id="reel-modal-backdrop"></div>
+    <div class="reel-modal-container">
+      <div class="reel-modal-header">
+        <div class="reel-modal-brand">
+          <span class="reel-brand-dot"></span>
+          <span class="reel-brand-title">EL QUILOMBO • REEL OFICIAL</span>
+        </div>
+        <div class="reel-modal-actions">
+          <a href="https://www.instagram.com/reel/Db4UmR8OuaR/" target="_blank" rel="noopener noreferrer" class="btn-reel-external" title="Ver en Instagram">
+            <span>Instagram ↗</span>
+          </a>
+          <button type="button" class="btn-reel-modal-close" id="btn-close-reel-modal" aria-label="Cerrar reproductor de reel">
+            ✕
+          </button>
+        </div>
+      </div>
+      <div class="reel-modal-viewport">
+        <div class="reel-loader" id="reel-modal-loader">
+          <div class="reel-spinner"></div>
+          <span>Cargando Reel de Instagram...</span>
+        </div>
+        <iframe id="fullscreen-reel-iframe" src="" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen="true" title="Instagram Reel El Quilombo"></iframe>
+      </div>
+    </div>
+  </div>
 
   <!-- Scripts -->
   <script src="js/countdown.js"></script>

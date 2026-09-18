@@ -121,6 +121,10 @@
       trackCover.alt = `${track.title} - ${track.artist}`;
     }
 
+    if (playerContainer) {
+      playerContainer.style.setProperty('--player-progress', '0%');
+    }
+
     // Sync hero sound widget
     if (heroSoundSub) {
       heroSoundSub.textContent = `Sonando: ${track.artist} - ${track.title}`;
@@ -332,6 +336,9 @@
       if (!audio.duration) return;
       const progress = (audio.currentTime / audio.duration) * 100;
       if (progressSlider) progressSlider.value = progress;
+      if (playerContainer) {
+        playerContainer.style.setProperty('--player-progress', `${progress}%`);
+      }
       if (currentTimeEl) currentTimeEl.textContent = formatTime(audio.currentTime);
       if (durationTimeEl) durationTimeEl.textContent = formatTime(audio.duration);
     });

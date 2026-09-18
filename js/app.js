@@ -45,60 +45,136 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Instagram Reel In-Place Player
+  // ==========================================================================
+  // 1. Fullscreen Instagram Reel Modal Controller (Story / TikTok Mode)
+  // ==========================================================================
   const btnReelPlay = document.getElementById('btn-reel-play');
-  const reelIframeContainer = document.getElementById('reel-iframe-container');
-  const heroReelIframe = document.getElementById('hero-reel-iframe');
-  const btnCloseReel = document.getElementById('btn-close-reel');
-  const soundWidget = document.getElementById('sound-widget');
+  const heroVisualMedia = document.getElementById('hero-visual-media');
+  const reelFullscreenModal = document.getElementById('reel-fullscreen-modal');
+  const reelModalBackdrop = document.getElementById('reel-modal-backdrop');
+  const btnCloseReelModal = document.getElementById('btn-close-reel-modal');
+  const fullscreenReelIframe = document.getElementById('fullscreen-reel-iframe');
+  const reelModalLoader = document.getElementById('reel-modal-loader');
   const reelEmbedUrl = 'https://www.instagram.com/reel/Db4UmR8OuaR/embed/';
 
-  if (btnReelPlay && reelIframeContainer && heroReelIframe) {
-    const heroVisualMedia = document.getElementById('hero-visual-media');
-    const visualCard = document.querySelector('.visual-card');
+  function openReelModal() {
+    if (!reelFullscreenModal || !fullscreenReelIframe) return;
 
-    function openReel() {
-      // Pause background music player when opening Instagram Reel
-      if (window.QuilomboPlayer && typeof window.QuilomboPlayer.pause === 'function') {
-        window.QuilomboPlayer.pause();
-      }
-
-      if (!heroReelIframe.src || heroReelIframe.src === 'about:blank' || !heroReelIframe.src.includes('Db4UmR8OuaR')) {
-        heroReelIframe.src = reelEmbedUrl;
-      }
-      reelIframeContainer.style.display = 'flex';
-      btnReelPlay.style.display = 'none';
-      if (soundWidget) soundWidget.style.display = 'none';
-      if (visualCard) visualCard.classList.add('reel-active');
+    // 1. Pause background Quilombo music player
+    if (window.QuilomboPlayer && typeof window.QuilomboPlayer.pause === 'function') {
+      window.QuilomboPlayer.pause();
     }
 
-    function closeReel(e) {
-      if (e) e.stopPropagation();
-      reelIframeContainer.style.display = 'none';
-      btnReelPlay.style.display = 'flex';
-      if (soundWidget) soundWidget.style.display = 'flex';
-      if (visualCard) visualCard.classList.remove('reel-active');
-      heroReelIframe.src = '';
-    }
+    // 2. Prepare and load Instagram iframe
+    if (reelModalLoader) reelModalLoader.style.opacity = '1';
+    fullscreenReelIframe.src = reelEmbedUrl;
+    fullscreenReelIframe.onload = () => {
+      if (reelModalLoader) reelModalLoader.style.opacity = '0';
+    };
 
+    // 3. Display modal and lock body scroll
+    reelFullscreenModal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeReelModal(e) {
+    if (e) e.stopPropagation();
+    if (!reelFullscreenModal || !fullscreenReelIframe) return;
+
+    // 1. Hide modal and clear iframe src to immediately halt media
+    reelFullscreenModal.style.display = 'none';
+    fullscreenReelIframe.src = '';
+
+    // 2. Restore body scroll
+    document.body.style.overflow = '';
+  }
+
+  if (btnReelPlay) {
     btnReelPlay.addEventListener('click', (e) => {
       e.stopPropagation();
-      openReel();
+      openReelModal();
     });
+  }
 
-    if (heroVisualMedia) {
-      heroVisualMedia.addEventListener('click', (e) => {
-        // Prevent opening if clicking sound-widget or inside active reel iframe
-        if (e.target.closest('#sound-widget') || e.target.closest('#reel-iframe-container')) {
-          return;
-        }
-        openReel();
+  if (heroVisualMedia) {
+    heroVisualMedia.addEventListener('click', (e) => {
+      if (e.target.closest('#sound-widget')) return;
+      openReelModal();
+    });
+  }
+
+  if (btnCloseReelModal) {
+    btnCloseReelModal.addEventListener('click', closeReelModal);
+  }
+
+  if (reelModalBackdrop) {
+    reelModalBackdrop.addEventListener('click', closeReelModal);
+  }
+
+  // Keyboard accessibility: ESC to close Reel modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && reelFullscreenModal && reelFullscreenModal.style.display === 'flex') {
+      closeReelModal(e);
+    }
+  });
+
+  // ==========================================================================
+  // 2. Artists & Lineup Swipeable Carousel Controller
+  // ==========================================================================
+  const carouselTrack = document.getElementById('artists-carousel-track');
+  const btnArtistsPrev = document.getElementById('btn-artists-prev');
+  const btnArtistsNext = document.getElementById('btn-artists-next');
+
+  if (carouselTrack) {
+    const getScrollStep = () => {
+      const firstSlide = carouselTrack.querySelector('.artist-card-slide');
+      if (firstSlide) {
+        return firstSlide.offsetWidth + 20;
+      }
+      return carouselTrack.clientWidth * 0.75;
+    };
+
+    if (btnArtistsNext) {
+      btnArtistsNext.addEventListener('click', () => {
+        carouselTrack.scrollBy({ left: getScrollStep(), behavior: 'smooth' });
       });
     }
 
-    if (btnCloseReel) {
-      btnCloseReel.addEventListener('click', closeReel);
+    if (btnArtistsPrev) {
+      btnArtistsPrev.addEventListener('click', () => {
+        carouselTrack.scrollBy({ left: -getScrollStep(), behavior: 'smooth' });
+      });
     }
+
+    // Mouse drag-to-scroll for desktop touch-like fluidity
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    carouselTrack.addEventListener('mousedown', (e) => {
+      isDown = true;
+      carouselTrack.style.cursor = 'grabbing';
+      startX = e.pageX - carouselTrack.offsetLeft;
+      scrollLeft = carouselTrack.scrollLeft;
+    });
+
+    carouselTrack.addEventListener('mouseleave', () => {
+      isDown = false;
+      carouselTrack.style.cursor = '';
+    });
+
+    carouselTrack.addEventListener('mouseup', () => {
+      isDown = false;
+      carouselTrack.style.cursor = '';
+    });
+
+    carouselTrack.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - carouselTrack.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      carouselTrack.scrollLeft = scrollLeft - walk;
+    });
   }
 
   // Reservation Form & Ticket Dialog

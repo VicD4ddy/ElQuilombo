@@ -12,6 +12,7 @@
     "canvas-confetti": "^1.9.4",
     "html-to-image": "^1.11.13",
     "next": "^16.3.5",
+    "nodemailer": "^10.0.10",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -19,6 +20,7 @@
     "@playwright/test": "^1.63.0",
     "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^22.0.0",
+    "@types/nodemailer": "^8.0.2",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "typescript": "^5.7.0"

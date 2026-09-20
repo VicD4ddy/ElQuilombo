@@ -1301,11 +1301,12 @@ body::before {
 }
 
 .artist-info-bar {
-  padding: 1rem;
+  padding: 1rem 1.15rem;
   background: var(--bg-card);
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  justify-content: center;
+  min-height: 62px;
   flex: 1;
 }
 

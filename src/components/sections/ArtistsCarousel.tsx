@@ -94,7 +94,6 @@ export default function ArtistsCarousel() {
                   </div>
                   <div className="artist-info-bar">
                     <h3 className="artist-name">{artist.name}</h3>
-                    <p className="artist-hit">{artist.hits}</p>
                   </div>
                 </article>
               );

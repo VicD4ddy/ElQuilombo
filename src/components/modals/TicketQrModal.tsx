@@ -6,7 +6,6 @@ import { TicketOrder } from '../../types/ticket';
 import { OFFICIAL_WHATSAPP_NUMBER } from '../../data/ticketing';
 import { MemeSticker, getRandomMemeSticker } from '../../data/memes';
 import { exportStoryVideo, exportStoryGif } from '../../lib/storyVideoExporter';
-import { addTicketsToReservation } from '../../lib/reservations';
 
 interface TicketQrModalProps {
   order: TicketOrder | null;
@@ -18,7 +17,7 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated }: Ticket
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const ticketRef = useRef<HTMLDivElement | null>(null);
 
-  // Local state for active meme (allowing user to change sticker)
+  // Local state for active meme and order
   const [currentMeme, setCurrentMeme] = useState<MemeSticker | null>(null);
   const [currentOrder, setCurrentOrder] = useState<TicketOrder | null>(null);
 
@@ -29,18 +28,11 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated }: Ticket
   const [exportProgressText, setExportProgressText] = useState<string | null>(null);
   const [exportNotice, setExportNotice] = useState<string | null>(null);
 
-  // Add more tickets modal/drawer state
-  const [isAddingTickets, setIsAddingTickets] = useState<boolean>(false);
-  const [additionalQty, setAdditionalQty] = useState<number>(1);
-  const [isUpdatingDb, setIsUpdatingDb] = useState<boolean>(false);
-  const [addNotice, setAddNotice] = useState<string | null>(null);
-
   // Synchronize with parent order
   useEffect(() => {
     if (order) {
       setCurrentOrder(order);
       setCurrentMeme(order.meme || getRandomMemeSticker());
-      setAddNotice(null);
       setExportNotice(null);
     }
   }, [order]);
@@ -226,34 +218,6 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated }: Ticket
     }
   };
 
-  // 4. Change Meme Sticker randomly
-  const handleShuffleMeme = () => {
-    const nextMeme = getRandomMemeSticker(currentMeme.id);
-    setCurrentMeme(nextMeme);
-  };
-
-  // 5. Add more tickets to existing reservation
-  const handleConfirmAddTickets = async () => {
-    if (additionalQty < 1) return;
-    setIsUpdatingDb(true);
-    setAddNotice(null);
-
-    try {
-      const res = await addTicketsToReservation(currentOrder.buyerDni, additionalQty);
-      if (res.success && res.order) {
-        setCurrentOrder(res.order);
-        onOrderUpdated?.(res.order);
-        setIsAddingTickets(false);
-        setExportNotice(`🎉 ¡Se agregaron +${additionalQty} entrada(s)! Nuevo total: ${res.order.quantity} entradas.`);
-      } else {
-        setAddNotice(res.message || 'No se pudo actualizar la cantidad.');
-      }
-    } catch (err: any) {
-      setAddNotice(err?.message || 'Error al conectar con la base de datos.');
-    } finally {
-      setIsUpdatingDb(false);
-    }
-  };
 
   return (
     <div
@@ -410,25 +374,8 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated }: Ticket
               </div>
               <div className="ticket-info-item">
                 <span className="t-label">Entradas Amparadas</span>
-                <span className="t-value neon-highlight" id="t-tier-name" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <span className="t-value neon-highlight" id="t-tier-name">
                   {currentOrder.quantity}x {currentOrder.tier.name}
-                  {/* Button to buy more tickets for this DNI */}
-                  <button
-                    type="button"
-                    onClick={() => setIsAddingTickets(!isAddingTickets)}
-                    style={{
-                      background: 'rgba(0, 240, 255, 0.15)',
-                      border: '1px solid var(--neon-cyan)',
-                      color: 'var(--neon-cyan)',
-                      fontSize: '0.68rem',
-                      fontWeight: 800,
-                      padding: '0.15rem 0.5rem',
-                      borderRadius: '12px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {isAddingTickets ? 'Cancelar' : '➕ Comprar Más'}
-                  </button>
                 </span>
               </div>
               <div className="ticket-info-item">
@@ -443,96 +390,6 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated }: Ticket
                 </span>
               </div>
             </div>
-
-            {/* Sub-card: Buy more tickets for this reservation */}
-            {isAddingTickets && (
-              <div
-                style={{
-                  background: 'rgba(139, 23, 245, 0.12)',
-                  border: '1px solid var(--neon-purple)',
-                  borderRadius: '14px',
-                  padding: '1rem',
-                  marginTop: '0.85rem',
-                }}
-              >
-                <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#fff', marginBottom: '0.35rem' }}>
-                  ➕ Sumar Entradas a tu Reserva (#{currentOrder.ticketCode})
-                </div>
-                <div style={{ fontSize: '0.78rem', color: 'var(--text-subtle)', marginBottom: '0.75rem' }}>
-                  ¿Querés invitar a más panas? Sumá entradas adicionales a tu misma cédula:
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem' }}>
-                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#e2e8f0' }}>Cantidad a sumar:</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                    <button
-                      type="button"
-                      onClick={() => setAdditionalQty((q) => Math.max(1, q - 1))}
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        color: '#fff',
-                        borderRadius: '6px',
-                        width: '28px',
-                        height: '28px',
-                        cursor: 'pointer',
-                        fontWeight: 900,
-                      }}
-                    >
-                      -
-                    </button>
-                    <span style={{ fontSize: '1rem', fontWeight: 900, color: 'var(--neon-cyan)', minWidth: '24px', textAlign: 'center' }}>
-                      +{additionalQty}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setAdditionalQty((q) => Math.min(8, q + 1))}
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        color: '#fff',
-                        borderRadius: '6px',
-                        width: '28px',
-                        height: '28px',
-                        cursor: 'pointer',
-                        fontWeight: 900,
-                      }}
-                    >
-                      +
-                    </button>
-                  </div>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#ffd600' }}>
-                    (+${additionalQty * (currentOrder.tier.priceUSD || 10)} USD)
-                  </span>
-                </div>
-
-                {addNotice && (
-                  <div style={{ fontSize: '0.75rem', color: '#f87171', marginBottom: '0.5rem' }}>
-                    ⚠️ {addNotice}
-                  </div>
-                )}
-
-                <button
-                  type="button"
-                  onClick={handleConfirmAddTickets}
-                  disabled={isUpdatingDb}
-                  style={{
-                    width: '100%',
-                    background: 'var(--gradient-party)',
-                    border: 'none',
-                    borderRadius: '8px',
-                    color: '#fff',
-                    fontFamily: 'var(--font-title)',
-                    fontWeight: 800,
-                    fontSize: '0.85rem',
-                    padding: '0.6rem',
-                    cursor: 'pointer',
-                  }}
-                >
-                  {isUpdatingDb ? 'Actualizando en Base de Datos...' : `Confirmar +${additionalQty} Entrada(s) Adicionales`}
-                </button>
-              </div>
-            )}
 
             {/* Perforation Divider Cut */}
             <div className="ticket-perforation">

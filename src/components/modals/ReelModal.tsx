@@ -82,12 +82,11 @@ export default function ReelModal({ isOpen, onClose }: ReelModalProps) {
           <iframe
             id="fullscreen-reel-iframe"
             src={reelEmbedUrl}
-            frameBorder="0"
-            scrolling="no"
-            allowTransparency={true}
-            allowFullScreen={true}
+            allowFullScreen
+            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
             title="Instagram Reel El Quilombo"
             onLoad={() => setIsLoading(false)}
+            style={{ border: 'none', overflow: 'hidden' }}
           />
         </div>
       </div>

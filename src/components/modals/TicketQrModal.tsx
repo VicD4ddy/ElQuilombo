@@ -100,7 +100,7 @@ export default function TicketQrModal({ order, onClose }: TicketQrModalProps) {
 🎶 *Tema/Artista que no puede faltar:* ${order.favoriteArtist}
 ${memeText ? `🎯 *${memeText}*` : ''}
 
-¿Me podrían facilitar los datos para concretar el pago? ¡Nos vemos en Óleo Gastrobar! 🇦🇷🔥`;
+¿Me podrían facilitar los datos para concretar el pago? ¡Nos vemos en Rock & Riff! 🇦🇷🔥`;
 
   const waWebUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(waMessage)}`;
   const waNativeUrl = `whatsapp://send?phone=${whatsappNumber}&text=${encodeURIComponent(waMessage)}`;
@@ -289,7 +289,7 @@ ${memeText ? `🎯 *${memeText}*` : ''}
               </div>
               <div className="ticket-info-item">
                 <span className="t-label">Fecha & Hora</span>
-                <span className="t-value">03 OCT • 9:00 PM</span>
+                <span className="t-value">09 OCT • 8:00 PM</span>
               </div>
               <div className="ticket-info-item">
                 <span className="t-label">Tipo de Boleto</span>
@@ -299,7 +299,7 @@ ${memeText ? `🎯 *${memeText}*` : ''}
               </div>
               <div className="ticket-info-item">
                 <span className="t-label">Lugar del Evento</span>
-                <span className="t-value">Óleo Gastrobar (La Viña)</span>
+                <span className="t-value">Rock &amp; Riff (La Viña)</span>
               </div>
               <div className="ticket-info-item">
                 <span className="t-label">Total a Pagar</span>
@@ -324,7 +324,7 @@ ${memeText ? `🎯 *${memeText}*` : ''}
                 <span className="t-label">Código Único de Reserva</span>
                 <span className="ticket-code-num" id="t-code-display">#{order.ticketCode}</span>
                 <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textAlign: 'right', marginTop: '4px', maxWidth: '200px' }}>
-                  Mostrá este código por WhatsApp o en la entrada de Óleo Gastrobar
+                  Mostrá este código por WhatsApp o en la entrada de Rock &amp; Riff
                 </span>
               </div>
             </div>

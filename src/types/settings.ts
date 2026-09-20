@@ -29,15 +29,15 @@ export interface OrganizerMetrics {
 }
 
 export const DEFAULT_EVENT_SETTINGS: EventSettings = {
-  eventDate: '03 OCT • 9:00 PM',
-  venueName: 'Óleo Gastrobar (La Viña)',
-  venueAddress: 'Valencia, Carabobo - Venezuela',
+  eventDate: '09 OCT • 8:00 PM',
+  venueName: 'Rock & Riff (Antiguo Óleo)',
+  venueAddress: 'Urb. La Viña, Valencia, Carabobo - Venezuela',
   officialWhatsapp: '58412882460',
   organizerPin: '1984',
   priceGeneral: 10,
   priceVip: 20,
   maxCapacity: 350,
-  ticketSubtitle: 'FIESTA ARGENTINA',
-  ticketDoorInstructions: 'Mostrá este código por WhatsApp o en la entrada de Óleo Gastrobar',
+  ticketSubtitle: 'ARGENTO PARTY',
+  ticketDoorInstructions: 'Mostrá este código por WhatsApp o en la entrada de Rock & Riff',
   customTracks: [],
 };

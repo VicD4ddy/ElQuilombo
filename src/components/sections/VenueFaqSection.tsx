@@ -10,36 +10,48 @@ export default function VenueFaqSection() {
           <div className="section-header">
             <span className="section-pill">Punto de Encuentro</span>
             <h2 className="section-title">
-              EL LUGAR: <span className="text-gradient">ÓLEO GASTROBAR</span>
+              EL LUGAR: <span className="text-gradient">ROCK &amp; RIFF</span>
             </h2>
             <p className="section-subtitle">
-              Uno de los spots más top de La Viña en Valencia, acondicionado especialmente con sonido y ambientación para El Quilombo.
+              Antiguo Óleo Gastrobar en La Viña, Valencia. Acondicionado especialmente con sonido de alta potencia, luces ultravioleta y ambientación urbana para El Quilombo.
             </p>
           </div>
 
           <div className="venue-grid">
             <div className="venue-card">
               <div className="venue-tag">📍 Ubicación Oficial</div>
-              <h3 className="venue-name">Óleo Gastrobar</h3>
-              <p className="venue-address">Urb. La Viña, Valencia, Estado Carabobo, Venezuela.</p>
+              <h3 className="venue-name">Rock &amp; Riff</h3>
+              <p className="venue-address">Antiguo Óleo Gastrobar • Urb. La Viña, Valencia, Estado Carabobo, Venezuela.</p>
+
+              <div style={{ margin: '0.75rem 0 1.25rem' }}>
+                <a
+                  href="https://www.instagram.com/rocknriffbar"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tag-badge tag-loc"
+                  style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                >
+                  <span>📷 @rocknriffbar ↗</span>
+                </a>
+              </div>
 
               <ul className="venue-details-list">
                 <li className="v-item">
                   <span className="v-item-icon">⏰</span>
                   <div>
-                    <strong>Hora de inicio:</strong> 9:00 PM (Apertura de puertas)
+                    <strong>Horario:</strong> 8:00 PM a 3:00 AM (Apertura de puertas 8:00 PM)
                   </div>
                 </li>
                 <li className="v-item">
                   <span className="v-item-icon">🌙</span>
                   <div>
-                    <strong>After Party:</strong> Hasta el amanecer con zona lounge
+                    <strong>After Party:</strong> Confirmado (la fiesta sigue extendida)
                   </div>
                 </li>
                 <li className="v-item">
-                  <span className="v-item-icon">🛡️</span>
+                  <span className="v-item-icon">🔞</span>
                   <div>
-                    <strong>Seguridad & Estacionamiento:</strong> Vigilancia privada garantizada
+                    <strong>Edad de Ingreso:</strong> Mayores de +15 años (con representante si es menor)
                   </div>
                 </li>
                 <li className="v-item">
@@ -51,7 +63,7 @@ export default function VenueFaqSection() {
               </ul>
 
               <a
-                href="https://maps.google.com/?q=Oleo+Gastrobar+La+Viña+Valencia+Venezuela"
+                href="https://maps.google.com/?q=Rock+and+Riff+La+Viña+Valencia+Venezuela"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-maps"

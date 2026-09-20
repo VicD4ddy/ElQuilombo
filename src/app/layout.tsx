@@ -14,15 +14,17 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://elquilombo.club'),
   title: 'El Quilombo • La Fiesta Temática Argentina en Valencia | Preventa Oficial',
   description:
-    'Asegurá tu entrada para El Quilombo en Óleo Gastrobar, La Viña, Valencia. Lo mejor del trap, hip-hop, cumbia 420 y rock argentino. 3 de Octubre.',
+    'Asegurá tu entrada para El Quilombo en Rock & Riff (Antiguo Óleo), La Viña, Valencia. Lo mejor del trap, freestyle y cultura urbana argentina. Viernes 09 de Octubre.',
   keywords: [
     'El Quilombo',
     'Fiesta Argentina Valencia',
+    'Rock & Riff',
     'Óleo Gastrobar',
     'Trap Argentino',
     'Milo J',
     'Trueno',
     'Duki',
+    'Ca7riel y Paco',
     'Valencia Venezuela',
     'Preventa Entradas',
   ],
@@ -32,7 +34,7 @@ export const metadata: Metadata = {
     url: 'https://elquilombo.club',
     title: 'El Quilombo • La Fiesta Temática Argentina en Valencia',
     description:
-      'Vení a vivir la noche más picante del trap, freestyle y cumbia villera en Óleo Gastrobar, La Viña. Preventa oficial activa.',
+      'Vení a vivir la noche más picante del trap, freestyle y cultura argentina en Rock & Riff, La Viña. Preventa oficial activa $10 USD.',
     siteName: 'El Quilombo',
     images: [
       {

@@ -12,7 +12,7 @@ interface TicketingSectionProps {
 }
 
 export default function TicketingSection({ onGenerateTicket }: TicketingSectionProps) {
-  const [selectedTierId, setSelectedTierId] = useState<'general' | 'vip'>('vip');
+  const [selectedTierId, setSelectedTierId] = useState<'general' | 'vip'>('general');
   const [quantity, setQuantity] = useState<number>(1);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formData, setFormData] = useState({
@@ -99,25 +99,26 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.phone || !formData.email || !formData.dni) return;
 
-    // 1. Play viral meme audio "FAHHHHHH"
-    playFahSound();
-
-    // 2. Explode party neon confetti
-    try {
-      confetti({
-        particleCount: 90,
-        spread: 75,
-        origin: { y: 0.65 },
-        colors: ['#a855f7', '#00f0ff', '#ff007f', '#ffd600', '#ffffff'],
-      });
-    } catch (err) {}
+    if (!formData.name.trim() || !formData.dni.trim() || !formData.phone.trim()) {
+      alert('Por favor completá los campos obligatorios (Nombre, Cédula y WhatsApp).');
+      return;
+    }
 
     setIsSubmitting(true);
 
     try {
       const meme = getRandomMemeSticker();
+
+      // Trigger viral sound effect and confetti
+      playFahSound();
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#8b17f5', '#a855f7', '#00f0ff', '#ffd600', '#ffffff'],
+      });
+
       const result = await processReservation(
         {
           tier: selectedTier,
@@ -142,6 +143,9 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
       };
 
       onGenerateTicket(finalOrder);
+    } catch (err: any) {
+      console.error('[Ticketing] Error creating reservation:', err);
+      alert('Ocurrió un inconveniente al procesar tu reserva. Por favor intenta de nuevo.');
     } finally {
       setIsSubmitting(false);
     }
@@ -151,12 +155,12 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
     <section className="section ticketing-section" id="entradas">
       <div className="container">
         <div className="section-header">
-          <span className="section-pill">Fase de Preventa</span>
+          <span className="section-pill">Fase de Preventa Oficial</span>
           <h2 className="section-title">
             ELEGÍ TU <span className="text-gradient">TIPO DE ENTRADA</span>
           </h2>
           <p className="section-subtitle">
-            Precios especiales de Preventa 1. Seleccioná tu pase para calcular el total y apartar tu entrada al instante.
+            Entradas limitadas para el <strong>Viernes 09 de Octubre en Rock &amp; Riff</strong>. Asegurá tu preventa a $10 USD antes de que suba a $15 USD en puerta.
           </p>
         </div>
 
@@ -164,13 +168,14 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
         <div className="pricing-grid">
           {/* General Pass */}
           <div
-            className={`ticket-card ${selectedTierId === 'general' ? 'selected' : ''}`}
+            className={`ticket-card popular ${selectedTierId === 'general' ? 'selected' : ''}`}
             data-tier="general"
             onClick={() => setSelectedTierId('general')}
           >
+            <div className="badge-popular" style={{ background: '#8b17f5' }}>🔥 PREVENTA OFICIAL (AHORRO $5)</div>
             <div className="ticket-header">
               <h3 className="ticket-name">{TICKET_TIERS.general.name}</h3>
-              <div className="ticket-sub">⚡ Preventa 1 (Early Bird)</div>
+              <div className="ticket-sub">⚡ Preventa Limitada ($15 en puerta)</div>
             </div>
             <div className="ticket-price-box">
               <span className="ticket-currency">$</span>
@@ -191,14 +196,14 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
 
           {/* VIP Pass */}
           <div
-            className={`ticket-card popular ${selectedTierId === 'vip' ? 'selected' : ''}`}
+            className={`ticket-card ${selectedTierId === 'vip' ? 'selected' : ''}`}
             data-tier="vip"
             onClick={() => setSelectedTierId('vip')}
           >
-            <div className="badge-popular">🔥 MÁS POPULAR</div>
+            <div className="badge-popular" style={{ background: '#4a0e80', border: '1px solid rgba(255, 255, 255, 0.2)' }}>⏳ A CONFIRMAR</div>
             <div className="ticket-header">
               <h3 className="ticket-name">{TICKET_TIERS.vip.name}</h3>
-              <div className="ticket-sub">⚡ Experiencia Completa + After</div>
+              <div className="ticket-sub">⚡ Sujeto a disponibilidad del 2do piso</div>
             </div>
             <div className="ticket-price-box">
               <span className="ticket-currency">$</span>
@@ -389,7 +394,7 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
                 <option value="Pago Móvil">Pago Móvil (Banesco, Mercantil, Venezuela, etc.)</option>
                 <option value="Zelle">Zelle (USD)</option>
                 <option value="Binance Pay (USDT)">Binance Pay (USDT)</option>
-                <option value="Efectivo en Óleo Gastrobar">Efectivo (USD en puerta / local)</option>
+                <option value="Efectivo en Rock & Riff">Efectivo (USD en Rock & Riff / local)</option>
               </select>
               <span className="form-hint">Te daremos los datos según tu método elegido</span>
             </div>

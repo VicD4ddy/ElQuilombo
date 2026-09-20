@@ -20,7 +20,7 @@ export default function CountdownTimer() {
 
   useEffect(() => {
     setIsClient(true);
-    const target = new Date('2026-10-03T21:00:00').getTime();
+    const target = new Date('2026-10-09T20:00:00').getTime();
 
     const calculate = () => {
       const now = new Date().getTime();
@@ -50,7 +50,7 @@ export default function CountdownTimer() {
     <div className="countdown-container" aria-label="Cuenta regresiva para El Quilombo">
       <div className="countdown-header">
         <span className="countdown-label">⏳ Cuenta Regresiva para el Evento</span>
-        <span className="countdown-date">📅 3 de Octubre • 9:00 PM</span>
+        <span className="countdown-date">📅 Viernes 09 de Octubre • 8:00 PM</span>
       </div>
       <div className="countdown-grid">
         <div className="countdown-unit">

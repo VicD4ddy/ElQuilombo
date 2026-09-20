@@ -7,7 +7,7 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    const targetDate = new Date('2026-10-03T21:00:00');
+    const targetDate = new Date('2026-10-09T20:00:00');
     const updateCountdown = () => {
       const now = new Date();
       const diff = targetDate.getTime() - now.getTime();
@@ -76,7 +76,7 @@ export default function Navbar() {
         <div className="nav-right-actions">
           <div className="nav-pill-date">
             <span className="dot" />
-            <span id="nav-cd-pill">3 Oct • Preventa Activa ({daysLeft}d)</span>
+            <span id="nav-cd-pill">09 Oct • Preventa $10 ({daysLeft}d)</span>
           </div>
           <a
             href="#entradas"

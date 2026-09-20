@@ -740,7 +740,7 @@ export default function OrganizadorPage() {
                 }}
               >
                 <span style={{ fontSize: '0.74rem', color: 'var(--neon-pink)', fontWeight: 800, textTransform: 'uppercase' }}>
-                  🔥 Aforo Óleo Gastrobar
+                  🔥 Aforo Rock & Riff
                 </span>
                 <div style={{ fontFamily: 'var(--font-title)', fontSize: '1.7rem', fontWeight: 900, color: '#fff', marginTop: '0.35rem' }}>
                   {metrics?.occupancyPercentage || 0}%

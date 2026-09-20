@@ -39,13 +39,13 @@ export default function Footer() {
                 @elquilombo.vzla ↗
               </a>
               <a
-                href="https://www.instagram.com/oleo.gastrobar/"
+                href="https://www.instagram.com/rocknriffbar/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="tag-badge tag-loc"
                 style={{ textDecoration: 'none' }}
               >
-                @oleo.gastrobar ↗
+                @rocknriffbar ↗
               </a>
             </div>
           </div>
@@ -124,12 +124,12 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="https://www.instagram.com/oleo.gastrobar/"
+                  href="https://www.instagram.com/rocknriffbar/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="footer-link"
                 >
-                  Venue: <span style={{ color: '#fff' }}>@oleo.gastrobar</span>
+                  Venue: <span style={{ color: '#fff' }}>@rocknriffbar (Antiguo Óleo)</span>
                 </a>
               </li>
               <li>

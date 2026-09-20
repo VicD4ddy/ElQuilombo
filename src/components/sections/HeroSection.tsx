@@ -14,30 +14,63 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
   return (
     <section className="hero-section" id="hero">
       <div className="container">
+        {/* Sponsors Top Strip */}
+        <div className="sponsor-strip">
+          <span className="sponsor-item">⚡ ANDY</span>
+          <span style={{ color: 'var(--neon-purple)', opacity: 0.6 }}>•</span>
+          <span className="sponsor-item">🐯 ROCK N&apos; RIFF</span>
+          <span style={{ color: 'var(--neon-purple)', opacity: 0.6 }}>•</span>
+          <span className="sponsor-item">😊 CLUB SONRISAS</span>
+        </div>
+
         <div className="hero-grid">
           {/* Left: Hero Copy & Countdown */}
           <div className="hero-content">
-            <div className="hero-tags">
-              <span className="tag-badge tag-arg">🇦🇷 Talento Argento</span>
-              <span className="tag-badge tag-loc">📍 Óleo Gastrobar • Valencia</span>
+            <div className="hero-tags" style={{ gap: '0.75rem', flexWrap: 'wrap' }}>
+              <span className="badge-slanted-purple">
+                <span>VIERNES 09 OCT</span>
+              </span>
+              <span className="badge-slanted-purple">
+                <span>ROCK N&apos; RIFF • 8:00PM - 3:00AM</span>
+              </span>
             </div>
 
-            <div className="hero-brand-logo-wrap">
+            <div className="hero-brand-logo-wrap" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.35rem' }}>
               <img
                 src="/assets/img/el-quilombo-logo.png"
                 alt="El Quilombo - Fiesta Temática Argentina"
                 className="hero-official-logo"
               />
+              <span className="badge-argento">(ARGENTO PARTY)</span>
             </div>
 
-            <h1 className="hero-title">
+            <h1 className="hero-title" style={{ marginTop: '0.75rem' }}>
               <span className="title-sub">⚡ LA FIESTA TEMÁTICA ARGENTINA EN VALENCIA 💜</span>
             </h1>
 
             <p className="hero-desc">
-              La noche donde Valencia se transforma en Buenos Aires.{' '}
-              <strong>Artistas en vivo</strong>, una playlist cargada de trap, cumbia 420 y clásicos argentinos, after party exclusivo y dinámicas en tarima.
+              La noche donde Valencia se transforma en Buenos Aires. Homenaje oficial a{' '}
+              <strong>Milo J, Trueno, Duki, WOS, Dillom, Ca7riel &amp; Paco</strong> y los mayores referentes del trap argentino. Artistas en vivo sorpresa, After Party oficial extendido y dinámicas en tarima.
             </p>
+
+            {/* Poster Price Blocks */}
+            <div className="poster-prices-container" style={{ justifyContent: 'flex-start', margin: '1rem 0' }}>
+              <div className="poster-price-box highlight">
+                <span className="price-label">PREVENTA</span>
+                <div className="price-amount">$10 USD</div>
+                <span style={{ fontSize: '0.75rem', color: 'var(--neon-cyan)', fontWeight: 700 }}>Entradas Limitadas</span>
+              </div>
+              <div className="poster-price-box">
+                <span className="price-label" style={{ background: '#4a0e80' }}>EN PUERTA</span>
+                <div className="price-amount" style={{ color: '#94a3b8' }}>$15 USD</div>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-subtle)' }}>Noche del evento</span>
+              </div>
+            </div>
+
+            {/* Age Restriction Notice */}
+            <div className="age-restriction-pill" style={{ marginBottom: '1.25rem' }}>
+              <span>PARA MAYORES DE <strong>+15</strong> (SI ES MENOR DEBE IR CON UN REPRESENTANTE)</span>
+            </div>
 
             {/* Live Event Countdown */}
             <CountdownTimer />
@@ -45,18 +78,18 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
             {/* Hero Action Buttons */}
             <div className="hero-actions">
               <a href="#entradas" className="btn-primary">
-                <span>🔥 Apartar Preventa</span>
+                <span>🔥 Apartar Preventa $10</span>
                 <span>→</span>
               </a>
               <a href="#lineup" className="btn-secondary">
-                <span>🎧 Ver Lineup</span>
+                <span>🎧 Ver Lineup (12 Artistas)</span>
               </a>
             </div>
 
             {/* Social Proof */}
             <div className="social-proof">
               <span className="flame">🔥</span>
-              <span><strong>+360 personas</strong> ya están siguiendo el lanzamiento de la preventa</span>
+              <span><strong>+420 personas</strong> ya están activas para el 9 de Octubre en Rock &amp; Riff</span>
             </div>
           </div>
 
@@ -64,8 +97,8 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
           <div className="hero-visual">
             <div className="visual-card">
               {/* Slanted Stickers */}
-              <div className="sticker-date">⚡ 3 DE OCTUBRE 💜</div>
-              <div className="sticker-limited">🚨 Aforo Limitado</div>
+              <div className="sticker-date">⚡ VIERNES 09 OCT 💜</div>
+              <div className="sticker-limited">🚨 PREVENTA $10 (LIMITADAS)</div>
 
               {/* Media Showcase */}
               <div
@@ -78,9 +111,10 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
                 }}
               >
                 <img
-                  src="/assets/img/quilombo-hero.jpg"
-                  alt="El Quilombo - Arte de la fiesta temática"
+                  src="/assets/img/flyer-quilombo.jpg"
+                  alt="El Quilombo - Afiche Oficial Argento Party"
                   id="hero-reel-cover"
+                  style={{ objectPosition: 'top center' }}
                 />
                 <div className="crt-overlay" id="hero-crt-overlay" />
 

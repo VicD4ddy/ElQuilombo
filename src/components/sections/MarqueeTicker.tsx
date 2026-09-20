@@ -2,16 +2,21 @@ import React from 'react';
 
 export default function MarqueeTicker() {
   const items = [
-    'MILO J',
+    'MILO J (MAIN)',
     'TRUENO',
     'DUKI',
-    'BIZARRAP',
-    'NICKI NICOLE',
-    'TIAGO PZK',
-    'MARÍA BECERRA',
+    'CA7RIEL & PACO',
     'WOS',
-    'YSY A',
     'DILLOM',
+    'LIT KILLAH',
+    'BHAVI',
+    'KHEA',
+    'YSY A',
+    'RAMMA',
+    'MARÍA BECERRA',
+    'VIERNES 09 OCT • ROCK N\' RIFF',
+    '🌙 AFTER PARTY CONFIRMADO',
+    '🎤 SHOW EN VIVO (FEAT. CLOUDBOI)',
   ];
 
   return (
@@ -22,12 +27,6 @@ export default function MarqueeTicker() {
             <span className="bolt">⚡</span> {artist}
           </span>
         ))}
-        <span className="marquee-item">
-          <span className="highlight">🌙 AFTER PARTY OFICIAL</span>
-        </span>
-        <span className="marquee-item">
-          <span className="bolt">⚡</span> CUMBIA 420 & CLÁSICOS ARGENTOS
-        </span>
 
         {/* Repeat for seamless infinite scroll */}
         {items.map((artist, idx) => (
@@ -35,9 +34,6 @@ export default function MarqueeTicker() {
             <span className="bolt">⚡</span> {artist}
           </span>
         ))}
-        <span className="marquee-item">
-          <span className="highlight">🌙 AFTER PARTY OFICIAL</span>
-        </span>
       </div>
     </div>
   );

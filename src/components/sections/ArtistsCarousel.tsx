@@ -25,7 +25,7 @@ export default function ArtistsCarousel() {
             LOS ARTISTAS QUE <span className="text-gradient">VAN A DETONAR</span>
           </h2>
           <p className="section-subtitle">
-            Lo más pesado del trap, hip-hop, R&B y cumbia villera de la escena argentina sonando en la pista de Óleo Gastrobar.
+            Lo más pesado del trap, hip-hop, R&B y cumbia villera de la escena argentina sonando en la pista de Rock & Riff (Antiguo Óleo).
           </p>
         </div>
 

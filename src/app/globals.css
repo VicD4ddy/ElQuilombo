@@ -3692,4 +3692,71 @@ body {
   text-transform: uppercase;
 }
 
+/* ==============================================================================
+   ANIMATED MEME STICKERS & VIRAL STORY EXPORT
+   ============================================================================== */
+@keyframes stickerBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-7px) scale(1.05); }
+}
+
+@keyframes stickerWobble {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+@keyframes stickerGlow {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.4)); transform: scale(1); }
+  50% { filter: drop-shadow(0 0 16px rgba(255, 214, 0, 0.8)); transform: scale(1.06); }
+}
+
+@keyframes stickerPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 14px rgba(239, 68, 68, 0.6)); }
+}
+
+@keyframes stickerSpin {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(7deg) scale(1.04); }
+}
+
+@keyframes stickerFloat {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-9px) rotate(3deg); }
+}
+
+.sticker-anim-bounce { animation: stickerBounce 1.8s infinite ease-in-out; }
+.sticker-anim-wobble { animation: stickerWobble 2s infinite ease-in-out; }
+.sticker-anim-glow { animation: stickerGlow 2s infinite ease-in-out; }
+.sticker-anim-pulse { animation: stickerPulse 1.6s infinite ease-in-out; }
+.sticker-anim-spin { animation: stickerSpin 2.4s infinite ease-in-out; }
+.sticker-anim-float { animation: stickerFloat 2.6s infinite ease-in-out; }
+
+.meme-sticker-interactive-card {
+  position: relative;
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: 0.85rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.meme-sticker-interactive-card:hover {
+  transform: translateY(-2px);
+}
+
+.meme-sticker-emoji-badge {
+  font-size: 2.2rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+}
+
+
 

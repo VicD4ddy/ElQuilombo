@@ -158,3 +158,99 @@ export async function processReservation(
     };
   }
 }
+
+/**
+ * Permite a un titular con cédula ya registrada sumar entradas adicionales a su reserva
+ */
+export async function addTicketsToReservation(
+  buyerDni: string,
+  additionalQty: number,
+  bcvRate?: number
+): Promise<{ success: boolean; order?: TicketOrder; message?: string }> {
+  const normalizedDni = buyerDni.trim().toUpperCase();
+
+  if (!isSupabaseConfigured || !supabase) {
+    return {
+      success: false,
+      message: 'Supabase no está configurado para actualizar reservas.',
+    };
+  }
+
+  try {
+    const { data: existing, error: findError } = await supabase
+      .from('reservations')
+      .select('*')
+      .eq('buyer_dni', normalizedDni)
+      .single();
+
+    if (findError || !existing) {
+      return {
+        success: false,
+        message: `No se encontró una reserva previa con la cédula ${normalizedDni}.`,
+      };
+    }
+
+    const currentQty = existing.quantity || 1;
+    const unitPrice = Math.round(existing.total_usd / currentQty) || 10;
+    const newQty = currentQty + additionalQty;
+    const newTotalUSD = newQty * unitPrice;
+
+    const rate = bcvRate && bcvRate > 0
+      ? bcvRate
+      : (existing.total_usd > 0 ? existing.total_ref_bs / existing.total_usd : 848);
+    const newTotalRefBs = newTotalUSD * rate;
+
+    const { data: updated, error: updateError } = await supabase
+      .from('reservations')
+      .update({
+        quantity: newQty,
+        total_usd: newTotalUSD,
+        total_ref_bs: newTotalRefBs,
+      })
+      .eq('id', existing.id)
+      .select()
+      .single();
+
+    if (updateError || !updated) {
+      throw updateError || new Error('No se pudo actualizar la reserva');
+    }
+
+    const updatedOrder: TicketOrder = {
+      tier: {
+        id: updated.tier_id,
+        name: updated.tier_name,
+        priceUSD: unitPrice,
+        features: [],
+      },
+      quantity: updated.quantity,
+      buyerName: updated.buyer_name,
+      buyerDni: updated.buyer_dni,
+      buyerPhone: updated.buyer_phone,
+      buyerEmail: updated.buyer_email,
+      paymentMethod: updated.payment_method,
+      favoriteArtist: updated.favorite_artist || '',
+      totalUSD: Number(updated.total_usd),
+      totalRefBs: Number(updated.total_ref_bs).toLocaleString('es-VE', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }),
+      ticketCode: updated.ticket_code,
+      createdAt: updated.created_at,
+      isExisting: true,
+      noticeMessage: `¡Se han sumado +${additionalQty} entrada(s)! Ahora tenés un total de ${updated.quantity} entradas.`,
+    };
+
+    return {
+      success: true,
+      order: updatedOrder,
+      message: `¡Se sumaron +${additionalQty} entrada(s) a tu reserva! Total: ${updated.quantity} entradas.`,
+    };
+  } catch (err: any) {
+    console.error('Error adding tickets to reservation:', err);
+    return {
+      success: false,
+      message: err?.message || 'Error al agregar entradas adicionales.',
+    };
+  }
+}
+

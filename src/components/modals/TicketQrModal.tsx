@@ -4,34 +4,63 @@ import React, { useEffect, useRef, useState } from 'react';
 import { toPng } from 'html-to-image';
 import { TicketOrder } from '../../types/ticket';
 import { OFFICIAL_WHATSAPP_NUMBER } from '../../data/ticketing';
+import { MemeSticker, getRandomMemeSticker } from '../../data/memes';
+import { exportStoryVideo, exportStoryGif } from '../../lib/storyVideoExporter';
+import { addTicketsToReservation } from '../../lib/reservations';
 
 interface TicketQrModalProps {
   order: TicketOrder | null;
   onClose: () => void;
+  onOrderUpdated?: (order: TicketOrder) => void;
 }
 
-export default function TicketQrModal({ order, onClose }: TicketQrModalProps) {
+export default function TicketQrModal({ order, onClose, onOrderUpdated }: TicketQrModalProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const ticketRef = useRef<HTMLDivElement | null>(null);
-  const [isExporting, setIsExporting] = useState<boolean>(false);
+
+  // Local state for active meme (allowing user to change sticker)
+  const [currentMeme, setCurrentMeme] = useState<MemeSticker | null>(null);
+  const [currentOrder, setCurrentOrder] = useState<TicketOrder | null>(null);
+
+  // Export states
+  const [isExportingVideo, setIsExportingVideo] = useState<boolean>(false);
+  const [isExportingGif, setIsExportingGif] = useState<boolean>(false);
+  const [isExportingPng, setIsExportingPng] = useState<boolean>(false);
+  const [exportProgressText, setExportProgressText] = useState<string | null>(null);
   const [exportNotice, setExportNotice] = useState<string | null>(null);
 
+  // Add more tickets modal/drawer state
+  const [isAddingTickets, setIsAddingTickets] = useState<boolean>(false);
+  const [additionalQty, setAdditionalQty] = useState<number>(1);
+  const [isUpdatingDb, setIsUpdatingDb] = useState<boolean>(false);
+  const [addNotice, setAddNotice] = useState<string | null>(null);
+
+  // Synchronize with parent order
   useEffect(() => {
-    if (!order || !canvasRef.current) return;
+    if (order) {
+      setCurrentOrder(order);
+      setCurrentMeme(order.meme || getRandomMemeSticker());
+      setAddNotice(null);
+      setExportNotice(null);
+    }
+  }, [order]);
+
+  // QR Code Rendering
+  useEffect(() => {
+    if (!currentOrder || !canvasRef.current) return;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const size = 260; // High-DPI for mobile retina screens
+    const size = 260;
     canvas.width = size;
     canvas.height = size;
 
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, size, size);
 
-    // Deterministic pseudo-random seed from code string
     let seed = 0;
-    const code = order.ticketCode;
+    const code = currentOrder.ticketCode;
     for (let i = 0; i < code.length; i++) {
       seed = (seed * 31 + code.charCodeAt(i)) & 0xffffffff;
     }
@@ -46,7 +75,6 @@ export default function TicketQrModal({ order, onClose }: TicketQrModalProps) {
 
     ctx.fillStyle = '#06050a';
 
-    // Finder patterns (3 corners)
     const drawFinder = (r: number, c: number) => {
       for (let i = 0; i < 7; i++) {
         for (let j = 0; j < 7; j++) {
@@ -63,7 +91,6 @@ export default function TicketQrModal({ order, onClose }: TicketQrModalProps) {
     drawFinder(0, modules - 7);
     drawFinder(modules - 7, 0);
 
-    // Fill data cells
     for (let r = 0; r < modules; r++) {
       for (let c = 0; c < modules; c++) {
         if ((r < 8 && c < 8) || (r < 8 && c >= modules - 8) || (r >= modules - 8 && c < 8)) {
@@ -80,25 +107,25 @@ export default function TicketQrModal({ order, onClose }: TicketQrModalProps) {
         }
       }
     }
-  }, [order]);
+  }, [currentOrder]);
 
-  if (!order) return null;
+  if (!currentOrder || !currentMeme) return null;
 
   const whatsappNumber = OFFICIAL_WHATSAPP_NUMBER;
-  const memeText = order.meme ? `Sticker: ${order.meme.emoji} ${order.meme.name}` : '';
+  const memeText = `Sticker: ${currentMeme.emoji} ${currentMeme.name}`;
   const waMessage = `⚡ *RESERVA PREVENTA - EL QUILOMBO* 💜
 ¡Hola equipo de @elquilombo.vzla! Quiero confirmar mi entrada:
 
-🎫 *Código:* #${order.ticketCode}
-👤 *Titular:* ${order.buyerName}
-🪪 *Cédula/DNI:* ${order.buyerDni}
-📱 *WhatsApp:* ${order.buyerPhone}
-📧 *Email:* ${order.buyerEmail}
-🎟️ *Entradas:* ${order.quantity}x ${order.tier.name}
-💰 *Total a pagar:* $${order.totalUSD} USD (Ref: Bs. ${order.totalRefBs})
-💳 *Método de pago:* ${order.paymentMethod}
-🎶 *Tema/Artista que no puede faltar:* ${order.favoriteArtist}
-${memeText ? `🎯 *${memeText}*` : ''}
+🎫 *Código:* #${currentOrder.ticketCode}
+👤 *Titular:* ${currentOrder.buyerName}
+🪪 *Cédula/DNI:* ${currentOrder.buyerDni}
+📱 *WhatsApp:* ${currentOrder.buyerPhone}
+📧 *Email:* ${currentOrder.buyerEmail}
+🎟️ *Entradas:* ${currentOrder.quantity}x ${currentOrder.tier.name}
+💰 *Total a pagar:* $${currentOrder.totalUSD} USD (Ref: Bs. ${currentOrder.totalRefBs})
+💳 *Método de pago:* ${currentOrder.paymentMethod}
+🎶 *Tema/Artista que no puede faltar:* ${currentOrder.favoriteArtist}
+🎯 *${memeText}*
 
 ¿Me podrían facilitar los datos para concretar el pago? ¡Nos vemos en Rock & Riff! 🇦🇷🔥`;
 
@@ -116,9 +143,66 @@ ${memeText ? `🎯 *${memeText}*` : ''}
     }
   };
 
-  const handleExportStory = async () => {
+  // 1. Export 9:16 Video Story
+  const handleExportVideo = async () => {
+    setIsExportingVideo(true);
+    setExportNotice(null);
+    setExportProgressText('Iniciando grabación...');
+
+    try {
+      const res = await exportStoryVideo(
+        currentOrder,
+        currentMeme,
+        '/assets/audio/fah.mp3',
+        (pct, txt) => setExportProgressText(`${txt} (${pct}%)`)
+      );
+
+      if (res.success) {
+        if (res.shared) {
+          setExportNotice('¡Listo! Video enviado a tu menú de compartir para Instagram / WhatsApp.');
+        } else {
+          setExportNotice('¡Video descargado con éxito! Subilo a tus historias de Instagram o Estados de WhatsApp con sonido.');
+        }
+      } else {
+        setExportNotice(`Inconveniente al exportar video: ${res.error || 'intenta nuevamente'}.`);
+      }
+    } catch (err: any) {
+      console.error('Error generating video story:', err);
+      setExportNotice('No se pudo generar el video en este dispositivo. Podés descargar el PNG o GIF.');
+    } finally {
+      setIsExportingVideo(false);
+      setExportProgressText(null);
+    }
+  };
+
+  // 2. Export Animated GIF
+  const handleExportGif = async () => {
+    setIsExportingGif(true);
+    setExportNotice(null);
+    setExportProgressText('Generando GIF animado...');
+
+    try {
+      const res = await exportStoryGif(currentOrder, currentMeme, (pct, txt) =>
+        setExportProgressText(`${txt} (${pct}%)`)
+      );
+      if (res.success) {
+        setExportNotice('¡GIF animado descargado! Compartilo por tus chats de WhatsApp.');
+      } else {
+        setExportNotice('Error al crear GIF animado.');
+      }
+    } catch (err: any) {
+      console.error('Error generating GIF:', err);
+      setExportNotice('No se pudo generar el GIF.');
+    } finally {
+      setIsExportingGif(false);
+      setExportProgressText(null);
+    }
+  };
+
+  // 3. Export Static PNG
+  const handleExportPng = async () => {
     if (!ticketRef.current) return;
-    setIsExporting(true);
+    setIsExportingPng(true);
     setExportNotice(null);
 
     try {
@@ -129,16 +213,45 @@ ${memeText ? `🎯 *${memeText}*` : ''}
       });
 
       const link = document.createElement('a');
-      link.download = `Boleto_ElQuilombo_${order.ticketCode}.png`;
+      link.download = `Boleto_ElQuilombo_${currentOrder.ticketCode}.png`;
       link.href = dataUrl;
       link.click();
 
-      setExportNotice('¡Boleto descargado en alta resolución! Subilo a tus historias de Instagram.');
+      setExportNotice('¡Boleto descargado en alta resolución (PNG) para mostrar en puerta!');
     } catch (err) {
       console.error('Error exporting story image:', err);
       setExportNotice('Hubo un inconveniente al exportar. Podés tomarle captura al boleto.');
     } finally {
-      setIsExporting(false);
+      setIsExportingPng(false);
+    }
+  };
+
+  // 4. Change Meme Sticker randomly
+  const handleShuffleMeme = () => {
+    const nextMeme = getRandomMemeSticker(currentMeme.id);
+    setCurrentMeme(nextMeme);
+  };
+
+  // 5. Add more tickets to existing reservation
+  const handleConfirmAddTickets = async () => {
+    if (additionalQty < 1) return;
+    setIsUpdatingDb(true);
+    setAddNotice(null);
+
+    try {
+      const res = await addTicketsToReservation(currentOrder.buyerDni, additionalQty);
+      if (res.success && res.order) {
+        setCurrentOrder(res.order);
+        onOrderUpdated?.(res.order);
+        setIsAddingTickets(false);
+        setExportNotice(`🎉 ¡Se agregaron +${additionalQty} entrada(s)! Nuevo total: ${res.order.quantity} entradas.`);
+      } else {
+        setAddNotice(res.message || 'No se pudo actualizar la cantidad.');
+      }
+    } catch (err: any) {
+      setAddNotice(err?.message || 'Error al conectar con la base de datos.');
+    } finally {
+      setIsUpdatingDb(false);
     }
   };
 
@@ -186,7 +299,7 @@ ${memeText ? `🎯 *${memeText}*` : ''}
       >
         <div className="ticket-pass" ref={ticketRef}>
           {/* Notification Alert for existing reservations */}
-          {order.noticeMessage && (
+          {currentOrder.noticeMessage && (
             <div
               className="ticket-notice-alert"
               id="ticket-notice-alert"
@@ -200,7 +313,7 @@ ${memeText ? `🎯 *${memeText}*` : ''}
                 textAlign: 'center',
               }}
             >
-              ℹ️ {order.noticeMessage}
+              ℹ️ {currentOrder.noticeMessage}
             </div>
           )}
 
@@ -218,7 +331,7 @@ ${memeText ? `🎯 *${memeText}*` : ''}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <div className="ticket-pass-badge">
-                {order.isExisting ? 'PRE-RESERVA ACTIVA' : '¡RESERVA CONFIRMADA!'}
+                {currentOrder.isExisting ? 'PRE-RESERVA ACTIVA' : '¡RESERVA CONFIRMADA!'}
               </div>
               <button
                 type="button"
@@ -249,52 +362,94 @@ ${memeText ? `🎯 *${memeText}*` : ''}
 
           {/* Pass Body */}
           <div className="ticket-pass-body">
-            {/* Meme Sticker Stamped on Ticket */}
-            {order.meme && (
-              <div
-                className="ticket-meme-sticker"
-                style={{
-                  background: order.meme.badgeBg,
-                  border: `2px dashed ${order.meme.borderColor}`,
-                  borderRadius: '12px',
-                  padding: '0.75rem 1rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.4)',
-                  animation: 'floatElement 3s ease-in-out infinite',
-                }}
-              >
-                <span style={{ fontSize: '2rem', lineHeight: 1 }}>{order.meme.emoji}</span>
-                <div>
-                  <div style={{ fontWeight: 900, fontSize: '0.85rem', color: order.meme.textColor, textTransform: 'uppercase' }}>
-                    STICKER OFICIAL: {order.meme.name}
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: order.meme.textColor, opacity: 0.95 }}>
-                    "{order.meme.tagline}"
-                  </div>
+            {/* Buyer Personalized Gratitude Header */}
+            <div style={{ textAlign: 'center', marginBottom: '0.85rem' }}>
+              <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1.5px', color: 'var(--neon-purple)', fontWeight: 800 }}>
+                ¡GRACIAS POR RESERVAR!
+              </span>
+              <h2 style={{ fontFamily: 'var(--font-title)', fontSize: '1.5rem', fontWeight: 900, color: '#fff', margin: '0.2rem 0' }}>
+                {currentOrder.buyerName.toUpperCase()}
+              </h2>
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-subtle)' }}>
+                Tu lugar está reservado para la noche más picante de Valencia 🔥
+              </span>
+            </div>
+
+            {/* Meme Sticker Interactive Stamped on Ticket */}
+            <div
+              className={`meme-sticker-interactive-card ${currentMeme.animationClass}`}
+              style={{
+                background: currentMeme.badgeBg,
+                border: `2px dashed ${currentMeme.borderColor}`,
+              }}
+            >
+              <span className="meme-sticker-emoji-badge">{currentMeme.emoji}</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 900, fontSize: '0.85rem', color: currentMeme.textColor, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  STICKER OFICIAL: {currentMeme.name}
+                </div>
+                <div style={{ fontSize: '0.75rem', color: currentMeme.textColor, opacity: 0.95, fontWeight: 600 }}>
+                  "{currentMeme.tagline}"
                 </div>
               </div>
-            )}
+              <button
+                type="button"
+                onClick={handleShuffleMeme}
+                title="Cambiar sticker aleatorio"
+                style={{
+                  background: 'rgba(0, 0, 0, 0.35)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  borderRadius: '20px',
+                  color: '#fff',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  padding: '0.35rem 0.65rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.3rem',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                🎲 Otro Meme
+              </button>
+            </div>
 
             {/* Ticket Info Grid */}
-            <div className="ticket-info-grid">
+            <div className="ticket-info-grid" style={{ marginTop: '1rem' }}>
               <div className="ticket-info-item">
                 <span className="t-label">Titular de la Entrada</span>
-                <span className="t-value" id="t-buyer-name">{order.buyerName}</span>
+                <span className="t-value" id="t-buyer-name">{currentOrder.buyerName}</span>
               </div>
               <div className="ticket-info-item">
                 <span className="t-label">Cédula / DNI</span>
-                <span className="t-value">{order.buyerDni}</span>
+                <span className="t-value">{currentOrder.buyerDni}</span>
               </div>
               <div className="ticket-info-item">
-                <span className="t-label">Fecha & Hora</span>
+                <span className="t-label">Fecha &amp; Hora</span>
                 <span className="t-value">09 OCT • 8:00 PM</span>
               </div>
               <div className="ticket-info-item">
-                <span className="t-label">Tipo de Boleto</span>
-                <span className="t-value neon-highlight" id="t-tier-name">
-                  {order.quantity}x {order.tier.name}
+                <span className="t-label">Entradas Amparadas</span>
+                <span className="t-value neon-highlight" id="t-tier-name" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  {currentOrder.quantity}x {currentOrder.tier.name}
+                  {/* Button to buy more tickets for this DNI */}
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingTickets(!isAddingTickets)}
+                    style={{
+                      background: 'rgba(0, 240, 255, 0.15)',
+                      border: '1px solid var(--neon-cyan)',
+                      color: 'var(--neon-cyan)',
+                      fontSize: '0.68rem',
+                      fontWeight: 800,
+                      padding: '0.15rem 0.5rem',
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {isAddingTickets ? 'Cancelar' : '➕ Comprar Más'}
+                  </button>
                 </span>
               </div>
               <div className="ticket-info-item">
@@ -303,12 +458,102 @@ ${memeText ? `🎯 *${memeText}*` : ''}
               </div>
               <div className="ticket-info-item">
                 <span className="t-label">Total a Pagar</span>
-                <span className="t-value neon-highlight" id="t-total-usd">${order.totalUSD} USD</span>
+                <span className="t-value neon-highlight" id="t-total-usd">${currentOrder.totalUSD} USD</span>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-subtle)' }} id="t-total-ref">
-                  (Ref: Bs. {order.totalRefBs})
+                  (Ref: Bs. {currentOrder.totalRefBs})
                 </span>
               </div>
             </div>
+
+            {/* Sub-card: Buy more tickets for this reservation */}
+            {isAddingTickets && (
+              <div
+                style={{
+                  background: 'rgba(139, 23, 245, 0.12)',
+                  border: '1px solid var(--neon-purple)',
+                  borderRadius: '14px',
+                  padding: '1rem',
+                  marginTop: '0.85rem',
+                }}
+              >
+                <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#fff', marginBottom: '0.35rem' }}>
+                  ➕ Sumar Entradas a tu Reserva (#{currentOrder.ticketCode})
+                </div>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-subtle)', marginBottom: '0.75rem' }}>
+                  ¿Querés invitar a más panas? Sumá entradas adicionales a tu misma cédula:
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem' }}>
+                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#e2e8f0' }}>Cantidad a sumar:</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <button
+                      type="button"
+                      onClick={() => setAdditionalQty((q) => Math.max(1, q - 1))}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        color: '#fff',
+                        borderRadius: '6px',
+                        width: '28px',
+                        height: '28px',
+                        cursor: 'pointer',
+                        fontWeight: 900,
+                      }}
+                    >
+                      -
+                    </button>
+                    <span style={{ fontSize: '1rem', fontWeight: 900, color: 'var(--neon-cyan)', minWidth: '24px', textAlign: 'center' }}>
+                      +{additionalQty}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setAdditionalQty((q) => Math.min(8, q + 1))}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        color: '#fff',
+                        borderRadius: '6px',
+                        width: '28px',
+                        height: '28px',
+                        cursor: 'pointer',
+                        fontWeight: 900,
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#ffd600' }}>
+                    (+${additionalQty * (currentOrder.tier.priceUSD || 10)} USD)
+                  </span>
+                </div>
+
+                {addNotice && (
+                  <div style={{ fontSize: '0.75rem', color: '#f87171', marginBottom: '0.5rem' }}>
+                    ⚠️ {addNotice}
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={handleConfirmAddTickets}
+                  disabled={isUpdatingDb}
+                  style={{
+                    width: '100%',
+                    background: 'var(--gradient-party)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    color: '#fff',
+                    fontFamily: 'var(--font-title)',
+                    fontWeight: 800,
+                    fontSize: '0.85rem',
+                    padding: '0.6rem',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {isUpdatingDb ? 'Actualizando en Base de Datos...' : `Confirmar +${additionalQty} Entrada(s) Adicionales`}
+                </button>
+              </div>
+            )}
 
             {/* Perforation Divider Cut */}
             <div className="ticket-perforation">
@@ -322,7 +567,7 @@ ${memeText ? `🎯 *${memeText}*` : ''}
               </div>
               <div className="ticket-code-info">
                 <span className="t-label">Código Único de Reserva</span>
-                <span className="ticket-code-num" id="t-code-display">#{order.ticketCode}</span>
+                <span className="ticket-code-num" id="t-code-display">#{currentOrder.ticketCode}</span>
                 <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textAlign: 'right', marginTop: '4px', maxWidth: '200px' }}>
                   Mostrá este código por WhatsApp o en la entrada de Rock &amp; Riff
                 </span>
@@ -332,13 +577,97 @@ ${memeText ? `🎯 *${memeText}*` : ''}
 
           {/* Pass Actions Footer */}
           <div className="ticket-pass-footer">
+            {exportProgressText && (
+              <div style={{ fontSize: '0.82rem', color: 'var(--neon-cyan)', textAlign: 'center', marginBottom: '0.25rem', fontWeight: 700 }}>
+                ⏳ {exportProgressText}
+              </div>
+            )}
             {exportNotice && (
-              <div style={{ fontSize: '0.78rem', color: 'var(--neon-cyan)', textAlign: 'center', marginBottom: '0.25rem' }}>
-                🎉 {exportNotice}
+              <div style={{ fontSize: '0.82rem', color: '#ffd600', textAlign: 'center', marginBottom: '0.25rem', fontWeight: 700 }}>
+                {exportNotice}
               </div>
             )}
 
-            {/* WhatsApp Direct Link */}
+            {/* 1. Share / Export Video 9:16 for Instagram Stories */}
+            <button
+              type="button"
+              id="btn-export-story-video"
+              onClick={handleExportVideo}
+              disabled={isExportingVideo || isExportingGif || isExportingPng}
+              style={{
+                width: '100%',
+                background: 'linear-gradient(135deg, #8b17f5 0%, #ec4899 50%, #ffd600 100%)',
+                border: 'none',
+                color: '#fff',
+                fontFamily: 'var(--font-title)',
+                fontWeight: 900,
+                fontSize: '0.95rem',
+                padding: '0.85rem',
+                borderRadius: 'var(--radius-pill)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                boxShadow: '0 4px 20px rgba(236, 72, 153, 0.45)',
+                transition: 'transform 0.2s',
+              }}
+            >
+              <span>🎬 {isExportingVideo ? 'Generando Video Stories...' : 'Compartir en Instagram Stories (Video 9:16)'}</span>
+            </button>
+
+            {/* 2. Secondary Export Options: GIF & PNG */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', width: '100%' }}>
+              <button
+                type="button"
+                id="btn-export-gif"
+                onClick={handleExportGif}
+                disabled={isExportingVideo || isExportingGif || isExportingPng}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid var(--border-neon-cyan)',
+                  color: 'var(--neon-cyan)',
+                  fontFamily: 'var(--font-title)',
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
+                  padding: '0.65rem 0.5rem',
+                  borderRadius: 'var(--radius-pill)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.35rem',
+                }}
+              >
+                <span>🎞️ {isExportingGif ? 'Creando GIF...' : 'Descargar GIF'}</span>
+              </button>
+
+              <button
+                type="button"
+                id="btn-export-png"
+                onClick={handleExportPng}
+                disabled={isExportingVideo || isExportingGif || isExportingPng}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid var(--border-neon-purple)',
+                  color: '#fff',
+                  fontFamily: 'var(--font-title)',
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
+                  padding: '0.65rem 0.5rem',
+                  borderRadius: 'var(--radius-pill)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.35rem',
+                }}
+              >
+                <span>📸 {isExportingPng ? 'Guardando...' : 'Boleto PNG'}</span>
+              </button>
+            </div>
+
+            {/* 3. WhatsApp Direct Link */}
             <a
               href={waWebUrl}
               target="_blank"
@@ -349,33 +678,6 @@ ${memeText ? `🎯 *${memeText}*` : ''}
               <span>💬 Confirmar y Enviar Pago por WhatsApp</span>
               <span>→</span>
             </a>
-
-            {/* Export for Instagram Stories / WhatsApp Status */}
-            <button
-              type="button"
-              id="btn-export-story"
-              onClick={handleExportStory}
-              disabled={isExporting}
-              style={{
-                width: '100%',
-                background: 'rgba(255, 255, 255, 0.08)',
-                border: '1px solid var(--border-neon-purple)',
-                color: '#fff',
-                fontFamily: 'var(--font-title)',
-                fontWeight: 700,
-                fontSize: '0.9rem',
-                padding: '0.75rem',
-                borderRadius: 'var(--radius-pill)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.5rem',
-                transition: 'background 0.2s',
-              }}
-            >
-              <span>📸 {isExporting ? 'Generando Imagen...' : 'Guardar Boleto para Instagram Story'}</span>
-            </button>
 
             {/* Close Button */}
             <button

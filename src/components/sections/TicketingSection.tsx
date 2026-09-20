@@ -417,10 +417,10 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
             <div className="form-full">
               <button type="submit" id="btn-submit-reservation" className="btn-checkout" disabled={isSubmitting}>
                 {isSubmitting ? (
-                  <span>⚡ Guardando en Supabase y Generando Boleto...</span>
+                  <span>⚡ Apartando Preventa...</span>
                 ) : (
                   <>
-                    <span>⚡ Generar Boleto Digital & Apartar por WhatsApp</span>
+                    <span>⚡ Apartar Preventa &amp; Coordinar con Belle Amar</span>
                     <span>→</span>
                   </>
                 )}

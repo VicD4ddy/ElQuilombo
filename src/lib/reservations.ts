@@ -83,6 +83,7 @@ export async function processReservation(
         }),
         ticketCode: existing.ticket_code,
         createdAt: existing.created_at,
+        isPaid: Boolean(existing.is_paid),
       };
 
       return {
@@ -134,6 +135,7 @@ export async function processReservation(
       ...orderData,
       ticketCode: inserted.ticket_code,
       createdAt: inserted.created_at,
+      isPaid: Boolean(inserted.is_paid),
     };
 
     return {
@@ -153,6 +155,7 @@ export async function processReservation(
         ...orderData,
         ticketCode: fallbackCode,
         createdAt: new Date().toISOString(),
+        isPaid: false,
       },
       message: 'Reserva generada localmente.',
     };
@@ -236,6 +239,7 @@ export async function addTicketsToReservation(
       }),
       ticketCode: updated.ticket_code,
       createdAt: updated.created_at,
+      isPaid: Boolean(updated.is_paid),
       isExisting: true,
       noticeMessage: `¡Se han sumado +${additionalQty} entrada(s)! Ahora tenés un total de ${updated.quantity} entradas.`,
     };

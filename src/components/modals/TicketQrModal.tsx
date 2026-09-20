@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { toPng } from 'html-to-image';
 import { TicketOrder } from '../../types/ticket';
-import { OFFICIAL_WHATSAPP_NUMBER } from '../../data/ticketing';
+import { OFFICIAL_WHATSAPP_NUMBER, BELLE_AMAR_NAME, BELLE_AMAR_PHONE, BELLE_AMAR_PHONE_FORMATTED } from '../../data/ticketing';
 import { MemeSticker, getRandomMemeSticker } from '../../data/memes';
 import { exportStoryVideo, exportStoryGif } from '../../lib/storyVideoExporter';
 
@@ -11,9 +11,10 @@ interface TicketQrModalProps {
   order: TicketOrder | null;
   onClose: () => void;
   onOrderUpdated?: (order: TicketOrder) => void;
+  isOrganizerView?: boolean;
 }
 
-export default function TicketQrModal({ order, onClose, onOrderUpdated }: TicketQrModalProps) {
+export default function TicketQrModal({ order, onClose, onOrderUpdated, isOrganizerView = false }: TicketQrModalProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const ticketRef = useRef<HTMLDivElement | null>(null);
 
@@ -103,9 +104,59 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated }: Ticket
 
   if (!currentOrder || !currentMeme) return null;
 
+  const isApproved = Boolean(currentOrder.isPaid);
+  const showQrSection = isApproved || Boolean(isOrganizerView);
+
   const whatsappNumber = OFFICIAL_WHATSAPP_NUMBER;
-  const memeText = `Sticker: ${currentMeme.emoji} ${currentMeme.name}`;
-  const waMessage = `⚡ *RESERVA PREVENTA - EL QUILOMBO* 💜
+  const memeText = `Sticker: ${currentMeme.name} ("${currentMeme.tagline}")`;
+
+  // Pre-filled WhatsApp message for Belle Amar (Payment Coordination & Approval)
+  const belleAmarMessage = `⚡ *RESERVA PREVENTA - EL QUILOMBO* 💜
+¡Hola Belle Amar! Acabo de apartar mi preventa en El Quilombo 🇦🇷🔥:
+
+🎫 *Código de Reserva:* #${currentOrder.ticketCode}
+👤 *Titular:* ${currentOrder.buyerName}
+🪪 *Cédula/DNI:* ${currentOrder.buyerDni}
+📱 *WhatsApp:* ${currentOrder.buyerPhone}
+📧 *Email:* ${currentOrder.buyerEmail}
+🎟️ *Entradas:* ${currentOrder.quantity}x ${currentOrder.tier.name}
+💰 *Total a pagar:* $${currentOrder.totalUSD} USD (Ref: Bs. ${currentOrder.totalRefBs})
+💳 *Método de pago:* ${currentOrder.paymentMethod}
+🎶 *Tema pedido:* ${currentOrder.favoriteArtist}
+🎯 *${memeText}*
+
+Quiero coordinar el pago para que el equipo apruebe mi entrada y me envíe el boleto oficial con código QR. ¡Muchas gracias!`;
+
+  const waBelleUrl = `https://wa.me/${BELLE_AMAR_PHONE}?text=${encodeURIComponent(belleAmarMessage)}`;
+  const waBelleNativeUrl = `whatsapp://send?phone=${BELLE_AMAR_PHONE}&text=${encodeURIComponent(belleAmarMessage)}`;
+
+  const handleWhatsappBelleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isMobile) {
+      e.preventDefault();
+      window.location.href = waBelleNativeUrl;
+      setTimeout(() => {
+        window.open(waBelleUrl, '_blank');
+      }, 750);
+    }
+  };
+
+  const buyerCleanPhone = (currentOrder.buyerPhone || '').replace(/\D/g, '');
+  const targetPhone = isOrganizerView ? buyerCleanPhone : whatsappNumber;
+
+  const waApprovedOrganizerMessage = `🎉 *¡TU ENTRADA HA SIDO APROBADA! - EL QUILOMBO* 🇦🇷🔥
+¡Hola ${currentOrder.buyerName}! Tu preventa ha sido validada y aprobada por el equipo de El Quilombo 💜
+
+🎟️ *Entrada:* ${currentOrder.quantity}x ${currentOrder.tier.name}
+🪪 *Titular:* ${currentOrder.buyerName} (${currentOrder.buyerDni})
+🔢 *Código Único de Acceso:* #${currentOrder.ticketCode}
+📍 *Lugar:* Rock & Riff (La Viña)
+🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM
+
+*(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).*
+¡Presentalo al llegar y preparate para la fiesta más picante de Valencia! 🇦🇷🔥`;
+
+  const waClientMessage = `⚡ *RESERVA PREVENTA - EL QUILOMBO* 💜
 ¡Hola equipo de @elquilombo.vzla! Quiero confirmar mi entrada:
 
 🎫 *Código:* #${currentOrder.ticketCode}
@@ -121,8 +172,9 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated }: Ticket
 
 ¿Me podrían facilitar los datos para concretar el pago? ¡Nos vemos en Rock & Riff! 🇦🇷🔥`;
 
-  const waWebUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(waMessage)}`;
-  const waNativeUrl = `whatsapp://send?phone=${whatsappNumber}&text=${encodeURIComponent(waMessage)}`;
+  const waMessage = isOrganizerView ? waApprovedOrganizerMessage : waClientMessage;
+  const waWebUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(waMessage)}`;
+  const waNativeUrl = `whatsapp://send?phone=${targetPhone}&text=${encodeURIComponent(waMessage)}`;
 
   const handleWhatsappClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -262,8 +314,8 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated }: Ticket
         }}
       >
         <div className="ticket-pass" ref={ticketRef}>
-          {/* Notification Alert for existing reservations */}
-          {currentOrder.noticeMessage && (
+          {/* Notification Alert for existing reservations or organizer view */}
+          {(currentOrder.noticeMessage || isOrganizerView) && (
             <div
               className="ticket-notice-alert"
               id="ticket-notice-alert"
@@ -277,7 +329,7 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated }: Ticket
                 textAlign: 'center',
               }}
             >
-              ℹ️ {currentOrder.noticeMessage}
+              ℹ️ {isOrganizerView ? `Boleto Oficial con QR listo para enviar a ${currentOrder.buyerName}` : currentOrder.noticeMessage}
             </div>
           )}
 
@@ -391,24 +443,96 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated }: Ticket
               </div>
             </div>
 
-            {/* Perforation Divider Cut */}
-            <div className="ticket-perforation">
-              <div className="perforation-line" />
-            </div>
+            {/* Conditional QR Section for Approved/Organizer Pass */}
+            {showQrSection && (
+              <>
+                {/* Perforation Divider Cut */}
+                <div className="ticket-perforation">
+                  <div className="perforation-line" />
+                </div>
 
-            {/* QR & Booking Serial Section */}
-            <div className="ticket-qr-section">
-              <div className="qr-canvas-box">
-                <canvas ref={canvasRef} id="ticket-qr-canvas" style={{ width: '100px', height: '100px', display: 'block' }} />
-              </div>
-              <div className="ticket-code-info">
-                <span className="t-label">Código Único de Reserva</span>
-                <span className="ticket-code-num" id="t-code-display">#{currentOrder.ticketCode}</span>
-                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textAlign: 'right', marginTop: '4px', maxWidth: '200px' }}>
-                  Mostrá este código por WhatsApp o en la entrada de Rock &amp; Riff
+                {/* QR & Booking Serial Section */}
+                <div className="ticket-qr-section">
+                  <div className="qr-canvas-box">
+                    <canvas ref={canvasRef} id="ticket-qr-canvas" style={{ width: '100px', height: '100px', display: 'block' }} />
+                  </div>
+                  <div className="ticket-code-info">
+                    <span className="t-label">Código Único de Reserva</span>
+                    <span className="ticket-code-num" id="t-code-display">#{currentOrder.ticketCode}</span>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textAlign: 'right', marginTop: '4px', maxWidth: '200px' }}>
+                      Mostrá este código por WhatsApp o en la entrada de Rock &amp; Riff
+                    </span>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Contacto Oficial de Belle Amar para Coordinación y Aprobación */}
+            {!showQrSection && (
+              <div
+                style={{
+                  marginTop: '1.25rem',
+                  background: 'rgba(37, 211, 102, 0.05)',
+                  border: '1px solid rgba(37, 211, 102, 0.25)',
+                  borderRadius: '16px',
+                  padding: '1.25rem 1.1rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.85rem',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}>
+                  <span style={{ fontSize: '1.4rem' }}>💬</span>
+                  <div style={{ textAlign: 'left' }}>
+                    <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#ffffff', letterSpacing: '0.3px' }}>
+                      {BELLE_AMAR_NAME}
+                    </div>
+                    <div style={{ fontSize: '0.82rem', color: '#25d366', fontWeight: 800 }}>
+                      WhatsApp: {BELLE_AMAR_PHONE_FORMATTED}
+                    </div>
+                  </div>
+                </div>
+
+                <p style={{ margin: 0, fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.45 }}>
+                  Para confirmar tu entrada y coordinar el pago, escribile directamente a <strong>Belle Amar</strong> por WhatsApp con los datos de tu reserva:
+                </p>
+
+                <a
+                  href={waBelleUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  id="btn-whatsapp-belle"
+                  onClick={handleWhatsappBelleClick}
+                  style={{
+                    width: '100%',
+                    background: 'linear-gradient(135deg, #25d366 0%, #128c7e 100%)',
+                    border: 'none',
+                    color: '#ffffff',
+                    fontFamily: 'var(--font-title)',
+                    fontWeight: 900,
+                    fontSize: '0.95rem',
+                    padding: '0.85rem 1rem',
+                    borderRadius: 'var(--radius-pill)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    textDecoration: 'none',
+                    boxShadow: '0 4px 18px rgba(37, 211, 102, 0.35)',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <span>💬 Escribir a Belle Amar ({BELLE_AMAR_PHONE_FORMATTED})</span>
+                  <span>→</span>
+                </a>
+
+                <span style={{ fontSize: '0.74rem', color: 'var(--text-subtle)', lineHeight: 1.4 }}>
+                  Posteriormente, Belle Amar o el equipo aprobará tu entrada desde el área de organizadores y se generará tu boleto oficial con código QR para enviártelo por WhatsApp.
                 </span>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Pass Actions Footer */}
@@ -424,96 +548,104 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated }: Ticket
               </div>
             )}
 
-            {/* 1. Share / Export Video 9:16 for Instagram Stories */}
-            <button
-              type="button"
-              id="btn-export-story-video"
-              onClick={handleExportVideo}
-              disabled={isExportingVideo || isExportingGif || isExportingPng}
-              style={{
-                width: '100%',
-                background: 'linear-gradient(135deg, #8b17f5 0%, #ec4899 50%, #ffd600 100%)',
-                border: 'none',
-                color: '#fff',
-                fontFamily: 'var(--font-title)',
-                fontWeight: 900,
-                fontSize: '0.95rem',
-                padding: '0.85rem',
-                borderRadius: 'var(--radius-pill)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.5rem',
-                boxShadow: '0 4px 20px rgba(236, 72, 153, 0.45)',
-                transition: 'transform 0.2s',
-              }}
-            >
-              <span>🎬 {isExportingVideo ? 'Generando Video Stories...' : 'Compartir en Instagram Stories (Video 9:16)'}</span>
-            </button>
+            {showQrSection ? (
+              <>
+                {/* 1. Share / Export Video 9:16 for Instagram Stories */}
+                <button
+                  type="button"
+                  id="btn-export-story-video"
+                  onClick={handleExportVideo}
+                  disabled={isExportingVideo || isExportingGif || isExportingPng}
+                  style={{
+                    width: '100%',
+                    background: 'linear-gradient(135deg, #8b17f5 0%, #ec4899 50%, #ffd600 100%)',
+                    border: 'none',
+                    color: '#fff',
+                    fontFamily: 'var(--font-title)',
+                    fontWeight: 900,
+                    fontSize: '0.95rem',
+                    padding: '0.85rem',
+                    borderRadius: 'var(--radius-pill)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    boxShadow: '0 4px 20px rgba(236, 72, 153, 0.45)',
+                    transition: 'transform 0.2s',
+                  }}
+                >
+                  <span>🎬 {isExportingVideo ? 'Generando Video Stories...' : 'Compartir en Instagram Stories (Video 9:16)'}</span>
+                </button>
 
-            {/* 2. Secondary Export Options: GIF & PNG */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', width: '100%' }}>
-              <button
-                type="button"
-                id="btn-export-gif"
-                onClick={handleExportGif}
-                disabled={isExportingVideo || isExportingGif || isExportingPng}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid var(--border-neon-cyan)',
-                  color: 'var(--neon-cyan)',
-                  fontFamily: 'var(--font-title)',
-                  fontWeight: 700,
-                  fontSize: '0.82rem',
-                  padding: '0.65rem 0.5rem',
-                  borderRadius: 'var(--radius-pill)',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.35rem',
-                }}
-              >
-                <span>🎞️ {isExportingGif ? 'Creando GIF...' : 'Descargar GIF'}</span>
-              </button>
+                {/* 2. Secondary Export Options: GIF & PNG */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', width: '100%' }}>
+                  <button
+                    type="button"
+                    id="btn-export-gif"
+                    onClick={handleExportGif}
+                    disabled={isExportingVideo || isExportingGif || isExportingPng}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.08)',
+                      border: '1px solid var(--border-neon-cyan)',
+                      color: 'var(--neon-cyan)',
+                      fontFamily: 'var(--font-title)',
+                      fontWeight: 700,
+                      fontSize: '0.82rem',
+                      padding: '0.65rem 0.5rem',
+                      borderRadius: 'var(--radius-pill)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.35rem',
+                    }}
+                  >
+                    <span>🎞️ {isExportingGif ? 'Creando GIF...' : 'Descargar GIF'}</span>
+                  </button>
 
-              <button
-                type="button"
-                id="btn-export-png"
-                onClick={handleExportPng}
-                disabled={isExportingVideo || isExportingGif || isExportingPng}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid var(--border-neon-purple)',
-                  color: '#fff',
-                  fontFamily: 'var(--font-title)',
-                  fontWeight: 700,
-                  fontSize: '0.82rem',
-                  padding: '0.65rem 0.5rem',
-                  borderRadius: 'var(--radius-pill)',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.35rem',
-                }}
-              >
-                <span>📸 {isExportingPng ? 'Guardando...' : 'Boleto PNG'}</span>
-              </button>
-            </div>
+                  <button
+                    type="button"
+                    id="btn-export-png"
+                    onClick={handleExportPng}
+                    disabled={isExportingVideo || isExportingGif || isExportingPng}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.08)',
+                      border: '1px solid var(--border-neon-purple)',
+                      color: '#fff',
+                      fontFamily: 'var(--font-title)',
+                      fontWeight: 700,
+                      fontSize: '0.82rem',
+                      padding: '0.65rem 0.5rem',
+                      borderRadius: 'var(--radius-pill)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.35rem',
+                    }}
+                  >
+                    <span>📸 {isExportingPng ? 'Guardando...' : 'Boleto PNG'}</span>
+                  </button>
+                </div>
 
-            {/* 3. WhatsApp Direct Link */}
-            <a
-              href={waWebUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-whatsapp-confirm"
-              onClick={handleWhatsappClick}
-            >
-              <span>💬 Confirmar y Enviar Pago por WhatsApp</span>
-              <span>→</span>
-            </a>
+                {/* 3. WhatsApp Direct Link */}
+                <a
+                  href={waWebUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-whatsapp-confirm"
+                  onClick={handleWhatsappClick}
+                >
+                  <span>
+                    {isOrganizerView
+                      ? `💬 Enviar Boleto por WhatsApp a ${currentOrder.buyerName}`
+                      : '💬 Enviar Comprobante por WhatsApp'}
+                  </span>
+                  <span>→</span>
+                </a>
+              </>
+            ) : null}
 
             {/* Close Button */}
             <button
@@ -522,16 +654,20 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated }: Ticket
               id="btn-close-modal"
               onClick={onClose}
               style={{
-                background: 'transparent',
-                border: 'none',
+                width: '100%',
+                background: showQrSection ? 'transparent' : 'rgba(255, 255, 255, 0.05)',
+                border: showQrSection ? 'none' : '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: 'var(--radius-pill)',
                 color: 'var(--text-subtle)',
                 fontSize: '0.82rem',
+                fontWeight: 700,
                 cursor: 'pointer',
-                padding: '0.4rem',
-                textDecoration: 'underline',
+                padding: '0.65rem 1rem',
+                marginTop: showQrSection ? '0.25rem' : '0.5rem',
+                textDecoration: showQrSection ? 'underline' : 'none',
               }}
             >
-              Cerrar Comprobante
+              {showQrSection ? 'Cerrar Comprobante' : 'Entendido, Cerrar Ventana'}
             </button>
           </div>
         </div>

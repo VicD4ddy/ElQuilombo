@@ -7,6 +7,9 @@ import { Track } from '../../types/track';
 import { PLAYLIST as INITIAL_PLAYLIST } from '../../data/playlist';
 import AdminTicketPreview from '../../components/admin/AdminTicketPreview';
 import { saveEventSettings, getEventSettings } from '../../lib/settings';
+import TicketQrModal from '../../components/modals/TicketQrModal';
+import { TicketOrder } from '../../types/ticket';
+import { MEME_STICKERS } from '../../data/memes';
 
 export default function OrganizadorPage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -14,6 +17,9 @@ export default function OrganizadorPage() {
   const [pinError, setPinError] = useState<string | null>(null);
 
   const [activeTab, setActiveTab] = useState<'metrics' | 'attendees' | 'ticket' | 'playlist'>('metrics');
+
+  // Selected reservation to generate and send QR ticket
+  const [selectedTicketOrder, setSelectedTicketOrder] = useState<TicketOrder | null>(null);
 
   // Event settings state
   const [settings, setSettings] = useState<EventSettings>(DEFAULT_EVENT_SETTINGS);
@@ -170,6 +176,44 @@ export default function OrganizadorPage() {
     } finally {
       setUpdatingId(null);
     }
+  };
+
+  const handleOpenTicketGenerator = async (reservation: any) => {
+    // Si aún no está aprobada, la marcamos como pagada en el sistema
+    if (!reservation.is_paid) {
+      await handleTogglePaid(reservation);
+    }
+
+    const selectedMeme =
+      MEME_STICKERS.find((m) => m.id === reservation.meme_sticker_used) ||
+      MEME_STICKERS[0];
+
+    const order: TicketOrder = {
+      tier: {
+        id: reservation.tier_id || 'general',
+        name: reservation.tier_name || 'Pase Preventa Oficial',
+        priceUSD: reservation.quantity ? Math.round(reservation.total_usd / reservation.quantity) : 10,
+        features: [],
+      },
+      quantity: reservation.quantity || 1,
+      buyerName: reservation.buyer_name || 'Asistente',
+      buyerDni: reservation.buyer_dni || '',
+      buyerPhone: reservation.buyer_phone || '',
+      buyerEmail: reservation.buyer_email || '',
+      paymentMethod: reservation.payment_method || 'Pago Móvil',
+      favoriteArtist: reservation.favorite_artist || '',
+      totalUSD: Number(reservation.total_usd || 0),
+      totalRefBs: Number(reservation.total_ref_bs || 0).toLocaleString('es-VE', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }),
+      ticketCode: reservation.ticket_code,
+      createdAt: reservation.created_at,
+      isPaid: true,
+      meme: selectedMeme,
+    };
+
+    setSelectedTicketOrder(order);
   };
 
   const handleExportCSV = () => {
@@ -1026,26 +1070,50 @@ export default function OrganizadorPage() {
                             </button>
                           </td>
                           <td style={{ padding: '0.85rem 1rem' }}>
-                            <a
-                              href={waLink}
-                              target="_blank"
-                              rel="noreferrer"
-                              style={{
-                                background: 'rgba(37, 211, 102, 0.15)',
-                                border: '1px solid #25d366',
-                                color: '#25d366',
-                                borderRadius: '6px',
-                                padding: '0.35rem 0.65rem',
-                                fontSize: '0.74rem',
-                                textDecoration: 'none',
-                                fontWeight: 700,
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '0.3rem',
-                              }}
-                            >
-                              💬 WhatsApp
-                            </a>
+                            <div style={{ display: 'flex', gap: '0.45rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                              <button
+                                type="button"
+                                onClick={() => handleOpenTicketGenerator(r)}
+                                title="Generar imagen oficial con código QR y enviar al cliente por WhatsApp"
+                                style={{
+                                  background: 'linear-gradient(135deg, rgba(139, 23, 245, 0.3) 0%, rgba(0, 240, 255, 0.25) 100%)',
+                                  border: '1px solid var(--border-neon-cyan)',
+                                  color: '#fff',
+                                  borderRadius: '6px',
+                                  padding: '0.35rem 0.65rem',
+                                  fontSize: '0.74rem',
+                                  fontWeight: 800,
+                                  cursor: 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.35rem',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                <span>🎟️</span> Generar Boleto QR &amp; Enviar
+                              </button>
+                              <a
+                                href={waLink}
+                                target="_blank"
+                                rel="noreferrer"
+                                style={{
+                                  background: 'rgba(37, 211, 102, 0.15)',
+                                  border: '1px solid #25d366',
+                                  color: '#25d366',
+                                  borderRadius: '6px',
+                                  padding: '0.35rem 0.65rem',
+                                  fontSize: '0.74rem',
+                                  textDecoration: 'none',
+                                  fontWeight: 700,
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.3rem',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                💬 WhatsApp
+                              </a>
+                            </div>
                           </td>
                         </tr>
                       );
@@ -1561,6 +1629,18 @@ export default function OrganizadorPage() {
           </div>
         )}
       </main>
+
+      {/* Modal Generador de Boleto QR para el Organizador */}
+      {selectedTicketOrder && (
+        <TicketQrModal
+          order={selectedTicketOrder}
+          onClose={() => {
+            setSelectedTicketOrder(null);
+            fetchReservations();
+          }}
+          isOrganizerView={true}
+        />
+      )}
     </div>
   );
 }

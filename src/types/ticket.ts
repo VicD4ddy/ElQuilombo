@@ -24,5 +24,6 @@ export interface TicketOrder {
   createdAt?: string;
   meme?: MemeSticker;
   isExisting?: boolean;
+  isPaid?: boolean;
   noticeMessage?: string;
 }

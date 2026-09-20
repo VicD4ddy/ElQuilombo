@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
-import { supabase, isSupabaseConfigured } from '../../../../lib/supabase';
+import { supabase, supabaseAdmin, isSupabaseConfigured } from '../../../../lib/supabase';
 import { OrganizerMetrics } from '../../../../types/settings';
 
 export async function GET() {
-  if (!isSupabaseConfigured || !supabase) {
+  const client = supabaseAdmin || supabase;
+  if (!isSupabaseConfigured || !client) {
     return NextResponse.json({
       success: false,
       error: 'Supabase is not configured',
@@ -13,7 +14,7 @@ export async function GET() {
   }
 
   try {
-    const { data: reservations, error } = await supabase
+    const { data: reservations, error } = await client
       .from('reservations')
       .select('*')
       .order('created_at', { ascending: false });
@@ -91,7 +92,8 @@ export async function GET() {
 }
 
 export async function PATCH(request: Request) {
-  if (!isSupabaseConfigured || !supabase) {
+  const client = supabaseAdmin || supabase;
+  if (!isSupabaseConfigured || !client) {
     return NextResponse.json({
       success: false,
       error: 'Supabase is not configured',
@@ -109,7 +111,7 @@ export async function PATCH(request: Request) {
       }, { status: 400 });
     }
 
-    let query = supabase.from('reservations').update({ is_paid: Boolean(is_paid) });
+    let query = client.from('reservations').update({ is_paid: Boolean(is_paid) });
 
     if (id) {
       query = query.eq('id', id);
@@ -120,6 +122,11 @@ export async function PATCH(request: Request) {
     const { data, error } = await query.select().single();
 
     if (error) {
+      if (error.code === 'PGRST116') {
+        throw new Error(
+          'No se pudo actualizar la reserva en Supabase (0 filas afectadas). Esto ocurre porque falta la política RLS de UPDATE en la tabla reservations en Supabase. Ejecuta el script SQL en el SQL Editor de Supabase.'
+        );
+      }
       throw error;
     }
 

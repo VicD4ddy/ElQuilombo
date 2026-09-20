@@ -148,7 +148,7 @@ export default function OrganizadorPage() {
     }
   };
 
-  const handleTogglePaid = async (reservation: any) => {
+  const handleTogglePaid = async (reservation: any): Promise<boolean> => {
     const newPaidStatus = !reservation.is_paid;
     setUpdatingId(reservation.id);
 
@@ -170,9 +170,15 @@ export default function OrganizadorPage() {
         );
         // Refresh metrics
         fetchReservations();
+        return true;
+      } else {
+        alert('⚠️ Error al actualizar estado en Supabase:\n\n' + (data.error || 'Verifica los permisos RLS en Supabase'));
+        return false;
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error toggling is_paid:', err);
+      alert('⚠️ Error de conexión al actualizar en Supabase: ' + (err?.message || 'Error desconocido'));
+      return false;
     } finally {
       setUpdatingId(null);
     }

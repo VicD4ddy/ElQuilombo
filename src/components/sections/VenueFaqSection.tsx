@@ -21,7 +21,13 @@ export default function VenueFaqSection() {
             <div className="venue-card">
               <div className="venue-tag">📍 Ubicación Oficial</div>
               <h3 className="venue-name">Rock &amp; Riff</h3>
-              <p className="venue-address">Antiguo Óleo Gastrobar • Urb. La Viña, Valencia, Estado Carabobo, Venezuela.</p>
+              <p className="venue-address">
+                Antiguo Óleo Gastrobar • Urb. La Viña, Valencia, Estado Carabobo.
+                <br />
+                <span style={{ fontSize: '0.78rem', color: '#ffd600', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.45rem' }}>
+                  ℹ️ Nota: En Google Maps figura aún como &ldquo;Óleo Gastrobar&rdquo;
+                </span>
+              </p>
 
               <div style={{ margin: '0.75rem 0 1.25rem' }}>
                 <a
@@ -63,7 +69,7 @@ export default function VenueFaqSection() {
               </ul>
 
               <a
-                href="https://maps.google.com/?q=Rock+and+Riff+La+Viña+Valencia+Venezuela"
+                href="https://maps.app.goo.gl/TVEdzrkQBRe8s6H59"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-maps"
@@ -75,11 +81,11 @@ export default function VenueFaqSection() {
 
             <div className="venue-map-frame">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.986795415712!2d-68.0125434!3d10.222384!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e804368142ff6c5%3A0x6b772099f6ec36e6!2sLa%20Vi%C3%B1a%2C%20Valencia%2C%20Carabobo!5e0!3m2!1ses!2sve!4v1700000000000!5m2!1ses!2sve"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1964.9!2d-68.0100133!3d10.2134622!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e80456bcc98cbdb%3A0x7681825935910fd6!2sOleo%20Gastrobar!5e0!3m2!1ses!2sve!4v1700000000000!5m2!1ses!2sve"
                 allowFullScreen={false}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                title="Mapa de Óleo Gastrobar, La Viña"
+                title="Mapa de ubicación Rock and Riff (Óleo Gastrobar, La Viña)"
               />
             </div>
           </div>

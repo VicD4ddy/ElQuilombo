@@ -168,9 +168,8 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
         <div className="pricing-grid">
           {/* General Pass */}
           <div
-            className={`ticket-card popular ${selectedTierId === 'general' ? 'selected' : ''}`}
+            className="ticket-card popular selected"
             data-tier="general"
-            onClick={() => setSelectedTierId('general')}
           >
             <div className="badge-popular" style={{ background: '#8b17f5' }}>🔥 PREVENTA OFICIAL (AHORRO $5)</div>
             <div className="ticket-header">
@@ -189,37 +188,18 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
                 </li>
               ))}
             </ul>
-            <button type="button" className="btn-select-tier">
-              {selectedTierId === 'general' ? '✓ Seleccionado' : 'Seleccionar Pase'}
-            </button>
-          </div>
-
-          {/* VIP Pass */}
-          <div
-            className={`ticket-card ${selectedTierId === 'vip' ? 'selected' : ''}`}
-            data-tier="vip"
-            onClick={() => setSelectedTierId('vip')}
-          >
-            <div className="badge-popular" style={{ background: '#4a0e80', border: '1px solid rgba(255, 255, 255, 0.2)' }}>⏳ A CONFIRMAR</div>
-            <div className="ticket-header">
-              <h3 className="ticket-name">{TICKET_TIERS.vip.name}</h3>
-              <div className="ticket-sub">⚡ Sujeto a disponibilidad del 2do piso</div>
-            </div>
-            <div className="ticket-price-box">
-              <span className="ticket-currency">$</span>
-              <span className="ticket-amount">{TICKET_TIERS.vip.priceUSD}</span>
-              <span className="ticket-period">USD</span>
-            </div>
-            <ul className="ticket-features">
-              {TICKET_TIERS.vip.features.map((feat, idx) => (
-                <li key={idx} className="ticket-feature-item">
-                  <span className="check">✓</span> <span>{feat}</span>
-                </li>
-              ))}
-            </ul>
-            <button type="button" className="btn-select-tier">
-              {selectedTierId === 'vip' ? '✓ Seleccionado' : 'Seleccionar Pase'}
-            </button>
+            <a
+              href="#reserva"
+              className="btn-select-tier"
+              style={{
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              ✓ Pase Seleccionado
+            </a>
           </div>
         </div>
 

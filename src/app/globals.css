@@ -1483,12 +1483,15 @@ body::before {
 }
 
 .pricing-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-  max-width: 820px;
+  display: flex;
+  justify-content: center;
+  max-width: 460px;
   margin-inline: auto;
   margin-bottom: 3.5rem;
+}
+
+.pricing-grid .ticket-card {
+  width: 100%;
 }
 
 .ticket-card {

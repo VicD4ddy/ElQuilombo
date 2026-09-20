@@ -420,7 +420,7 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
                   <span>⚡ Apartando Preventa...</span>
                 ) : (
                   <>
-                    <span>⚡ Apartar Preventa &amp; Coordinar con Belle Amar</span>
+                    <span>⚡ Apartar Preventa &amp; Coordinar con los Organizadores</span>
                     <span>→</span>
                   </>
                 )}

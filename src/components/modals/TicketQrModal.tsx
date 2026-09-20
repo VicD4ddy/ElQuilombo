@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { toPng } from 'html-to-image';
 import { TicketOrder } from '../../types/ticket';
-import { OFFICIAL_WHATSAPP_NUMBER, BELLE_AMAR_NAME, BELLE_AMAR_PHONE, BELLE_AMAR_PHONE_FORMATTED } from '../../data/ticketing';
+import { OFFICIAL_WHATSAPP_NUMBER, ORGANIZERS_NAME, ORGANIZERS_PHONE, ORGANIZERS_PHONE_FORMATTED } from '../../data/ticketing';
 import { MemeSticker, getRandomMemeSticker } from '../../data/memes';
 import { exportStoryVideo, exportStoryGif } from '../../lib/storyVideoExporter';
 
@@ -110,9 +110,9 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated, isOrgani
   const whatsappNumber = OFFICIAL_WHATSAPP_NUMBER;
   const memeText = `Sticker: ${currentMeme.name} ("${currentMeme.tagline}")`;
 
-  // Pre-filled WhatsApp message for Belle Amar (Payment Coordination & Approval)
-  const belleAmarMessage = `⚡ *RESERVA PREVENTA - EL QUILOMBO* 💜
-¡Hola Belle Amar! Acabo de apartar mi preventa en El Quilombo 🇦🇷🔥:
+  // Pre-filled WhatsApp message for Organizers (Payment Coordination & Approval)
+  const organizersMessage = `⚡ *RESERVA PREVENTA - EL QUILOMBO* 💜
+¡Hola organizadores de El Quilombo! Acabo de apartar mi preventa 🇦🇷🔥:
 
 🎫 *Código de Reserva:* #${currentOrder.ticketCode}
 👤 *Titular:* ${currentOrder.buyerName}
@@ -127,16 +127,16 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated, isOrgani
 
 Quiero coordinar el pago para que el equipo apruebe mi entrada y me envíe el boleto oficial con código QR. ¡Muchas gracias!`;
 
-  const waBelleUrl = `https://wa.me/${BELLE_AMAR_PHONE}?text=${encodeURIComponent(belleAmarMessage)}`;
-  const waBelleNativeUrl = `whatsapp://send?phone=${BELLE_AMAR_PHONE}&text=${encodeURIComponent(belleAmarMessage)}`;
+  const waOrganizersUrl = `https://wa.me/${ORGANIZERS_PHONE}?text=${encodeURIComponent(organizersMessage)}`;
+  const waOrganizersNativeUrl = `whatsapp://send?phone=${ORGANIZERS_PHONE}&text=${encodeURIComponent(organizersMessage)}`;
 
-  const handleWhatsappBelleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleWhatsappOrganizersClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (isMobile) {
       e.preventDefault();
-      window.location.href = waBelleNativeUrl;
+      window.location.href = waOrganizersNativeUrl;
       setTimeout(() => {
-        window.open(waBelleUrl, '_blank');
+        window.open(waOrganizersUrl, '_blank');
       }, 750);
     }
   };
@@ -467,7 +467,7 @@ Quiero coordinar el pago para que el equipo apruebe mi entrada y me envíe el bo
               </>
             )}
 
-            {/* Contacto Oficial de Belle Amar para Coordinación y Aprobación */}
+            {/* Contacto Oficial de los Organizadores para Coordinación y Aprobación */}
             {!showQrSection && (
               <div
                 style={{
@@ -486,24 +486,24 @@ Quiero coordinar el pago para que el equipo apruebe mi entrada y me envíe el bo
                   <span style={{ fontSize: '1.4rem' }}>💬</span>
                   <div style={{ textAlign: 'left' }}>
                     <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#ffffff', letterSpacing: '0.3px' }}>
-                      {BELLE_AMAR_NAME}
+                      {ORGANIZERS_NAME}
                     </div>
                     <div style={{ fontSize: '0.82rem', color: '#25d366', fontWeight: 800 }}>
-                      WhatsApp: {BELLE_AMAR_PHONE_FORMATTED}
+                      WhatsApp: {ORGANIZERS_PHONE_FORMATTED}
                     </div>
                   </div>
                 </div>
 
                 <p style={{ margin: 0, fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.45 }}>
-                  Para confirmar tu entrada y coordinar el pago, escribile directamente a <strong>Belle Amar</strong> por WhatsApp con los datos de tu reserva:
+                  Para confirmar tu entrada y coordinar el pago, escribile directamente a <strong>los organizadores</strong> por WhatsApp con los datos de tu reserva:
                 </p>
 
                 <a
-                  href={waBelleUrl}
+                  href={waOrganizersUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  id="btn-whatsapp-belle"
-                  onClick={handleWhatsappBelleClick}
+                  id="btn-whatsapp-organizers"
+                  onClick={handleWhatsappOrganizersClick}
                   style={{
                     width: '100%',
                     background: 'linear-gradient(135deg, #25d366 0%, #128c7e 100%)',
@@ -524,12 +524,12 @@ Quiero coordinar el pago para que el equipo apruebe mi entrada y me envíe el bo
                     transition: 'all 0.2s',
                   }}
                 >
-                  <span>💬 Escribir a Belle Amar ({BELLE_AMAR_PHONE_FORMATTED})</span>
+                  <span>💬 Escribir a los Organizadores ({ORGANIZERS_PHONE_FORMATTED})</span>
                   <span>→</span>
                 </a>
 
                 <span style={{ fontSize: '0.74rem', color: 'var(--text-subtle)', lineHeight: 1.4 }}>
-                  Posteriormente, Belle Amar o el equipo aprobará tu entrada desde el área de organizadores y se generará tu boleto oficial con código QR para enviártelo por WhatsApp.
+                  Posteriormente, los organizadores aprobarán tu entrada desde el área de administración y se generará tu boleto oficial con código QR para enviártelo por WhatsApp.
                 </span>
               </div>
             )}

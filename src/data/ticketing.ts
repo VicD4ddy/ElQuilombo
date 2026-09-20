@@ -1,9 +1,14 @@
 import { TicketTier } from '../types/ticket';
 
 export const OFFICIAL_WHATSAPP_NUMBER = '584265401385';
-export const BELLE_AMAR_NAME = 'Belle Amar';
-export const BELLE_AMAR_PHONE = '584265401385';
-export const BELLE_AMAR_PHONE_FORMATTED = '+58 426-5401385';
+export const ORGANIZERS_NAME = 'Los Organizadores';
+export const ORGANIZERS_PHONE = '584265401385';
+export const ORGANIZERS_PHONE_FORMATTED = '+58 426-5401385';
+
+// Compatibilidad
+export const BELLE_AMAR_NAME = ORGANIZERS_NAME;
+export const BELLE_AMAR_PHONE = ORGANIZERS_PHONE;
+export const BELLE_AMAR_PHONE_FORMATTED = ORGANIZERS_PHONE_FORMATTED;
 
 // Fallback de referencia en caso de fallo temporal de la API BCV
 export const REF_EXCHANGE_RATE = 847.44;

@@ -335,6 +335,9 @@ export default function OrganizadorPage() {
     return true;
   });
 
+  const paidCount = reservations.filter((r) => r.is_paid).length;
+  const pendingCount = reservations.filter((r) => !r.is_paid).length;
+
   // -------------------------------------------------------------
   // PIN LOGIN SCREEN
   // -------------------------------------------------------------
@@ -494,193 +497,94 @@ export default function OrganizadorPage() {
       }}
     >
       {/* Top Admin Header */}
-      <header
-        style={{
-          background: 'rgba(15, 12, 28, 0.95)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
-          backdropFilter: 'blur(12px)',
-        }}
-      >
-        <div
-          className="container"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '0.85rem 1.25rem',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <Link href="/">
+      <header className="organizer-header-responsive">
+        <div className="organizer-header-top">
+          <div className="organizer-brand-group">
+            <Link href="/" title="Volver a la portada">
               <img
                 src="/assets/img/el-quilombo-logo.png"
                 alt="El Quilombo"
-                style={{ width: '90px', display: 'block' }}
+                className="organizer-brand-logo"
               />
             </Link>
-            <span
-              style={{
-                background: 'rgba(168, 85, 247, 0.15)',
-                border: '1px solid var(--border-neon-purple)',
-                color: 'var(--neon-purple-light)',
-                padding: '0.25rem 0.65rem',
-                borderRadius: 'var(--radius-pill)',
-                fontSize: '0.72rem',
-                fontWeight: 800,
-                textTransform: 'uppercase',
-              }}
-            >
+            <span className="organizer-badge-tag">
               Panel Organizador
             </span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div className="organizer-header-actions">
             <Link
               href="/"
               target="_blank"
-              style={{
-                fontSize: '0.82rem',
-                color: 'var(--neon-cyan)',
-                fontWeight: 700,
-                textDecoration: 'none',
-              }}
+              className="organizer-action-link-web"
+              title="Abrir web pública en nueva pestaña"
             >
-              🌐 Ver Web en Vivo ↗
+              <span>🌐</span> <span>Ver Web ↗</span>
             </Link>
             <button
               type="button"
               onClick={handleLogout}
-              style={{
-                background: 'rgba(255, 255, 255, 0.06)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                borderRadius: 'var(--radius-pill)',
-                color: 'var(--text-subtle)',
-                fontSize: '0.78rem',
-                padding: '0.35rem 0.75rem',
-                cursor: 'pointer',
-              }}
+              className="organizer-action-btn-logout"
+              title="Cerrar sesión de organizador"
             >
-              Cerrar Sesión
+              Salir
             </button>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div
-          className="container"
-          style={{
-            display: 'flex',
-            gap: '0.5rem',
-            padding: '0.25rem 1.25rem 0.5rem',
-            overflowX: 'auto',
-          }}
-        >
+        <div className="organizer-tabs-bar">
           <button
             type="button"
             id="tab-btn-metrics"
             onClick={() => setActiveTab('metrics')}
-            style={{
-              background: activeTab === 'metrics' ? 'var(--neon-purple)' : 'transparent',
-              color: activeTab === 'metrics' ? '#fff' : 'var(--text-subtle)',
-              border: 'none',
-              borderRadius: 'var(--radius-pill)',
-              padding: '0.45rem 1rem',
-              fontSize: '0.82rem',
-              fontWeight: 800,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              whiteSpace: 'nowrap',
-            }}
+            className={`organizer-tab-btn ${activeTab === 'metrics' ? 'active' : ''}`}
           >
-            <span>📊</span> Métricas en Vivo
+            <span>📊</span> Métricas
           </button>
 
           <button
             type="button"
             id="tab-btn-attendees"
             onClick={() => setActiveTab('attendees')}
-            style={{
-              background: activeTab === 'attendees' ? 'var(--neon-purple)' : 'transparent',
-              color: activeTab === 'attendees' ? '#fff' : 'var(--text-subtle)',
-              border: 'none',
-              borderRadius: 'var(--radius-pill)',
-              padding: '0.45rem 1rem',
-              fontSize: '0.82rem',
-              fontWeight: 800,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              whiteSpace: 'nowrap',
-            }}
+            className={`organizer-tab-btn ${activeTab === 'attendees' ? 'active' : ''}`}
           >
-            <span>👥</span> Asistentes & Conciliación ({reservations.length})
+            <span>👥</span> Asistentes ({reservations.length})
           </button>
 
           <button
             type="button"
             id="tab-btn-ticket"
             onClick={() => setActiveTab('ticket')}
-            style={{
-              background: activeTab === 'ticket' ? 'var(--neon-purple)' : 'transparent',
-              color: activeTab === 'ticket' ? '#fff' : 'var(--text-subtle)',
-              border: 'none',
-              borderRadius: 'var(--radius-pill)',
-              padding: '0.45rem 1rem',
-              fontSize: '0.82rem',
-              fontWeight: 800,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              whiteSpace: 'nowrap',
-            }}
+            className={`organizer-tab-btn ${activeTab === 'ticket' ? 'active' : ''}`}
           >
-            <span>🎟️</span> Personalizar Boleto
+            <span>🎟️</span> Boleto Digital
           </button>
 
           <button
             type="button"
             id="tab-btn-playlist"
             onClick={() => setActiveTab('playlist')}
-            style={{
-              background: activeTab === 'playlist' ? 'var(--neon-purple)' : 'transparent',
-              color: activeTab === 'playlist' ? '#fff' : 'var(--text-subtle)',
-              border: 'none',
-              borderRadius: 'var(--radius-pill)',
-              padding: '0.45rem 1rem',
-              fontSize: '0.82rem',
-              fontWeight: 800,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              whiteSpace: 'nowrap',
-            }}
+            className={`organizer-tab-btn ${activeTab === 'playlist' ? 'active' : ''}`}
           >
-            <span>🎵</span> Playlist «Quilombo Sound» ({customTracks.length + INITIAL_PLAYLIST.length})
+            <span>🎵</span> Playlist ({customTracks.length + INITIAL_PLAYLIST.length})
           </button>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main className="container" style={{ padding: '1.75rem 1.25rem' }}>
+      <main className="organizer-main-container">
         {/* ========================================================= */}
         {/* TAB 1: METRICS DASHBOARD                                  */}
         {/* ========================================================= */}
         {activeTab === 'metrics' && (
           <div>
-            <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ marginBottom: '1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
               <div>
-                <h2 style={{ fontFamily: 'var(--font-title)', fontSize: '1.4rem', fontWeight: 900, color: '#fff' }}>
-                  RESUMEN DE RECAUDACIÓN & AFORO
+                <h2 style={{ fontFamily: 'var(--font-title)', fontSize: '1.35rem', fontWeight: 900, color: '#fff' }}>
+                  RESUMEN DE RECAUDACIÓN &amp; AFORO
                 </h2>
-                <p style={{ color: 'var(--text-subtle)', fontSize: '0.82rem' }}>
+                <p style={{ color: 'var(--text-subtle)', fontSize: '0.8rem' }}>
                   Datos en tiempo real sincronizados desde la base de datos Supabase.
                 </p>
               </div>
@@ -695,104 +599,97 @@ export default function OrganizadorPage() {
                   color: '#fff',
                   fontSize: '0.8rem',
                   fontWeight: 700,
-                  padding: '0.45rem 0.9rem',
+                  padding: '0.5rem 1rem',
                   cursor: 'pointer',
+                  minHeight: '40px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
                 }}
               >
                 {isLoadingReservations ? '🔄 Actualizando...' : '🔄 Refrescar'}
               </button>
             </div>
 
-            {/* Metric KPI Cards */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                gap: '1rem',
-                marginBottom: '2rem',
-              }}
-            >
+            {/* Metric KPI Cards Grid (Responsive 2x2 on Mobile, 4x1 on Desktop) */}
+            <div className="organizer-metrics-grid">
               {/* Total Revenue USD */}
               <div
+                className="organizer-kpi-card"
                 style={{
-                  background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(15, 12, 28, 0.8))',
+                  background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(15, 12, 28, 0.85))',
                   border: '1px solid var(--border-neon-cyan)',
-                  borderRadius: '16px',
-                  padding: '1.25rem',
                 }}
               >
-                <span style={{ fontSize: '0.74rem', color: 'var(--neon-cyan)', fontWeight: 800, textTransform: 'uppercase' }}>
+                <span className="organizer-kpi-title" style={{ color: 'var(--neon-cyan)' }}>
                   💰 Total Preventa (USD)
                 </span>
-                <div style={{ fontFamily: 'var(--font-title)', fontSize: '2rem', fontWeight: 900, color: '#fff', marginTop: '0.35rem' }}>
+                <div className="organizer-kpi-value">
                   ${metrics?.totalRevenueUSD || 0} USD
                 </div>
-                <span style={{ fontSize: '0.74rem', color: 'var(--text-subtle)' }}>
+                <span className="organizer-kpi-subtext">
                   Ref. Bs: {metrics ? metrics.totalRevenueBs.toLocaleString('es-VE', { minimumFractionDigits: 2 }) : '0,00'}
                 </span>
               </div>
 
               {/* Tickets Count */}
               <div
+                className="organizer-kpi-card"
                 style={{
-                  background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(15, 12, 28, 0.8))',
+                  background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.12), rgba(15, 12, 28, 0.85))',
                   border: '1px solid var(--border-neon-purple)',
-                  borderRadius: '16px',
-                  padding: '1.25rem',
                 }}
               >
-                <span style={{ fontSize: '0.74rem', color: 'var(--neon-purple-light)', fontWeight: 800, textTransform: 'uppercase' }}>
+                <span className="organizer-kpi-title" style={{ color: 'var(--neon-purple-light)' }}>
                   🎟️ Entradas Apartadas
                 </span>
-                <div style={{ fontFamily: 'var(--font-title)', fontSize: '2rem', fontWeight: 900, color: '#fff', marginTop: '0.35rem' }}>
+                <div className="organizer-kpi-value">
                   {metrics?.totalTicketsCount || 0}
                 </div>
-                <span style={{ fontSize: '0.74rem', color: 'var(--text-subtle)' }}>
+                <span className="organizer-kpi-subtext">
                   {metrics?.totalReservations || 0} órdenes registradas
                 </span>
               </div>
 
               {/* Paid Status */}
               <div
+                className="organizer-kpi-card"
                 style={{
-                  background: 'linear-gradient(135deg, rgba(37, 211, 102, 0.1), rgba(15, 12, 28, 0.8))',
-                  border: '1px solid rgba(37, 211, 102, 0.3)',
-                  borderRadius: '16px',
-                  padding: '1.25rem',
+                  background: 'linear-gradient(135deg, rgba(37, 211, 102, 0.12), rgba(15, 12, 28, 0.85))',
+                  border: '1px solid rgba(37, 211, 102, 0.35)',
                 }}
               >
-                <span style={{ fontSize: '0.74rem', color: '#25d366', fontWeight: 800, textTransform: 'uppercase' }}>
+                <span className="organizer-kpi-title" style={{ color: '#25d366' }}>
                   ✓ Pagadas vs. ⏳ Pendientes
                 </span>
-                <div style={{ fontFamily: 'var(--font-title)', fontSize: '1.7rem', fontWeight: 900, color: '#fff', marginTop: '0.35rem' }}>
+                <div className="organizer-kpi-value">
                   <span style={{ color: '#25d366' }}>{metrics?.paidReservationsCount || 0}</span>
-                  <span style={{ color: 'var(--text-subtle)', fontSize: '1.1rem' }}> / </span>
+                  <span style={{ color: 'var(--text-subtle)', fontSize: '1rem' }}> / </span>
                   <span style={{ color: '#ffd600' }}>{metrics?.pendingReservationsCount || 0}</span>
                 </div>
-                <span style={{ fontSize: '0.74rem', color: 'var(--text-subtle)' }}>
-                  Confirmar comprobantes por WhatsApp
+                <span className="organizer-kpi-subtext">
+                  WhatsApp Conciliación
                 </span>
               </div>
 
               {/* Aforo / Occupancy */}
               <div
+                className="organizer-kpi-card"
                 style={{
-                  background: 'linear-gradient(135deg, rgba(255, 0, 127, 0.1), rgba(15, 12, 28, 0.8))',
+                  background: 'linear-gradient(135deg, rgba(255, 0, 127, 0.12), rgba(15, 12, 28, 0.85))',
                   border: '1px solid var(--border-neon-pink)',
-                  borderRadius: '16px',
-                  padding: '1.25rem',
                 }}
               >
-                <span style={{ fontSize: '0.74rem', color: 'var(--neon-pink)', fontWeight: 800, textTransform: 'uppercase' }}>
-                  🔥 Aforo Rock & Riff
+                <span className="organizer-kpi-title" style={{ color: 'var(--neon-pink)' }}>
+                  🔥 Aforo Rock &amp; Riff
                 </span>
-                <div style={{ fontFamily: 'var(--font-title)', fontSize: '1.7rem', fontWeight: 900, color: '#fff', marginTop: '0.35rem' }}>
+                <div className="organizer-kpi-value">
                   {metrics?.occupancyPercentage || 0}%
                 </div>
-                <div style={{ width: '100%', height: '6px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '3px', marginTop: '0.5rem' }}>
+                <div style={{ width: '100%', height: '6px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '3px', marginTop: '0.45rem' }}>
                   <div
                     style={{
-                      width: `${metrics?.occupancyPercentage || 0}%`,
+                      width: `${Math.min(100, metrics?.occupancyPercentage || 0)}%`,
                       height: '100%',
                       background: 'var(--gradient-party)',
                       borderRadius: '3px',
@@ -909,51 +806,38 @@ export default function OrganizadorPage() {
               </div>
             </div>
 
-            {/* Filter Bar */}
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '0.75rem',
-                alignItems: 'center',
-                marginBottom: '1rem',
-                background: 'rgba(15, 12, 28, 0.8)',
-                padding: '0.75rem 1rem',
-                borderRadius: '12px',
-              }}
-            >
-              <input
-                type="text"
-                id="search-attendees-input"
-                placeholder="🔍 Buscar por nombre, cédula o código (#QLB...)"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                style={{
-                  flex: 1,
-                  minWidth: '240px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  borderRadius: '8px',
-                  padding: '0.55rem 0.85rem',
-                  color: '#fff',
-                  fontSize: '0.85rem',
-                  outline: 'none',
-                }}
-              />
+            {/* Filter Bar with iOS-friendly 16px search and count pills */}
+            <div className="organizer-filters-bar">
+              <div className="organizer-search-box">
+                <input
+                  type="text"
+                  id="search-attendees-input"
+                  placeholder="🔍 Buscar por nombre, cédula o código..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="organizer-search-input"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="organizer-search-clear-btn"
+                    title="Limpiar búsqueda"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
 
-              <div style={{ display: 'flex', gap: '0.35rem' }}>
+              <div className="organizer-filter-pills-row">
                 <button
                   type="button"
                   onClick={() => setStatusFilter('all')}
+                  className="organizer-filter-pill-btn"
                   style={{
-                    background: statusFilter === 'all' ? 'var(--neon-purple)' : 'rgba(255, 255, 255, 0.05)',
+                    background: statusFilter === 'all' ? 'var(--neon-purple)' : 'rgba(255, 255, 255, 0.06)',
                     color: '#fff',
-                    border: 'none',
-                    borderRadius: '6px',
-                    padding: '0.5rem 0.75rem',
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
+                    boxShadow: statusFilter === 'all' ? '0 0 12px rgba(168, 85, 247, 0.4)' : 'none',
                   }}
                 >
                   Todos ({reservations.length})
@@ -961,52 +845,37 @@ export default function OrganizadorPage() {
                 <button
                   type="button"
                   onClick={() => setStatusFilter('paid')}
+                  className="organizer-filter-pill-btn"
                   style={{
-                    background: statusFilter === 'paid' ? '#25d366' : 'rgba(255, 255, 255, 0.05)',
+                    background: statusFilter === 'paid' ? '#25d366' : 'rgba(255, 255, 255, 0.06)',
                     color: '#fff',
-                    border: 'none',
-                    borderRadius: '6px',
-                    padding: '0.5rem 0.75rem',
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
+                    boxShadow: statusFilter === 'paid' ? '0 0 12px rgba(37, 211, 102, 0.35)' : 'none',
                   }}
                 >
-                  ✓ Pagados
+                  ✓ Pagados ({paidCount})
                 </button>
                 <button
                   type="button"
                   onClick={() => setStatusFilter('pending')}
+                  className="organizer-filter-pill-btn"
                   style={{
-                    background: statusFilter === 'pending' ? '#ffd600' : 'rgba(255, 255, 255, 0.05)',
+                    background: statusFilter === 'pending' ? '#ffd600' : 'rgba(255, 255, 255, 0.06)',
                     color: statusFilter === 'pending' ? '#000' : '#fff',
-                    border: 'none',
-                    borderRadius: '6px',
-                    padding: '0.5rem 0.75rem',
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
+                    boxShadow: statusFilter === 'pending' ? '0 0 12px rgba(255, 214, 0, 0.35)' : 'none',
                   }}
                 >
-                  ⏳ Pendientes
+                  ⏳ Pendientes ({pendingCount})
                 </button>
               </div>
             </div>
 
-            {/* Table Container */}
-            <div
-              style={{
-                overflowX: 'auto',
-                background: 'rgba(15, 12, 28, 0.9)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: '16px',
-              }}
-            >
+            {/* Desktop View: Full Data Table (Screens >= 768px) */}
+            <div className="organizer-desktop-table-container">
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem', textAlign: 'left' }}>
                 <thead>
                   <tr style={{ background: 'rgba(255, 255, 255, 0.04)', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
                     <th style={{ padding: '0.85rem 1rem', color: 'var(--neon-cyan)', fontWeight: 800 }}>Código</th>
-                    <th style={{ padding: '0.85rem 1rem', color: '#fff', fontWeight: 800 }}>Titular & Cédula</th>
+                    <th style={{ padding: '0.85rem 1rem', color: '#fff', fontWeight: 800 }}>Titular &amp; Cédula</th>
                     <th style={{ padding: '0.85rem 1rem', color: '#fff', fontWeight: 800 }}>Entradas</th>
                     <th style={{ padding: '0.85rem 1rem', color: '#fff', fontWeight: 800 }}>Monto</th>
                     <th style={{ padding: '0.85rem 1rem', color: '#fff', fontWeight: 800 }}>Método</th>
@@ -1024,7 +893,7 @@ export default function OrganizadorPage() {
 
                       return (
                         <tr
-                          key={r.id}
+                          key={`desktop-${r.id}`}
                           style={{
                             borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
                             background: r.is_paid ? 'rgba(37, 211, 102, 0.03)' : 'transparent',
@@ -1120,13 +989,152 @@ export default function OrganizadorPage() {
                     })
                   ) : (
                     <tr>
-                      <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-subtle)' }}>
+                      <td colSpan={7} style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--text-subtle)' }}>
                         No se encontraron reservas con ese criterio de búsqueda.
                       </td>
                     </tr>
                   )}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile View: Ergonomic Concierge Cards (Screens < 768px) */}
+            <div className="organizer-mobile-cards-container">
+              {filteredReservations.length > 0 ? (
+                filteredReservations.map((r) => {
+                  const waCleanPhone = (r.buyer_phone || '').replace(/\D/g, '');
+                  const waLink = `https://wa.me/${waCleanPhone}?text=${encodeURIComponent(
+                    `¡Hola ${r.buyer_name}! Te escribimos del equipo de El Quilombo 🇦🇷🔥 con respecto a tu preventa #${r.ticket_code} ($${r.total_usd} USD).`
+                  )}`;
+
+                  return (
+                    <div
+                      key={`mobile-card-${r.id}`}
+                      className={`attendee-mobile-card ${r.is_paid ? 'paid' : 'pending'}`}
+                    >
+                      {/* Card Header: Ticket Code + Status Toggle */}
+                      <div className="attendee-mobile-card-header">
+                        <span className="attendee-mobile-ticket-code">
+                          #{r.ticket_code}
+                        </span>
+
+                        <button
+                          type="button"
+                          onClick={() => handleTogglePaid(r)}
+                          disabled={updatingId === r.id}
+                          className={`attendee-mobile-status-toggle ${r.is_paid ? 'paid' : 'pending'}`}
+                          title="Tocar para cambiar estado de pago"
+                        >
+                          {updatingId === r.id
+                            ? 'Guardando...'
+                            : r.is_paid
+                            ? '✓ PAGADO'
+                            : '⏳ PENDIENTE'}
+                        </button>
+                      </div>
+
+                      {/* Attendee Name */}
+                      <div className="attendee-mobile-buyer-name">{r.buyer_name}</div>
+
+                      {/* Meta: Cédula & Phone */}
+                      <div className="attendee-mobile-meta-row">
+                        {r.buyer_dni && (
+                          <span className="attendee-mobile-meta-item">
+                            🪪 {r.buyer_dni}
+                          </span>
+                        )}
+                        {r.buyer_phone && (
+                          <span className="attendee-mobile-meta-item">
+                            📱 {r.buyer_phone}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Details Grid: Quantity, Tier, Amount & Payment Method */}
+                      <div className="attendee-mobile-details-grid">
+                        <div>
+                          <div className="attendee-mobile-detail-label">Entradas</div>
+                          <div className="attendee-mobile-detail-value">
+                            {r.quantity}x {r.tier_name || 'Preventa'}
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="attendee-mobile-detail-label">Total USD</div>
+                          <div className="attendee-mobile-detail-value" style={{ color: 'var(--neon-cyan)' }}>
+                            ${r.total_usd} USD
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="attendee-mobile-detail-label">Método Pago</div>
+                          <div className="attendee-mobile-detail-value" style={{ fontSize: '0.8rem' }}>
+                            {r.payment_method || 'Pago Móvil'}
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="attendee-mobile-detail-label">Ref. Bs</div>
+                          <div className="attendee-mobile-detail-value" style={{ fontSize: '0.78rem', color: 'var(--text-subtle)' }}>
+                            Bs. {r.total_ref_bs || '0,00'}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Song Request if provided */}
+                      {r.favorite_artist && (
+                        <div className="attendee-mobile-song-box" title={`Tema pedido: ${r.favorite_artist}`}>
+                          <span>🎧</span>
+                          <span><strong>Tema pedido:</strong> {r.favorite_artist}</span>
+                        </div>
+                      )}
+
+                      {/* Action Buttons: Generate & Send QR + Direct WhatsApp */}
+                      <div className="attendee-mobile-actions-row">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenTicketGenerator(r)}
+                          className="attendee-mobile-btn-qr"
+                          title="Aprobar y generar imagen oficial con código QR para enviar al asistente"
+                        >
+                          <span>🎟️</span>
+                          <span>Generar Boleto QR</span>
+                        </button>
+
+                        <a
+                          href={waLink}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="attendee-mobile-btn-wa"
+                          title="Abrir chat directo de WhatsApp con el cliente"
+                        >
+                          <span>💬</span>
+                          <span>WhatsApp</span>
+                        </a>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div
+                  style={{
+                    textAlign: 'center',
+                    padding: '2.5rem 1rem',
+                    background: 'rgba(15, 12, 28, 0.8)',
+                    borderRadius: '16px',
+                    border: '1px solid rgba(255, 255, 255, 0.06)',
+                    color: 'var(--text-subtle)',
+                  }}
+                >
+                  <p style={{ fontSize: '1.4rem', marginBottom: '0.5rem' }}>🔍</p>
+                  <p style={{ fontSize: '0.92rem', color: '#fff', fontWeight: 700 }}>
+                    No se encontraron reservas
+                  </p>
+                  <p style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                    Probá cambiando el filtro o término de búsqueda.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         )}

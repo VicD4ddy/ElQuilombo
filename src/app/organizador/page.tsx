@@ -10,6 +10,7 @@ import { saveEventSettings, getEventSettings } from '../../lib/settings';
 import TicketQrModal from '../../components/modals/TicketQrModal';
 import { TicketOrder } from '../../types/ticket';
 import { MEME_STICKERS } from '../../data/memes';
+import { getWhatsappChatUrl } from '../../lib/whatsapp';
 
 export default function OrganizadorPage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -892,10 +893,10 @@ export default function OrganizadorPage() {
                 <tbody>
                   {filteredReservations.length > 0 ? (
                     filteredReservations.map((r) => {
-                      const waCleanPhone = (r.buyer_phone || '').replace(/\D/g, '');
-                      const waLink = `https://wa.me/${waCleanPhone}?text=${encodeURIComponent(
+                      const waLink = getWhatsappChatUrl(
+                        r.buyer_phone,
                         `¡Hola ${r.buyer_name}! Te escribimos del equipo de El Quilombo 🇦🇷🔥 con respecto a tu preventa #${r.ticket_code} ($${r.total_usd} USD).`
-                      )}`;
+                      );
 
                       return (
                         <tr
@@ -1008,10 +1009,10 @@ export default function OrganizadorPage() {
             <div className="organizer-mobile-cards-container">
               {filteredReservations.length > 0 ? (
                 filteredReservations.map((r) => {
-                  const waCleanPhone = (r.buyer_phone || '').replace(/\D/g, '');
-                  const waLink = `https://wa.me/${waCleanPhone}?text=${encodeURIComponent(
+                  const waLink = getWhatsappChatUrl(
+                    r.buyer_phone,
                     `¡Hola ${r.buyer_name}! Te escribimos del equipo de El Quilombo 🇦🇷🔥 con respecto a tu preventa #${r.ticket_code} ($${r.total_usd} USD).`
-                  )}`;
+                  );
 
                   return (
                     <div

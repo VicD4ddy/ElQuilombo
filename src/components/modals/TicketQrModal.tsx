@@ -6,6 +6,7 @@ import { TicketOrder } from '../../types/ticket';
 import { OFFICIAL_WHATSAPP_NUMBER, ORGANIZERS_NAME, ORGANIZERS_PHONE, ORGANIZERS_PHONE_FORMATTED } from '../../data/ticketing';
 import { MemeSticker, getRandomMemeSticker } from '../../data/memes';
 import { exportStoryVideo, exportStoryGif } from '../../lib/storyVideoExporter';
+import { formatWhatsappPhone, getWhatsappChatUrl } from '../../lib/whatsapp';
 
 interface TicketQrModalProps {
   order: TicketOrder | null;
@@ -127,22 +128,14 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated, isOrgani
 
 Quiero coordinar el pago para que el equipo apruebe mi entrada y me envíe el boleto oficial con código QR. ¡Muchas gracias!`;
 
-  const waOrganizersUrl = `https://wa.me/${ORGANIZERS_PHONE}?text=${encodeURIComponent(organizersMessage)}`;
-  const waOrganizersNativeUrl = `whatsapp://send?phone=${ORGANIZERS_PHONE}&text=${encodeURIComponent(organizersMessage)}`;
+  const waOrganizersUrl = getWhatsappChatUrl(ORGANIZERS_PHONE, organizersMessage);
 
   const handleWhatsappOrganizersClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if (isMobile) {
-      e.preventDefault();
-      window.location.href = waOrganizersNativeUrl;
-      setTimeout(() => {
-        window.open(waOrganizersUrl, '_blank');
-      }, 750);
-    }
+    // Permite navegación nativa universal hacia WhatsApp
   };
 
-  const buyerCleanPhone = (currentOrder.buyerPhone || '').replace(/\D/g, '');
-  const targetPhone = isOrganizerView ? buyerCleanPhone : whatsappNumber;
+  const buyerFormattedPhone = formatWhatsappPhone(currentOrder.buyerPhone);
+  const targetPhone = isOrganizerView ? buyerFormattedPhone : formatWhatsappPhone(whatsappNumber);
 
   const waApprovedOrganizerMessage = `🎉 *¡TU ENTRADA HA SIDO APROBADA! - EL QUILOMBO* 🇦🇷🔥
 ¡Hola ${currentOrder.buyerName}! Tu preventa ha sido validada y aprobada por el equipo de El Quilombo 💜
@@ -173,17 +166,13 @@ Quiero coordinar el pago para que el equipo apruebe mi entrada y me envíe el bo
 ¿Me podrían facilitar los datos para concretar el pago? ¡Nos vemos en Rock & Riff! 🇦🇷🔥`;
 
   const waMessage = isOrganizerView ? waApprovedOrganizerMessage : waClientMessage;
-  const waWebUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(waMessage)}`;
-  const waNativeUrl = `whatsapp://send?phone=${targetPhone}&text=${encodeURIComponent(waMessage)}`;
+  const waWebUrl = getWhatsappChatUrl(targetPhone, waMessage);
 
   const handleWhatsappClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if (isMobile) {
+    if (!targetPhone) {
       e.preventDefault();
-      window.location.href = waNativeUrl;
-      setTimeout(() => {
-        window.open(waWebUrl, '_blank');
-      }, 750);
+      alert('⚠️ No se encontró un número de teléfono válido para este asistente.');
+      return;
     }
   };
 

@@ -270,6 +270,331 @@ Quiero coordinar el pago para que el equipo apruebe mi entrada y me envíe el bo
     }
   };
 
+  // -------------------------------------------------------------
+  // ORGANIZER QUICK QR PASS VIEW
+  // Muestra únicamente la sección del código QR mejorada con
+  // botones de Enviar por WhatsApp y Descargar Imagen (PNG)
+  // -------------------------------------------------------------
+  if (isOrganizerView) {
+    return (
+      <div
+        className="ticket-dialog-wrapper"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '1rem',
+          overflowY: 'auto',
+        }}
+      >
+        {/* Dark Blur Backdrop */}
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(6, 5, 10, 0.92)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            zIndex: 1,
+          }}
+          onClick={onClose}
+        />
+
+        {/* Organizer Ticket Modal Dialog */}
+        <dialog
+          className="ticket-dialog"
+          open
+          style={{
+            position: 'relative',
+            zIndex: 2,
+            margin: 'auto',
+            border: 'none',
+            background: 'transparent',
+            padding: 0,
+            maxWidth: '460px',
+            width: '100%',
+          }}
+        >
+          {/* Official Pass Card To Export (Attached to ticketRef) */}
+          <div
+            ref={ticketRef}
+            style={{
+              background: 'linear-gradient(145deg, #181232 0%, #0c0a18 100%)',
+              border: '1px solid rgba(0, 240, 255, 0.45)',
+              borderRadius: '24px',
+              padding: '1.5rem',
+              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.85), 0 0 35px rgba(0, 240, 255, 0.2)',
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            {/* Top Pass Brand & Status */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingBottom: '0.85rem',
+                borderBottom: '1px dashed rgba(255, 255, 255, 0.15)',
+                marginBottom: '1.25rem',
+              }}
+            >
+              <img
+                src="/assets/img/el-quilombo-logo.png"
+                alt="El Quilombo"
+                style={{ width: '85px', height: 'auto', display: 'block' }}
+              />
+              <span
+                style={{
+                  background: 'rgba(37, 211, 102, 0.15)',
+                  border: '1px solid #25d366',
+                  color: '#25d366',
+                  padding: '0.25rem 0.65rem',
+                  borderRadius: 'var(--radius-pill)',
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  letterSpacing: '0.5px',
+                  textTransform: 'uppercase',
+                }}
+              >
+                ✓ Pase Oficial Aprobado
+              </span>
+            </div>
+
+            {/* QR Section (Mejorada & Compacta) */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.03)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '18px',
+                padding: '1.15rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '1.1rem',
+                marginBottom: '1.15rem',
+              }}
+            >
+              {/* QR Canvas Box */}
+              <div
+                style={{
+                  background: '#ffffff',
+                  padding: '8px',
+                  borderRadius: '14px',
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.6)',
+                  flexShrink: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <canvas
+                  ref={canvasRef}
+                  id="ticket-qr-canvas"
+                  style={{ width: '110px', height: '110px', display: 'block' }}
+                />
+              </div>
+
+              {/* Code and Event Details */}
+              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <span
+                  style={{
+                    fontSize: '0.68rem',
+                    color: 'var(--text-subtle)',
+                    textTransform: 'uppercase',
+                    fontWeight: 800,
+                    letterSpacing: '0.5px',
+                  }}
+                >
+                  CÓDIGO ÚNICO DE RESERVA
+                </span>
+                <span
+                  style={{
+                    fontFamily: 'monospace',
+                    fontSize: '1.35rem',
+                    fontWeight: 900,
+                    color: '#ffd600',
+                    letterSpacing: '1px',
+                    lineHeight: 1.15,
+                  }}
+                >
+                  #{currentOrder.ticketCode}
+                </span>
+                <div style={{ fontSize: '0.74rem', color: '#cbd5e1', lineHeight: 1.35, marginTop: '0.2rem' }}>
+                  Mostrá este código por WhatsApp o en la entrada de <strong>Rock &amp; Riff</strong>
+                </div>
+              </div>
+            </div>
+
+            {/* Attendee Info Grid */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '0.65rem',
+                background: 'rgba(255, 255, 255, 0.03)',
+                border: '1px solid rgba(255, 255, 255, 0.06)',
+                borderRadius: '12px',
+                padding: '0.85rem 1rem',
+                marginBottom: '0.5rem',
+              }}
+            >
+              <div>
+                <div style={{ fontSize: '0.68rem', color: 'var(--text-subtle)', textTransform: 'uppercase', fontWeight: 700 }}>
+                  Titular
+                </div>
+                <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#ffffff' }}>
+                  {currentOrder.buyerName}
+                </div>
+              </div>
+
+              <div>
+                <div style={{ fontSize: '0.68rem', color: 'var(--text-subtle)', textTransform: 'uppercase', fontWeight: 700 }}>
+                  Cédula / DNI
+                </div>
+                <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#ffffff' }}>
+                  {currentOrder.buyerDni || 'No especificada'}
+                </div>
+              </div>
+
+              <div>
+                <div style={{ fontSize: '0.68rem', color: 'var(--text-subtle)', textTransform: 'uppercase', fontWeight: 700 }}>
+                  Entradas
+                </div>
+                <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--neon-cyan)' }}>
+                  {currentOrder.quantity}x {currentOrder.tier.name}
+                </div>
+              </div>
+
+              <div>
+                <div style={{ fontSize: '0.68rem', color: 'var(--text-subtle)', textTransform: 'uppercase', fontWeight: 700 }}>
+                  Fecha &amp; Lugar
+                </div>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#cbd5e1' }}>
+                  09 OCT • Rock &amp; Riff
+                </div>
+              </div>
+            </div>
+
+            {/* Event Branding Watermark */}
+            <div
+              style={{
+                textAlign: 'center',
+                fontSize: '0.7rem',
+                color: 'var(--text-subtle)',
+                marginTop: '0.65rem',
+              }}
+            >
+              Verificado por el Equipo Oficial de El Quilombo 🇦🇷🔥
+            </div>
+          </div>
+
+          {/* Action Buttons (Outside ticketRef so they are NOT in the exported PNG) */}
+          <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+            {exportNotice && (
+              <div
+                style={{
+                  fontSize: '0.82rem',
+                  color: '#ffd600',
+                  textAlign: 'center',
+                  fontWeight: 700,
+                  background: 'rgba(255, 214, 0, 0.1)',
+                  padding: '0.5rem',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 214, 0, 0.25)',
+                }}
+              >
+                {exportNotice}
+              </div>
+            )}
+
+            {/* 1. Send via WhatsApp to Attendee */}
+            <a
+              href={waWebUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={handleWhatsappClick}
+              id="btn-organizer-send-whatsapp"
+              style={{
+                width: '100%',
+                background: 'linear-gradient(135deg, #25d366 0%, #128c7e 100%)',
+                border: 'none',
+                color: '#ffffff',
+                fontFamily: 'var(--font-title)',
+                fontWeight: 900,
+                fontSize: '0.95rem',
+                padding: '0.85rem 1rem',
+                borderRadius: 'var(--radius-pill)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                textDecoration: 'none',
+                boxShadow: '0 4px 18px rgba(37, 211, 102, 0.35)',
+                minHeight: '48px',
+                transition: 'transform 0.15s ease',
+              }}
+            >
+              <span>💬 Enviar Boleto por WhatsApp a {currentOrder.buyerName}</span>
+              <span>→</span>
+            </a>
+
+            {/* 2. Download Image (PNG) */}
+            <button
+              type="button"
+              id="btn-download-organizer-ticket-png"
+              onClick={handleExportPng}
+              disabled={isExportingPng}
+              style={{
+                width: '100%',
+                background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.85) 0%, rgba(0, 240, 255, 0.85) 100%)',
+                border: '1px solid var(--border-neon-cyan)',
+                color: '#ffffff',
+                fontFamily: 'var(--font-title)',
+                fontWeight: 800,
+                fontSize: '0.92rem',
+                padding: '0.85rem 1rem',
+                borderRadius: 'var(--radius-pill)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.45rem',
+                minHeight: '48px',
+                boxShadow: '0 4px 16px rgba(0, 240, 255, 0.25)',
+              }}
+            >
+              <span>📸</span>
+              <span>{isExportingPng ? 'Generando Imagen PNG...' : 'Descargar Imagen'}</span>
+            </button>
+
+            {/* 3. Close Modal */}
+            <button
+              type="button"
+              id="btn-close-organizer-qr-modal"
+              onClick={onClose}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-subtle)',
+                fontSize: '0.82rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                padding: '0.5rem',
+                textAlign: 'center',
+                textDecoration: 'underline',
+              }}
+            >
+              Cerrar Comprobante
+            </button>
+          </div>
+        </dialog>
+      </div>
+    );
+  }
 
   return (
     <div

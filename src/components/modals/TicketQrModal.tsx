@@ -325,39 +325,31 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated }: Ticket
                 alt="El Quilombo"
                 className="ticket-pass-logo"
               />
-              <div style={{ fontSize: '0.72rem', opacity: 0.95, fontWeight: 700, letterSpacing: '0.5px' }}>
-                FIESTA ARGENTINA
-              </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <div className="ticket-pass-badge">
-                {currentOrder.isExisting ? 'PRE-RESERVA ACTIVA' : '¡RESERVA CONFIRMADA!'}
-              </div>
-              <button
-                type="button"
-                id="btn-close-ticket-top"
-                aria-label="Cerrar boleto"
-                onClick={onClose}
-                style={{
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  borderRadius: '50%',
-                  width: '32px',
-                  height: '32px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#fff',
-                  fontSize: '1rem',
-                  cursor: 'pointer',
-                  padding: 0,
-                  lineHeight: 1,
-                  transition: 'background 0.2s',
-                }}
-              >
-                ✕
-              </button>
-            </div>
+            <button
+              type="button"
+              id="btn-close-ticket-top"
+              aria-label="Cerrar boleto"
+              onClick={onClose}
+              style={{
+                background: 'rgba(255, 255, 255, 0.06)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                borderRadius: '50%',
+                width: '32px',
+                height: '32px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#fff',
+                fontSize: '0.85rem',
+                cursor: 'pointer',
+                padding: 0,
+                lineHeight: 1,
+                transition: 'all 0.2s',
+              }}
+            >
+              ✕
+            </button>
           </div>
 
           {/* Pass Body */}
@@ -375,12 +367,13 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated }: Ticket
               </span>
             </div>
 
-            {/* Meme Sticker Interactive Stamped on Ticket */}
+            {/* Meme Sticker Stamped on Ticket */}
             <div
               className={`meme-sticker-interactive-card ${currentMeme.animationClass}`}
               style={{
-                background: currentMeme.badgeBg,
-                border: `2px dashed ${currentMeme.borderColor}`,
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                borderLeft: `4px solid ${currentMeme.borderColor || 'var(--neon-purple)'}`,
               }}
             >
               <div className="meme-sticker-img-container">
@@ -391,36 +384,14 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated }: Ticket
                   loading="eager"
                 />
               </div>
-              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                <div style={{ fontWeight: 900, fontSize: '0.82rem', color: currentMeme.textColor, textTransform: 'uppercase', letterSpacing: '0.4px', lineHeight: 1.2 }}>
+              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                <div style={{ fontWeight: 800, fontSize: '0.84rem', color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.4px', lineHeight: 1.2 }}>
                   STICKER: {currentMeme.name}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: currentMeme.textColor, opacity: 0.95, fontWeight: 600, lineHeight: 1.25 }}>
+                <div style={{ fontSize: '0.74rem', color: '#94a3b8', fontStyle: 'italic', fontWeight: 500, lineHeight: 1.3 }}>
                   "{currentMeme.tagline}"
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={handleShuffleMeme}
-                title="Cambiar sticker aleatorio"
-                style={{
-                  background: 'rgba(0, 0, 0, 0.45)',
-                  border: '1px solid rgba(255, 255, 255, 0.35)',
-                  borderRadius: '20px',
-                  color: '#fff',
-                  fontSize: '0.7rem',
-                  fontWeight: 800,
-                  padding: '0.35rem 0.6rem',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.25rem',
-                  whiteSpace: 'nowrap',
-                  flexShrink: 0,
-                }}
-              >
-                🎲 Otro Meme
-              </button>
             </div>
 
             {/* Ticket Info Grid */}

@@ -53,12 +53,6 @@ export default function AdminTicketPreview({ settings }: AdminTicketPreviewProps
               alt="El Quilombo"
               className="ticket-pass-logo"
             />
-            <div style={{ fontSize: '0.72rem', opacity: 0.95, fontWeight: 700, letterSpacing: '0.5px' }}>
-              {settings.ticketSubtitle || 'FIESTA ARGENTINA'}
-            </div>
-          </div>
-          <div className="ticket-pass-badge">
-            ¡RESERVA CONFIRMADA!
           </div>
         </div>
 
@@ -67,22 +61,39 @@ export default function AdminTicketPreview({ settings }: AdminTicketPreviewProps
           {/* Sample Sticker */}
           <div
             style={{
-              background: 'linear-gradient(135deg, rgba(255, 0, 127, 0.2), rgba(168, 85, 247, 0.2))',
-              border: '2px dashed var(--neon-pink)',
+              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              borderLeft: '4px solid #ffd600',
               borderRadius: '12px',
-              padding: '0.65rem 0.9rem',
+              padding: '0.65rem 0.85rem',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.65rem',
+              gap: '0.75rem',
             }}
           >
-            <span style={{ fontSize: '1.6rem' }}>🐶🕺</span>
+            <div
+              style={{
+                width: '52px',
+                height: '52px',
+                minWidth: '52px',
+                borderRadius: '10px',
+                overflow: 'hidden',
+                background: '#000',
+                border: '1.5px solid rgba(255, 255, 255, 0.3)',
+              }}
+            >
+              <img
+                src="/assets/img/memes/perrito-ia.jpg"
+                alt="Perrito"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </div>
             <div>
-              <div style={{ fontWeight: 900, fontSize: '0.8rem', color: '#ff007f', textTransform: 'uppercase' }}>
-                STICKER OFICIAL: PERRITO BAILARÍN
+              <div style={{ fontWeight: 800, fontSize: '0.8rem', color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+                STICKER: PERRITO BAILARÍN CON IA
               </div>
-              <div style={{ fontSize: '0.72rem', color: '#ff77bc' }}>
-                &ldquo;Hoy se sale a romper la noche en Óleo&rdquo;
+              <div style={{ fontSize: '0.72rem', color: '#94a3b8', fontStyle: 'italic' }}>
+                &ldquo;Tirando unos pasos prohibidos pal 9 de Octubre&rdquo;
               </div>
             </div>
           </div>

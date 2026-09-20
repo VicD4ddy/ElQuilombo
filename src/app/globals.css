@@ -1868,16 +1868,17 @@ body::before {
 }
 
 .ticket-pass {
-  background: linear-gradient(165deg, #1d163a 0%, #0d0a1b 100%);
-  border: 1px solid var(--border-neon-cyan);
+  background: linear-gradient(165deg, #141022 0%, #090710 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.9), var(--glow-cyan-lg);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.95);
   position: relative;
 }
 
 .ticket-pass-header {
-  background: var(--grad-sunset);
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   padding: 1.25rem 1.75rem;
   display: flex;
   align-items: center;

@@ -383,12 +383,19 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated }: Ticket
                 border: `2px dashed ${currentMeme.borderColor}`,
               }}
             >
-              <span className="meme-sticker-emoji-badge">{currentMeme.emoji}</span>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 900, fontSize: '0.85rem', color: currentMeme.textColor, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  STICKER OFICIAL: {currentMeme.name}
+              <div className="meme-sticker-img-container">
+                <img
+                  src={currentMeme.imageUrl}
+                  alt={currentMeme.name}
+                  className="meme-sticker-img"
+                  loading="eager"
+                />
+              </div>
+              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <div style={{ fontWeight: 900, fontSize: '0.82rem', color: currentMeme.textColor, textTransform: 'uppercase', letterSpacing: '0.4px', lineHeight: 1.2 }}>
+                  STICKER: {currentMeme.name}
                 </div>
-                <div style={{ fontSize: '0.75rem', color: currentMeme.textColor, opacity: 0.95, fontWeight: 600 }}>
+                <div style={{ fontSize: '0.72rem', color: currentMeme.textColor, opacity: 0.95, fontWeight: 600, lineHeight: 1.25 }}>
                   "{currentMeme.tagline}"
                 </div>
               </div>
@@ -397,18 +404,19 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated }: Ticket
                 onClick={handleShuffleMeme}
                 title="Cambiar sticker aleatorio"
                 style={{
-                  background: 'rgba(0, 0, 0, 0.35)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  background: 'rgba(0, 0, 0, 0.45)',
+                  border: '1px solid rgba(255, 255, 255, 0.35)',
                   borderRadius: '20px',
                   color: '#fff',
-                  fontSize: '0.72rem',
-                  fontWeight: 700,
-                  padding: '0.35rem 0.65rem',
+                  fontSize: '0.7rem',
+                  fontWeight: 800,
+                  padding: '0.35rem 0.6rem',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.3rem',
+                  gap: '0.25rem',
                   whiteSpace: 'nowrap',
+                  flexShrink: 0,
                 }}
               >
                 🎲 Otro Meme

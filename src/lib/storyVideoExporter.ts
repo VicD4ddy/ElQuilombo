@@ -77,6 +77,22 @@ export async function exportStoryVideo(
       });
     }
 
+    // Preload Meme Image if available
+    let memeImg: HTMLImageElement | null = null;
+    if (meme.imageUrl) {
+      try {
+        memeImg = await new Promise<HTMLImageElement | null>((resolve) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => resolve(img);
+          img.onerror = () => resolve(null);
+          img.src = meme.imageUrl;
+        });
+      } catch {
+        memeImg = null;
+      }
+    }
+
     // 4. Setup MediaStream & MediaRecorder
     const videoStream = canvas.captureStream(30);
     const combinedTracks: MediaStreamTrack[] = [...videoStream.getVideoTracks()];
@@ -320,20 +336,50 @@ export async function exportStoryVideo(
       ctx.fill();
       ctx.stroke();
 
-      // Large Emoji
-      ctx.font = '48px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(meme.emoji, cardX + 75, stickerY + 70);
+      if (memeImg) {
+        const imgSize = 78;
+        const imgX = cardX + 45;
+        const imgY = stickerY + (110 - imgSize) / 2;
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(imgX, imgY, imgSize, imgSize, 14);
+        ctx.clip();
+        ctx.drawImage(memeImg, imgX, imgY, imgSize, imgSize);
+        ctx.restore();
 
-      // Meme Title & Tagline
-      ctx.textAlign = 'left';
-      ctx.font = '800 20px sans-serif';
-      ctx.fillStyle = '#ffffff';
-      ctx.fillText(meme.name, cardX + 130, stickerY + 45);
+        // Border around meme image
+        ctx.save();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(imgX, imgY, imgSize, imgSize, 14);
+        ctx.stroke();
+        ctx.restore();
 
-      ctx.font = '600 14px sans-serif';
-      ctx.fillStyle = '#cbd5e1';
-      ctx.fillText(meme.tagline, cardX + 130, stickerY + 75, cardW - 170);
+        // Meme Title & Tagline
+        ctx.textAlign = 'left';
+        ctx.font = '800 20px sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(`STICKER: ${meme.name}`, cardX + 140, stickerY + 45);
+
+        ctx.font = '600 14px sans-serif';
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillText(`"${meme.tagline}"`, cardX + 140, stickerY + 75, cardW - 175);
+      } else {
+        // Fallback Large Emoji
+        ctx.font = '48px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(meme.emoji, cardX + 75, stickerY + 70);
+
+        ctx.textAlign = 'left';
+        ctx.font = '800 20px sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(meme.name, cardX + 130, stickerY + 45);
+
+        ctx.font = '600 14px sans-serif';
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillText(meme.tagline, cardX + 130, stickerY + 75, cardW - 170);
+      }
       ctx.restore();
 
       // I. Footer Call-To-Action (FOMO)
@@ -460,6 +506,22 @@ export async function exportStoryGif(
     const ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('No se pudo crear el canvas para GIF');
 
+    // Preload meme image for GIF
+    let memeImg: HTMLImageElement | null = null;
+    if (meme.imageUrl) {
+      try {
+        memeImg = await new Promise<HTMLImageElement | null>((resolve) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => resolve(img);
+          img.onerror = () => resolve(null);
+          img.src = meme.imageUrl;
+        });
+      } catch {
+        memeImg = null;
+      }
+    }
+
     // Capture 12 loop frames
     const frames: string[] = [];
     const totalFrames = 12;
@@ -531,17 +593,46 @@ export async function exportStoryGif(
       ctx.fill();
       ctx.stroke();
 
-      ctx.font = '36px sans-serif';
-      ctx.fillText(meme.emoji, 85, stickerY + 52);
+      if (memeImg) {
+        const imgSize = 56;
+        const imgX = 58;
+        const imgY = stickerY + (80 - imgSize) / 2;
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(imgX, imgY, imgSize, imgSize, 10);
+        ctx.clip();
+        ctx.drawImage(memeImg, imgX, imgY, imgSize, imgSize);
+        ctx.restore();
 
-      ctx.textAlign = 'left';
-      ctx.font = '800 15px sans-serif';
-      ctx.fillStyle = '#ffffff';
-      ctx.fillText(meme.name, 125, stickerY + 35);
+        ctx.save();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(imgX, imgY, imgSize, imgSize, 10);
+        ctx.stroke();
+        ctx.restore();
 
-      ctx.font = '600 11px sans-serif';
-      ctx.fillStyle = '#cbd5e1';
-      ctx.fillText(meme.tagline, 125, stickerY + 58, width - 180);
+        ctx.textAlign = 'left';
+        ctx.font = '800 14px sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(meme.name, 126, stickerY + 34);
+
+        ctx.font = '600 11px sans-serif';
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillText(meme.tagline, 126, stickerY + 54, width - 180);
+      } else {
+        ctx.font = '36px sans-serif';
+        ctx.fillText(meme.emoji, 85, stickerY + 52);
+
+        ctx.textAlign = 'left';
+        ctx.font = '800 15px sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(meme.name, 125, stickerY + 35);
+
+        ctx.font = '600 11px sans-serif';
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillText(meme.tagline, 125, stickerY + 58, width - 180);
+      }
 
       // Footer
       ctx.textAlign = 'center';

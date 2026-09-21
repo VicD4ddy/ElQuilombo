@@ -261,7 +261,7 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
                 <span>→</span>
               </a>
               <a href="#lineup" className="btn-secondary">
-                <span>🎧 Ver Lineup (12 Artistas)</span>
+                <span>🎧 Ver Playlist</span>
               </a>
             </div>
 

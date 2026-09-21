@@ -22,7 +22,7 @@ export default function ArtistsCarousel() {
         <div className="section-header">
           <span className="section-pill">Talento & Sonido</span>
           <h2 className="section-title">
-            LOS ARTISTAS QUE <span className="text-gradient">VAN A DETONAR</span>
+            LA PLAYLIST QUE <span className="text-gradient">VA A DETONAR</span>
           </h2>
           <p className="section-subtitle">
             Lo más pesado del trap, hip-hop, R&B y cumbia villera de la escena argentina sonando en la pista de Rock & Riff (Antiguo Óleo).

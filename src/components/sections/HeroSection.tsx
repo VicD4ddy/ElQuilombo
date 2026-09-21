@@ -26,22 +26,12 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
         <div className="hero-grid">
           {/* Left: Hero Copy & Countdown */}
           <div className="hero-content">
-            <div className="hero-tags" style={{ gap: '0.75rem', flexWrap: 'wrap' }}>
-              <span className="badge-slanted-purple">
-                <span>VIERNES 09 OCT</span>
-              </span>
-              <span className="badge-slanted-purple">
-                <span>ROCK N&apos; RIFF • 8:00PM - 3:00AM</span>
-              </span>
-            </div>
-
-            <div className="hero-brand-logo-wrap" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.35rem' }}>
+            <div className="hero-brand-logo-wrap">
               <img
                 src="/assets/img/el-quilombo-logo.png"
                 alt="El Quilombo - Fiesta Temática Argentina"
                 className="hero-official-logo"
               />
-              <span className="badge-argento">(ARGENTO PARTY)</span>
             </div>
 
             <h1 className="hero-title" style={{ marginTop: '0.75rem' }}>

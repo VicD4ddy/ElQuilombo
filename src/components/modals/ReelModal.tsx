@@ -148,14 +148,16 @@ export default function ReelModal({ isOpen, onClose }: ReelModalProps) {
               <span>Cargando video viral de TikTok...</span>
             </div>
           )}
-          <iframe
-            id="fullscreen-reel-iframe"
-            src={TIKTOK_EMBED_URL}
-            allowFullScreen
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            title="TikTok Viral El Quilombo por @belleamar_"
-            onLoad={() => setIsLoading(false)}
-            style={{ border: 'none', width: '100%', height: '100%' }}
+          <video
+            id="fullscreen-reel-video"
+            src="/assets/video/tiktok-viral-quilombo.mp4"
+            poster="/assets/img/tiktok-cover.jpg"
+            controls
+            autoPlay
+            playsInline
+            onCanPlay={() => setIsLoading(false)}
+            className="fullscreen-reel-video"
+            style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#000' }}
           />
         </div>
 

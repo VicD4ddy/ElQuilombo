@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import CountdownTimer from './CountdownTimer';
+import { useAudioPlayer } from '../../context/AudioPlayerContext';
 
 // Real verified comments extracted directly from the viral TikTok video by @belleamar_ (ID: 7677661590254046482)
 const REAL_TIKTOK_COMMENTS = [
@@ -78,7 +79,16 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ onOpenReel }: HeroSectionProps) {
+  const { pauseAudio } = useAudioPlayer();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const [commentIndex, setCommentIndex] = useState(0);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [showControls, setShowControls] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -86,6 +96,83 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
     }, 3200);
     return () => clearInterval(timer);
   }, []);
+
+  const handleTogglePlay = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (video.paused) {
+      pauseAudio();
+      video.play().then(() => {
+        setIsVideoPlaying(true);
+      }).catch((err) => {
+        console.warn('Video play error:', err);
+      });
+    } else {
+      video.pause();
+      setIsVideoPlaying(false);
+    }
+  };
+
+  const handleVideoCardClick = () => {
+    handleTogglePlay();
+    setShowControls(true);
+    if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+    controlsTimeoutRef.current = setTimeout(() => {
+      setShowControls(false);
+    }, 3000);
+  };
+
+  const handleToggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = !video.muted;
+    setIsMuted(video.muted);
+  };
+
+  const handleTimeUpdate = () => {
+    if (videoRef.current) {
+      setCurrentTime(videoRef.current.currentTime);
+    }
+  };
+
+  const handleLoadedMetadata = () => {
+    if (videoRef.current) {
+      setDuration(videoRef.current.duration);
+    }
+  };
+
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    const video = videoRef.current;
+    if (!video) return;
+    const target = Number(e.target.value);
+    video.currentTime = target;
+    setCurrentTime(target);
+  };
+
+  const formatTime = (secs: number) => {
+    if (isNaN(secs) || secs < 0) return '0:00';
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+
+  const handleFullscreenClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const video = videoRef.current;
+    if (video) {
+      if ((video as any).webkitEnterFullscreen) {
+        (video as any).webkitEnterFullscreen();
+        return;
+      } else if (video.requestFullscreen) {
+        video.requestFullscreen().catch(() => onOpenReel());
+        return;
+      }
+    }
+    onOpenReel();
+  };
 
   const currentComment = REAL_TIKTOK_COMMENTS[commentIndex];
 
@@ -168,19 +255,133 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
               <div className="sticker-date">⚡ VIERNES 09 OCT 💜</div>
               <div className="sticker-limited">🚨 PREVENTA $10 (LIMITADAS)</div>
 
-              {/* Direct TikTok Video Player Showcase */}
-              <div className="visual-media is-video-active" id="hero-visual-media">
-                <div className="inline-tiktok-wrapper">
-                  <iframe
-                    id="hero-inline-tiktok"
-                    src="https://www.tiktok.com/embed/v2/7677661590254046482"
-                    allowFullScreen
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    title="TikTok Viral El Quilombo por @belleamar_"
-                    className="inline-tiktok-iframe"
-                    scrolling="no"
-                    style={{ width: '100%', height: '100%', border: 'none', overflow: 'hidden' }}
-                  />
+              {/* Direct Native TikTok Video Player Showcase */}
+              <div
+                className={`visual-media is-video-active ${isVideoPlaying ? 'video-playing' : ''}`}
+                id="hero-visual-media"
+                onClick={handleVideoCardClick}
+                onMouseEnter={() => setShowControls(true)}
+                onMouseLeave={() => isVideoPlaying && setShowControls(false)}
+              >
+                <video
+                  ref={videoRef}
+                  src="/assets/video/tiktok-viral-quilombo.mp4"
+                  poster="/assets/img/tiktok-cover.jpg"
+                  playsInline
+                  preload="metadata"
+                  className="hero-inline-video"
+                  onPlay={() => {
+                    setIsVideoPlaying(true);
+                    pauseAudio();
+                  }}
+                  onPause={() => setIsVideoPlaying(false)}
+                  onEnded={() => setIsVideoPlaying(false)}
+                  onTimeUpdate={handleTimeUpdate}
+                  onLoadedMetadata={handleLoadedMetadata}
+                />
+
+                {/* Top Badge Overlay */}
+                <div className="video-top-badges">
+                  <div className="tiktok-viral-tag">
+                    <span className="tiktok-logo-badge">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z" />
+                      </svg>
+                    </span>
+                    <span>@belleamar_</span>
+                    <span className="live-dot" />
+                    <span className="views-highlight">140K+ VISTAS</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="video-mute-quick-btn"
+                    onClick={handleToggleMute}
+                    aria-label={isMuted ? 'Activar sonido' : 'Silenciar'}
+                    title={isMuted ? 'Activar sonido' : 'Silenciar'}
+                  >
+                    {isMuted ? '🔇' : '🔊'}
+                  </button>
+                </div>
+
+                {/* Big Center Play Button Overlay (when paused) */}
+                {!isVideoPlaying && (
+                  <div className="video-play-center-overlay">
+                    <button
+                      type="button"
+                      className="btn-tiktok-inline-play"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleTogglePlay();
+                      }}
+                      aria-label="Reproducir video de TikTok"
+                    >
+                      <span className="inline-play-icon">▶</span>
+                      <div className="inline-play-info">
+                        <span className="inline-play-title">REPRODUCIR TIKTOK</span>
+                        <span className="inline-play-sub">Dale click para escuchar</span>
+                      </div>
+                    </button>
+                  </div>
+                )}
+
+                {/* Bottom Video Controls Bar (visible on hover, tap, or pause) */}
+                <div
+                  className={`video-bottom-controls-bar ${(!isVideoPlaying || showControls) ? 'visible' : ''}`}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    type="button"
+                    className="video-ctrl-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleTogglePlay();
+                    }}
+                    aria-label={isVideoPlaying ? 'Pausar' : 'Reproducir'}
+                  >
+                    {isVideoPlaying ? '⏸' : '▶'}
+                  </button>
+
+                  <span className="video-time-display">
+                    {formatTime(currentTime)} / {formatTime(duration)}
+                  </span>
+
+                  <div className="video-progress-wrap">
+                    <input
+                      type="range"
+                      min="0"
+                      max={duration || 79}
+                      step="0.1"
+                      value={currentTime}
+                      onChange={handleSeek}
+                      className="video-seek-slider"
+                      aria-label="Barra de progreso de video"
+                    />
+                    <div
+                      className="video-seek-fill"
+                      style={{ width: `${(currentTime / (duration || 79)) * 100}%` }}
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    className="video-ctrl-btn"
+                    onClick={handleToggleMute}
+                    aria-label={isMuted ? 'Activar sonido' : 'Silenciar'}
+                    title={isMuted ? 'Activar sonido' : 'Silenciar'}
+                  >
+                    {isMuted ? '🔇' : '🔊'}
+                  </button>
+
+                  <button
+                    type="button"
+                    className="video-ctrl-btn"
+                    onClick={handleFullscreenClick}
+                    aria-label="Pantalla completa"
+                    title="Pantalla completa"
+                  >
+                    ⛶
+                  </button>
                 </div>
               </div>
 
@@ -224,7 +425,7 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
                   <button
                     type="button"
                     className="btn-video-fullscreen-action"
-                    onClick={onOpenReel}
+                    onClick={handleFullscreenClick}
                     title="Ver en pantalla completa"
                   >
                     <span>⛶ Pantalla Completa</span>

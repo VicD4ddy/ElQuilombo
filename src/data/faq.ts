@@ -12,7 +12,7 @@ export const FAQS: FaqItem[] = [
   },
   {
     question: '¿Dónde y cuándo se realizará el evento?',
-    answer: 'El evento se llevará a cabo el Viernes 09 de Octubre en Rock & Riff (Antiguo Óleo Gastrobar, La Viña, Valencia). Las puertas abren a las 8:00 PM y cerramos a las 3:00 AM con After Party oficial confirmado.',
+    answer: 'El evento se llevará a cabo el Viernes 09 de Octubre en Rock & Riff (La Viña, Valencia). Las puertas abren a las 8:00 PM y cerramos a las 3:00 AM con After Party oficial confirmado.',
     defaultOpen: true,
   },
   {

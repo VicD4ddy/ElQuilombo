@@ -30,7 +30,7 @@ export interface OrganizerMetrics {
 
 export const DEFAULT_EVENT_SETTINGS: EventSettings = {
   eventDate: '09 OCT • 8:00 PM',
-  venueName: 'Rock & Riff (Antiguo Óleo)',
+  venueName: 'Rock & Riff',
   venueAddress: 'Urb. La Viña, Valencia, Carabobo - Venezuela',
   officialWhatsapp: '58412882460',
   organizerPin: '1984',

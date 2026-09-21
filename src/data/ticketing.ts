@@ -21,7 +21,7 @@ export const TICKET_TIERS: Record<'general' | 'vip', TicketTier> = {
     badge: 'Ahorro $5 (Limitadas)',
     description: 'Acceso general al evento en Rock & Riff + sticker pack exclusivo + trago de bienvenida',
     features: [
-      'Acceso general a Rock & Riff (Antiguo Óleo)',
+      'Acceso general a Rock & Riff',
       'Precio especial de preventa $10 (En puerta: $15)',
       '1 Trago de bienvenida de cortesía',
       'Sticker Pack oficial de El Quilombo',

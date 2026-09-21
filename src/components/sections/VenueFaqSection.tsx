@@ -19,7 +19,7 @@ export default function VenueFaqSection() {
               <div className="venue-tag">📍 Ubicación Oficial</div>
               <h3 className="venue-name">Rock &amp; Riff</h3>
               <p className="venue-address">
-                Antiguo Óleo Gastrobar • Urb. La Viña, Valencia, Estado Carabobo.
+                Urb. La Viña, Valencia, Estado Carabobo.
                 <br />
                 <span style={{ fontSize: '0.78rem', color: '#ffd600', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.45rem' }}>
                   ℹ️ Nota: En Google Maps figura aún como &ldquo;Óleo Gastrobar&rdquo;

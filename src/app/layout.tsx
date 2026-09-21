@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://elquilombo.club'),
   title: 'El Quilombo • La Fiesta Temática Argentina en Valencia | Preventa Oficial',
   description:
-    'Asegurá tu entrada para El Quilombo en Rock & Riff (Antiguo Óleo), La Viña, Valencia. Lo mejor del trap, freestyle y cultura urbana argentina. Viernes 09 de Octubre.',
+    'Asegurá tu entrada para El Quilombo en Rock & Riff, La Viña, Valencia. Lo mejor del trap, freestyle y cultura urbana argentina. Viernes 09 de Octubre.',
   keywords: [
     'El Quilombo',
     'Fiesta Argentina Valencia',

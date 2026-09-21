@@ -124,7 +124,7 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   className="footer-link"
                 >
-                  Venue: <span style={{ color: '#fff' }}>@rocknriffbar (Antiguo Óleo)</span>
+                  Venue: <span style={{ color: '#fff' }}>@rocknriffbar</span>
                 </a>
               </li>
               <li>

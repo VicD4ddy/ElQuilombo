@@ -25,7 +25,7 @@ export default function ArtistsCarousel() {
             LA PLAYLIST QUE <span className="text-gradient">VA A DETONAR</span>
           </h2>
           <p className="section-subtitle">
-            Lo más pesado del trap, hip-hop, R&B y cumbia villera de la escena argentina sonando en la pista de Rock & Riff (Antiguo Óleo).
+            Lo más pesado del trap, hip-hop, R&amp;B y cumbia villera de la escena argentina sonando en la pista de Rock &amp; Riff.
           </p>
         </div>
 

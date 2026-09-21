@@ -14,7 +14,14 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
   return (
     <section className="hero-section" id="hero">
       <div className="container">
-
+        {/* Top Presenter: Club Sonrisas */}
+        <div className="hero-sponsor-wrap">
+          <img
+            src="/assets/img/club-sonrisas.png"
+            alt="Club Sonrisas"
+            className="hero-sponsor-logo"
+          />
+        </div>
 
         <div className="hero-grid">
           {/* Left: Hero Copy & Countdown */}

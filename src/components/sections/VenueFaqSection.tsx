@@ -12,9 +12,6 @@ export default function VenueFaqSection() {
             <h2 className="section-title">
               EL LUGAR: <span className="text-gradient">ROCK &amp; RIFF</span>
             </h2>
-            <p className="section-subtitle">
-              Antiguo Óleo Gastrobar en La Viña, Valencia. Acondicionado especialmente con sonido de alta potencia, luces ultravioleta y ambientación urbana para El Quilombo.
-            </p>
           </div>
 
           <div className="venue-grid">

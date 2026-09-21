@@ -17,7 +17,8 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ onOpenReel }: HeroSectionProps) {
-  const { currentTrack, isPlaying, togglePlayPause } = useAudioPlayer();
+  const { currentTrack, isPlaying, togglePlayPause, pauseAudio } = useAudioPlayer();
+  const [activeTab, setActiveTab] = useState<'video' | 'flyer'>('video');
   const [commentIndex, setCommentIndex] = useState(0);
 
   useEffect(() => {
@@ -26,6 +27,13 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
     }, 3000);
     return () => clearInterval(timer);
   }, []);
+
+  const handleTabSwitch = (tab: 'video' | 'flyer') => {
+    setActiveTab(tab);
+    if (tab === 'video') {
+      pauseAudio();
+    }
+  };
 
   return (
     <section className="hero-section" id="hero">
@@ -106,60 +114,109 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
               <div className="sticker-date">⚡ VIERNES 09 OCT 💜</div>
               <div className="sticker-limited">🚨 PREVENTA $10 (LIMITADAS)</div>
 
+              {/* Mode Switcher: Video Directo vs. Afiche Oficial */}
+              <div className="hero-card-switcher">
+                <button
+                  type="button"
+                  className={`card-switch-btn ${activeTab === 'video' ? 'active' : ''}`}
+                  onClick={() => handleTabSwitch('video')}
+                  aria-label="Ver Video Viral de TikTok"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z" />
+                  </svg>
+                  <span>🎬 Video TikTok (140K)</span>
+                  <span className="live-dot" />
+                </button>
+
+                <button
+                  type="button"
+                  className={`card-switch-btn ${activeTab === 'flyer' ? 'active' : ''}`}
+                  onClick={() => handleTabSwitch('flyer')}
+                  aria-label="Ver Afiche Oficial"
+                >
+                  <span>🖼️ Afiche Oficial</span>
+                </button>
+              </div>
+
               {/* Media Showcase */}
               <div
-                className="visual-media"
+                className={`visual-media ${activeTab === 'video' ? 'is-video-active' : ''}`}
                 id="hero-visual-media"
-                onClick={(e) => {
-                  const target = e.target as HTMLElement;
-                  if (target.closest('#sound-widget')) return;
-                  onOpenReel();
-                }}
               >
-                <img
-                  src="/assets/img/flyer-quilombo.jpg"
-                  alt="El Quilombo - Afiche Oficial Argento Party"
-                  id="hero-reel-cover"
-                  style={{ objectPosition: 'top center' }}
-                />
-                <div className="crt-overlay" id="hero-crt-overlay" />
-
-                {/* TikTok Viral FOMO Centerpiece */}
-                <div className="tiktok-card-overlay">
-                  {/* Top Viral Badge */}
-                  <div className="tiktok-viral-tag">
-                    <span className="tiktok-logo-badge">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z" />
-                      </svg>
-                    </span>
-                    <span className="viral-text">VIRAL EN TIKTOK</span>
-                    <span className="live-dot" />
-                    <span className="views-highlight">140K+</span>
+                {activeTab === 'video' ? (
+                  <div className="inline-tiktok-wrapper">
+                    <iframe
+                      id="hero-inline-tiktok"
+                      src="https://www.tiktok.com/embed/v2/7677661590254046482"
+                      allowFullScreen
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      title="TikTok Viral El Quilombo por @belleamar_"
+                      className="inline-tiktok-iframe"
+                    />
                   </div>
+                ) : (
+                  <>
+                    <img
+                      src="/assets/img/flyer-quilombo.jpg"
+                      alt="El Quilombo - Afiche Oficial Argento Party"
+                      id="hero-reel-cover"
+                      style={{ objectPosition: 'top center' }}
+                    />
+                    <div className="crt-overlay" id="hero-crt-overlay" />
 
-                  {/* Play Button Overlay */}
-                  <button
-                    type="button"
-                    className="btn-tiktok-play"
-                    id="btn-tiktok-play"
-                    aria-label="Ver video viral en TikTok de El Quilombo"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onOpenReel();
-                    }}
-                  >
-                    <span className="tiktok-play-icon">▶</span>
-                    <div className="tiktok-play-text">
-                      <span className="tiktok-play-main">Ver Video Viral</span>
-                      <span className="tiktok-play-sub">@belleamar_ en TikTok</span>
+                    {/* Quick Button to switch back to Video */}
+                    <button
+                      type="button"
+                      className="btn-flyer-switch-to-video"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleTabSwitch('video');
+                      }}
+                    >
+                      <span className="tiktok-logo-badge">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z" />
+                        </svg>
+                      </span>
+                      <span>▶ Ver Video TikTok (140K)</span>
+                    </button>
+
+                    {/* Interactive Audio Equalizer Bar */}
+                    <div
+                      className="sound-widget"
+                      id="sound-widget"
+                      title="Click para pausar/reanudar música"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        togglePlayPause();
+                      }}
+                    >
+                      <div className="sound-info">
+                        <span className="sound-title">Vibra Quilombo Sound</span>
+                        <span className="sound-sub" id="sound-sub">
+                          Sonando: {currentTrack.artist} - {currentTrack.title}
+                        </span>
+                      </div>
+                      <div className="equalizer">
+                        <div className={`eq-bar ${isPlaying ? 'running' : 'paused'}`} />
+                        <div className={`eq-bar ${isPlaying ? 'running' : 'paused'}`} />
+                        <div className={`eq-bar ${isPlaying ? 'running' : 'paused'}`} />
+                        <div className={`eq-bar ${isPlaying ? 'running' : 'paused'}`} />
+                        <div className={`eq-bar ${isPlaying ? 'running' : 'paused'}`} />
+                      </div>
                     </div>
-                  </button>
+                  </>
+                )}
+              </div>
 
-                  {/* FOMO Numbers Strip */}
-                  <div className="tiktok-metrics-strip">
+              {/* FOMO Panel below video when in Video mode */}
+              {activeTab === 'video' && (
+                <div className="hero-inline-fomo-panel">
+                  {/* 4 Real Metrics */}
+                  <div className="tiktok-metrics-strip inline-fomo-metrics">
                     <div className="tiktok-stat">
-                      <span className="stat-val">140K</span>
+                      <span className="stat-val">140.0K</span>
                       <span className="stat-lbl">Vistas 👁️</span>
                     </div>
                     <div className="tiktok-stat-sep" />
@@ -172,6 +229,11 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
                       <span className="stat-val">842</span>
                       <span className="stat-lbl">Comments 💬</span>
                     </div>
+                    <div className="tiktok-stat-sep" />
+                    <div className="tiktok-stat">
+                      <span className="stat-val">4.1K</span>
+                      <span className="stat-lbl">Shares ↗</span>
+                    </div>
                   </div>
 
                   {/* Live Fan Reactions Pill */}
@@ -179,33 +241,29 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
                     <span className="reaction-user">{VIRAL_COMMENTS[commentIndex].user}:</span>
                     <span className="reaction-text">&ldquo;{VIRAL_COMMENTS[commentIndex].text}&rdquo;</span>
                   </div>
-                </div>
 
-                {/* Interactive Audio Equalizer Bar */}
-                <div
-                  className="sound-widget"
-                  id="sound-widget"
-                  title="Click para pausar/reanudar música"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    togglePlayPause();
-                  }}
-                >
-                  <div className="sound-info">
-                    <span className="sound-title">Vibra Quilombo Sound</span>
-                    <span className="sound-sub" id="sound-sub">
-                      Sonando: {currentTrack.artist} - {currentTrack.title}
-                    </span>
-                  </div>
-                  <div className="equalizer">
-                    <div className={`eq-bar ${isPlaying ? 'running' : 'paused'}`} />
-                    <div className={`eq-bar ${isPlaying ? 'running' : 'paused'}`} />
-                    <div className={`eq-bar ${isPlaying ? 'running' : 'paused'}`} />
-                    <div className={`eq-bar ${isPlaying ? 'running' : 'paused'}`} />
-                    <div className={`eq-bar ${isPlaying ? 'running' : 'paused'}`} />
+                  {/* Quick Action Bar */}
+                  <div className="hero-video-actions-bar">
+                    <button
+                      type="button"
+                      className="btn-video-fullscreen-action"
+                      onClick={onOpenReel}
+                      title="Ver en pantalla completa"
+                    >
+                      <span>⛶ Pantalla Completa</span>
+                    </button>
+                    <a
+                      href="https://www.tiktok.com/@belleamar_/video/7677661590254046482"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-video-tiktok-link"
+                      title="Abrir en TikTok"
+                    >
+                      <span>TikTok ↗</span>
+                    </a>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>

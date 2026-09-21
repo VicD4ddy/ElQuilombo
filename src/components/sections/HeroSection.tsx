@@ -406,14 +406,18 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
                   </div>
                 </div>
 
-                {/* Real Verified Comments Ticker */}
-                <div className="tiktok-live-reaction-pill" key={commentIndex}>
-                  <span className="reaction-user">{currentComment.user}</span>
-                  <span className="reaction-nickname">({currentComment.nickname}):</span>
-                  <span className="reaction-text">&ldquo;{currentComment.text}&rdquo;</span>
-                  {currentComment.likes > 0 && (
-                    <span className="reaction-likes">❤️ {currentComment.likes}</span>
-                  )}
+                {/* Real Verified Comments Ticker (Full Text) */}
+                <div className="tiktok-live-reaction-card" key={commentIndex}>
+                  <div className="reaction-card-header">
+                    <div className="reaction-card-user-info">
+                      <span className="reaction-user">{currentComment.user}</span>
+                      <span className="reaction-nickname">({currentComment.nickname}):</span>
+                    </div>
+                    {currentComment.likes > 0 && (
+                      <span className="reaction-likes">❤️ {currentComment.likes}</span>
+                    )}
+                  </div>
+                  <p className="reaction-text">&ldquo;{currentComment.text}&rdquo;</p>
                 </div>
 
                 {/* Action Bar */}

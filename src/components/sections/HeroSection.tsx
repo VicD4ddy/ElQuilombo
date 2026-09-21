@@ -251,10 +251,6 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
           {/* Right: Interactive Visual Card (Direct TikTok Video & Real FOMO Reactions) */}
           <div className="hero-visual">
             <div className="visual-card">
-              {/* Slanted Stickers */}
-              <div className="sticker-date">⚡ VIERNES 09 OCT 💜</div>
-              <div className="sticker-limited">🚨 PREVENTA $10 (LIMITADAS)</div>
-
               {/* Direct Native TikTok Video Player Showcase */}
               <div
                 className={`visual-media is-video-active ${isVideoPlaying ? 'video-playing' : ''}`}

@@ -14,14 +14,7 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
   return (
     <section className="hero-section" id="hero">
       <div className="container">
-        {/* Sponsors Top Strip */}
-        <div className="sponsor-strip">
-          <span className="sponsor-item">⚡ ANDY</span>
-          <span style={{ color: 'var(--neon-purple)', opacity: 0.6 }}>•</span>
-          <span className="sponsor-item">🐯 ROCK N&apos; RIFF</span>
-          <span style={{ color: 'var(--neon-purple)', opacity: 0.6 }}>•</span>
-          <span className="sponsor-item">😊 CLUB SONRISAS</span>
-        </div>
+
 
         <div className="hero-grid">
           {/* Left: Hero Copy & Countdown */}

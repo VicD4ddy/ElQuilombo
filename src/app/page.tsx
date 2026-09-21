@@ -38,11 +38,13 @@ export default function Home() {
       <ReelModal isOpen={isReelOpen} onClose={() => setIsReelOpen(false)} />
 
       {/* Generated Digital Ticket QR Modal */}
-      <TicketQrModal
-        order={ticketOrder}
-        onClose={() => setTicketOrder(null)}
-        onOrderUpdated={(updated) => setTicketOrder(updated)}
-      />
+      {ticketOrder && (
+        <TicketQrModal
+          order={ticketOrder}
+          onClose={() => setTicketOrder(null)}
+          onOrderUpdated={(updated) => setTicketOrder(updated)}
+        />
+      )}
     </>
   );
 }

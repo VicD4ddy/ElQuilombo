@@ -7,7 +7,7 @@ export interface FaqItem {
 export const FAQS: FaqItem[] = [
   {
     question: '¿Cómo funciona el proceso de reserva y pago?',
-    answer: 'Al llenar el formulario en esta web, se generará tu Boleto Digital con código QR. Luego serás redirigido directamente a nuestro WhatsApp oficial (+58 412-882460) con los datos de tu reserva listos para que el equipo de El Quilombo te envíe los datos de transferencia (Pago Móvil, Zelle, Binance o Efectivo) y confirme tu lugar.',
+    answer: 'Al llenar el formulario en esta web, se generará tu Boleto Digital con código QR. Luego serás redirigido directamente a nuestro WhatsApp oficial con los datos de tu reserva listos para que el equipo de El Quilombo verifique tu transferencia (Pago Móvil, Zelle o Binance Pay) y confirme tu lugar.',
     defaultOpen: true,
   },
   {
@@ -21,7 +21,7 @@ export const FAQS: FaqItem[] = [
   },
   {
     question: '¿Cuál es el precio de las entradas?',
-    answer: 'El Pase Preventa Oficial tiene un costo preferencial de $10 USD (o su equivalente en Bs a tasa BCV). En puerta la noche del evento tendrá un costo de $15 USD sujeto a aforo restante. ¡Asegurá tu preventa!',
+    answer: 'El Pase Preventa Oficial tiene un costo preferencial de $10 USD (o su equivalente en Bolívares). En puerta la noche del evento tendrá un costo de $15 USD sujeto a aforo restante. ¡Asegurá tu preventa!',
   },
   {
     question: '¿Cuál es el código de vestimenta (Dress Code)?',

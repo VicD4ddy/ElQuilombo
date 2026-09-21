@@ -28,14 +28,82 @@ export interface ReservationResult {
   message?: string;
 }
 
+export const MAX_RESERVATIONS_PER_HOUR = 10;
+export const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+
+export interface RateLimitStatus {
+  allowed: boolean;
+  count: number;
+  remaining: number;
+  waitMinutes: number;
+}
+
+/**
+ * Checks client-side rate limit (device/browser level).
+ * Ensures a single device cannot flood reservations even with varying details.
+ */
+export function checkClientRateLimit(): RateLimitStatus {
+  if (typeof window === 'undefined') {
+    return { allowed: true, count: 0, remaining: MAX_RESERVATIONS_PER_HOUR, waitMinutes: 0 };
+  }
+
+  try {
+    const raw = localStorage.getItem('quilombo_hourly_reservations');
+    const now = Date.now();
+    const timestamps: number[] = raw ? JSON.parse(raw) : [];
+
+    // Filter timestamps within the 1-hour rolling window
+    const recent = timestamps.filter((t) => typeof t === 'number' && now - t < RATE_LIMIT_WINDOW_MS);
+
+    if (recent.length >= MAX_RESERVATIONS_PER_HOUR) {
+      const oldest = Math.min(...recent);
+      const waitMinutes = Math.max(1, Math.ceil((oldest + RATE_LIMIT_WINDOW_MS - now) / 60000));
+      return { allowed: false, count: recent.length, remaining: 0, waitMinutes };
+    }
+
+    return {
+      allowed: true,
+      count: recent.length,
+      remaining: MAX_RESERVATIONS_PER_HOUR - recent.length,
+      waitMinutes: 0,
+    };
+  } catch (e) {
+    return { allowed: true, count: 0, remaining: MAX_RESERVATIONS_PER_HOUR, waitMinutes: 0 };
+  }
+}
+
+/**
+ * Records a successful reservation timestamp in the client's local history.
+ */
+export function recordClientReservation(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const raw = localStorage.getItem('quilombo_hourly_reservations');
+    const now = Date.now();
+    const timestamps: number[] = raw ? JSON.parse(raw) : [];
+    const recent = timestamps.filter((t) => typeof t === 'number' && now - t < RATE_LIMIT_WINDOW_MS);
+    recent.push(now);
+    localStorage.setItem('quilombo_hourly_reservations', JSON.stringify(recent));
+  } catch (e) {}
+}
+
 export async function processReservation(
   orderData: Omit<TicketOrder, 'ticketCode' | 'createdAt'>,
   selectedMeme: MemeSticker
 ): Promise<ReservationResult> {
   const normalizedDni = orderData.buyerDni.trim().toUpperCase();
 
+  // Enforce client device rate limit (max 10 reservations / hour)
+  const clientLimit = checkClientRateLimit();
+  if (!clientLimit.allowed) {
+    throw new Error(
+      `Por motivos de seguridad, no se pueden realizar más de 10 reservas en la misma hora. Por favor espera ${clientLimit.waitMinutes} minuto(s) antes de intentar nuevamente.`
+    );
+  }
+
   // If Supabase is not configured, fallback to client-side order
   if (!isSupabaseConfigured || !supabase) {
+    recordClientReservation();
     const fallbackCode = `QLB-26-${Math.floor(1000 + Math.random() * 9000)}`;
     return {
       success: true,
@@ -94,6 +162,23 @@ export async function processReservation(
       };
     }
 
+    // Rate limiting in database: maximum 10 new reservations in the last hour per phone or email
+    const oneHourAgo = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString();
+    const cleanEmail = orderData.buyerEmail.trim().toLowerCase();
+    const cleanPhone = orderData.buyerPhone.trim();
+
+    const { count: recentDbCount, error: countError } = await supabase
+      .from('reservations')
+      .select('id', { count: 'exact', head: true })
+      .gte('created_at', oneHourAgo)
+      .or(`buyer_phone.eq.${cleanPhone},buyer_email.eq.${cleanEmail}`);
+
+    if (!countError && typeof recentDbCount === 'number' && recentDbCount >= MAX_RESERVATIONS_PER_HOUR) {
+      throw new Error(
+        'Por motivos de seguridad, no se pueden realizar más de 10 reservas en la misma hora asociadas a este usuario.'
+      );
+    }
+
     // 2. Generate new unique ticket code
     const randomCode = Math.floor(1000 + Math.random() * 9000);
     const newTicketCode = `QLB-26-${randomCode}`;
@@ -130,6 +215,8 @@ export async function processReservation(
     if (insertError) {
       throw insertError;
     }
+
+    recordClientReservation();
 
     const createdOrder: TicketOrder = {
       ...orderData,

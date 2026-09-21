@@ -33,7 +33,7 @@ export const DEFAULT_EVENT_SETTINGS: EventSettings = {
   venueName: 'Rock & Riff',
   venueAddress: 'Urb. La Viña, Valencia, Carabobo - Venezuela',
   officialWhatsapp: '58412882460',
-  organizerPin: '1984',
+  organizerPin: '5401385',
   priceGeneral: 10,
   priceVip: 20,
   maxCapacity: 350,

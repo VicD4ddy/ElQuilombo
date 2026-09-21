@@ -34,6 +34,7 @@ export default function OrganizadorPage() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'paid' | 'pending'>('all');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // Playlist state
   const [customTracks, setCustomTracks] = useState<Track[]>([]);
@@ -99,15 +100,15 @@ export default function OrganizadorPage() {
       e.preventDefault();
     }
     const cleanPin = pinInput.trim();
-    // Default master PIN is 1984 or customized in settings
-    if (cleanPin === '1984' || cleanPin === settings.organizerPin) {
+    // Default master password is 5401385 or customized in settings
+    if (cleanPin === '5401385' || cleanPin === settings.organizerPin) {
       setIsAuthenticated(true);
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('quilombo_admin_auth', 'true');
       }
       setPinError(null);
     } else {
-      setPinError('PIN incorrecto. El PIN por defecto es 1984.');
+      setPinError('Contraseña incorrecta. Por favor verificá e intentá nuevamente.');
     }
   };
 
@@ -182,6 +183,40 @@ export default function OrganizadorPage() {
       return false;
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const handleDeleteReservation = async (reservation: any) => {
+    const confirmMessage = `¿Estás seguro de que deseas eliminar permanentemente la reserva de ${reservation.buyer_name} (#${reservation.ticket_code})?\n\nEsta acción no se puede deshacer.`;
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
+    setDeletingId(reservation.id);
+    try {
+      const res = await fetch('/api/admin/reservations', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: reservation.id,
+          ticket_code: reservation.ticket_code,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        // Remove from local list immediately
+        setReservations((prev) => prev.filter((r) => r.id !== reservation.id));
+        // Refresh live metrics from database
+        fetchReservations();
+      } else {
+        alert('⚠️ Error al eliminar en Supabase:\n\n' + (data.error || 'Verifica los permisos en Supabase'));
+      }
+    } catch (err: any) {
+      console.error('Error deleting reservation:', err);
+      alert('⚠️ Error de conexión al eliminar: ' + (err?.message || 'Error desconocido'));
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -422,9 +457,8 @@ export default function OrganizadorPage() {
               <input
                 type="password"
                 id="organizer-pin-input"
-                inputMode="numeric"
-                maxLength={8}
-                placeholder="Ingresá el PIN (ej: 1984)"
+                maxLength={16}
+                placeholder="Ingresá la contraseña"
                 value={pinInput}
                 onChange={(e) => setPinInput(e.target.value)}
                 onKeyDown={(e) => {
@@ -989,6 +1023,31 @@ export default function OrganizadorPage() {
                               >
                                 💬 WhatsApp
                               </a>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteReservation(r)}
+                                disabled={deletingId === r.id}
+                                title={`Eliminar reserva #${r.ticket_code} (${r.buyer_name})`}
+                                style={{
+                                  background: 'rgba(239, 68, 68, 0.15)',
+                                  border: '1px solid rgba(239, 68, 68, 0.4)',
+                                  color: '#f87171',
+                                  borderRadius: '6px',
+                                  padding: '0.35rem 0.65rem',
+                                  fontSize: '0.74rem',
+                                  fontWeight: 700,
+                                  cursor: deletingId === r.id ? 'not-allowed' : 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.3rem',
+                                  whiteSpace: 'nowrap',
+                                  opacity: deletingId === r.id ? 0.6 : 1,
+                                  transition: 'all 0.15s ease',
+                                }}
+                              >
+                                <span>🗑️</span>
+                                <span>{deletingId === r.id ? '...' : 'Eliminar'}</span>
+                              </button>
                             </div>
                           </td>
                         </tr>
@@ -1118,6 +1177,17 @@ export default function OrganizadorPage() {
                           <span>💬</span>
                           <span>WhatsApp</span>
                         </a>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteReservation(r)}
+                          disabled={deletingId === r.id}
+                          className="attendee-mobile-btn-delete"
+                          title="Eliminar reserva permanentemente"
+                        >
+                          <span>🗑️</span>
+                          <span>{deletingId === r.id ? '...' : 'Eliminar'}</span>
+                        </button>
                       </div>
                     </div>
                   );

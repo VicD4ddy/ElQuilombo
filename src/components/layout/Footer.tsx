@@ -140,42 +140,17 @@ export default function Footer() {
         {/* Barra Inferior del Footer */}
         <div className="footer-bottom">
           <span>© 2026 El Quilombo Vzla. Todos los derechos reservados.</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
+          <span>
+            Diseño & Desarrollo Web por{' '}
             <a
-              href="/organizador"
-              style={{
-                fontSize: '0.8rem',
-                color: 'var(--text-subtle)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                textDecoration: 'none',
-                opacity: 0.7,
-                transition: 'opacity 0.2s, color 0.2s',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = '1';
-                e.currentTarget.style.color = 'var(--neon-yellow)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = '0.7';
-                e.currentTarget.style.color = 'var(--text-subtle)';
-              }}
+              href="https://www.instagram.com/Vicdaddy.js/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'var(--neon-cyan)', fontWeight: 800, textDecoration: 'none' }}
             >
-              <span>🔐</span> Acceso Organizador
+              @Vicdaddy.js
             </a>
-            <span>
-              Diseño & Desarrollo Web por{' '}
-              <a
-                href="https://www.instagram.com/Vicdaddy.js/"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: 'var(--neon-cyan)', fontWeight: 800, textDecoration: 'none' }}
-              >
-                @Vicdaddy.js
-              </a>
-            </span>
-          </div>
+          </span>
         </div>
       </div>
     </footer>

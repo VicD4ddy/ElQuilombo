@@ -7,6 +7,7 @@ import { OFFICIAL_WHATSAPP_NUMBER, ORGANIZERS_NAME, ORGANIZERS_PHONE, ORGANIZERS
 import { MemeSticker, getRandomMemeSticker } from '../../data/memes';
 import { exportStoryVideo, exportStoryGif } from '../../lib/storyVideoExporter';
 import { formatWhatsappPhone, getWhatsappChatUrl } from '../../lib/whatsapp';
+import { getPaymentDetail, getPagoMovilBankingClipboard } from '../../data/payments';
 
 interface TicketQrModalProps {
   order: TicketOrder | null;
@@ -29,6 +30,22 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated, isOrgani
   const [isExportingPng, setIsExportingPng] = useState<boolean>(false);
   const [exportProgressText, setExportProgressText] = useState<string | null>(null);
   const [exportNotice, setExportNotice] = useState<string | null>(null);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  const handleCopy = (text: string, label: string) => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setCopiedField(label);
+      setTimeout(() => setCopiedField(null), 2500);
+    }
+  };
+
+  const handleClose = () => {
+    setCurrentOrder(null);
+    setCurrentMeme(null);
+    setExportNotice(null);
+    onClose();
+  };
 
   // Synchronize with parent order
   useEffect(() => {
@@ -36,8 +53,23 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated, isOrgani
       setCurrentOrder(order);
       setCurrentMeme(order.meme || getRandomMemeSticker());
       setExportNotice(null);
+    } else {
+      setCurrentOrder(null);
+      setCurrentMeme(null);
+      setExportNotice(null);
     }
   }, [order]);
+
+  // Support ESC key to close modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // QR Code Rendering
   useEffect(() => {
@@ -103,7 +135,7 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated, isOrgani
     }
   }, [currentOrder]);
 
-  if (!currentOrder || !currentMeme) return null;
+  if (!order || !currentOrder || !currentMeme) return null;
 
   const isApproved = Boolean(currentOrder.isPaid);
   const showQrSection = isApproved || Boolean(isOrganizerView);
@@ -112,7 +144,7 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated, isOrgani
   const memeText = `Sticker: ${currentMeme.name} ("${currentMeme.tagline}")`;
 
   // Pre-filled WhatsApp message for Organizers (Payment Coordination & Approval)
-  const organizersMessage = `⚡ *RESERVA PREVENTA - EL QUILOMBO* 💜
+  const organizersMessage = `⚡ *RESERVA Y PAGO - EL QUILOMBO* 💜
 ¡Hola organizadores de El Quilombo! Acabo de apartar mi preventa 🇦🇷🔥:
 
 🎫 *Código de Reserva:* #${currentOrder.ticketCode}
@@ -121,12 +153,12 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated, isOrgani
 📱 *WhatsApp:* ${currentOrder.buyerPhone}
 📧 *Email:* ${currentOrder.buyerEmail}
 🎟️ *Entradas:* ${currentOrder.quantity}x ${currentOrder.tier.name}
-💰 *Total a pagar:* $${currentOrder.totalUSD} USD (Ref: Bs. ${currentOrder.totalRefBs})
+💰 *Total a transferir:* $${currentOrder.totalUSD} USD (Ref: Bs. ${currentOrder.totalRefBs})
 💳 *Método de pago:* ${currentOrder.paymentMethod}
 🎶 *Tema pedido:* ${currentOrder.favoriteArtist}
 🎯 *${memeText}*
 
-Quiero coordinar el pago para que el equipo apruebe mi entrada y me envíe el boleto oficial con código QR. ¡Muchas gracias!`;
+Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aquí el comprobante para validar mi entrada y activar mi boleto QR. ¡Muchas gracias!`;
 
   const waOrganizersUrl = getWhatsappChatUrl(ORGANIZERS_PHONE, organizersMessage);
 
@@ -289,7 +321,7 @@ Quiero coordinar el pago para que el equipo apruebe mi entrada y me envíe el bo
             WebkitBackdropFilter: 'blur(16px)',
             zIndex: 1,
           }}
-          onClick={onClose}
+          onClick={handleClose}
         />
 
         {/* Organizer Ticket Modal Dialog */}
@@ -564,7 +596,7 @@ Quiero coordinar el pago para que el equipo apruebe mi entrada y me envíe el bo
             <button
               type="button"
               id="btn-close-organizer-qr-modal"
-              onClick={onClose}
+              onClick={handleClose}
               style={{
                 background: 'transparent',
                 border: 'none',
@@ -609,7 +641,7 @@ Quiero coordinar el pago para que el equipo apruebe mi entrada y me envíe el bo
           WebkitBackdropFilter: 'blur(14px)',
           zIndex: 1,
         }}
-        onClick={onClose}
+        onClick={handleClose}
       />
 
       {/* Main Ticket Modal Dialog */}
@@ -660,7 +692,7 @@ Quiero coordinar el pago para que el equipo apruebe mi entrada y me envíe el bo
               type="button"
               id="btn-close-ticket-top"
               aria-label="Cerrar boleto"
-              onClick={onClose}
+              onClick={handleClose}
               style={{
                 background: 'rgba(255, 255, 255, 0.06)',
                 border: '1px solid rgba(255, 255, 255, 0.12)',
@@ -752,7 +784,7 @@ Quiero coordinar el pago para que el equipo apruebe mi entrada y me envíe el bo
                 <span className="t-label">Total a Pagar</span>
                 <span className="t-value neon-highlight" id="t-total-usd">${currentOrder.totalUSD} USD</span>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-subtle)' }} id="t-total-ref">
-                  (Ref: Bs. {currentOrder.totalRefBs})
+                  (Bs. {currentOrder.totalRefBs})
                 </span>
               </div>
             </div>
@@ -781,72 +813,263 @@ Quiero coordinar el pago para que el equipo apruebe mi entrada y me envíe el bo
               </>
             )}
 
-            {/* Contacto Oficial de los Organizadores para Coordinación y Aprobación */}
-            {!showQrSection && (
-              <div
-                style={{
-                  marginTop: '1.25rem',
-                  background: 'rgba(37, 211, 102, 0.05)',
-                  border: '1px solid rgba(37, 211, 102, 0.25)',
-                  borderRadius: '16px',
-                  padding: '1.25rem 1.1rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.85rem',
-                  textAlign: 'center',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}>
-                  <span style={{ fontSize: '1.4rem' }}>💬</span>
-                  <div style={{ textAlign: 'left' }}>
-                    <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#ffffff', letterSpacing: '0.3px' }}>
-                      {ORGANIZERS_NAME}
-                    </div>
-                    <div style={{ fontSize: '0.82rem', color: '#25d366', fontWeight: 800 }}>
-                      WhatsApp: {ORGANIZERS_PHONE_FORMATTED}
-                    </div>
-                  </div>
-                </div>
+            {/* Selected Payment Method Details for Non-Approved / Customer Reservation View */}
+            {!showQrSection && (() => {
+              const paymentDetail = getPaymentDetail(currentOrder.paymentMethod || 'Pago Móvil');
 
-                <p style={{ margin: 0, fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.45 }}>
-                  Para confirmar tu entrada y coordinar el pago, escribile directamente a <strong>los organizadores</strong> por WhatsApp con los datos de tu reserva:
-                </p>
-
-                <a
-                  href={waOrganizersUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  id="btn-whatsapp-organizers"
-                  onClick={handleWhatsappOrganizersClick}
+              return (
+                <div
                   style={{
-                    width: '100%',
-                    background: 'linear-gradient(135deg, #25d366 0%, #128c7e 100%)',
-                    border: 'none',
-                    color: '#ffffff',
-                    fontFamily: 'var(--font-title)',
-                    fontWeight: 900,
-                    fontSize: '0.95rem',
-                    padding: '0.85rem 1rem',
-                    borderRadius: 'var(--radius-pill)',
-                    cursor: 'pointer',
+                    marginTop: '1.25rem',
+                    background: 'linear-gradient(135deg, rgba(20, 15, 38, 0.96) 0%, rgba(10, 8, 20, 0.98) 100%)',
+                    border: `1px solid ${paymentDetail.accentColor}55`,
+                    borderRadius: '18px',
+                    padding: '1.25rem 1.15rem',
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.5rem',
-                    textDecoration: 'none',
-                    boxShadow: '0 4px 18px rgba(37, 211, 102, 0.35)',
-                    transition: 'all 0.2s',
+                    flexDirection: 'column',
+                    gap: '0.85rem',
+                    textAlign: 'left',
+                    boxShadow: `0 8px 30px rgba(0, 0, 0, 0.6), 0 0 20px ${paymentDetail.accentColor}20`,
                   }}
                 >
-                  <span>💬 Escribir a los Organizadores ({ORGANIZERS_PHONE_FORMATTED})</span>
-                  <span>→</span>
-                </a>
+                  {/* Header: Title + Selected Method Badge */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '0.65rem' }}>
+                    <div>
+                      <div style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '1.2px', color: paymentDetail.accentColor, fontWeight: 800 }}>
+                        DATOS PARA CONCRETAR TU PAGO
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginTop: '0.15rem' }}>
+                        <span style={{ fontSize: '1.2rem' }}>{paymentDetail.icon}</span>
+                        <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#ffffff' }}>
+                          {paymentDetail.name}
+                        </h4>
+                      </div>
+                    </div>
+                    <span
+                      style={{
+                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        color: paymentDetail.accentColor,
+                        background: `${paymentDetail.accentColor}18`,
+                        border: `1px solid ${paymentDetail.accentColor}66`,
+                        borderRadius: 'var(--radius-pill)',
+                        padding: '0.2rem 0.65rem',
+                      }}
+                    >
+                      {paymentDetail.badge}
+                    </span>
+                  </div>
 
-                <span style={{ fontSize: '0.74rem', color: 'var(--text-subtle)', lineHeight: 1.4 }}>
-                  Posteriormente, los organizadores aprobarán tu entrada desde el área de administración y se generará tu boleto oficial con código QR para enviártelo por WhatsApp.
-                </span>
-              </div>
-            )}
+                  {/* Amount to transfer banner */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.04)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '12px',
+                      padding: '0.75rem 0.95rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '0.75rem',
+                    }}
+                  >
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-subtle)', fontWeight: 600 }}>
+                      Monto a transferir:
+                    </span>
+                    <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.2rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                        <span style={{ fontSize: '1.2rem', fontWeight: 900, color: 'var(--neon-cyan)', fontFamily: 'monospace' }}>
+                          {currentOrder.paymentMethod.includes('Pago Móvil')
+                            ? `Bs. ${currentOrder.totalRefBs}`
+                            : currentOrder.paymentMethod.includes('Binance')
+                            ? `${currentOrder.totalUSD} USDT`
+                            : `$${currentOrder.totalUSD} USD`}
+                        </span>
+                        <button
+                          type="button"
+                          title="Copiar monto exacto"
+                          onClick={() => {
+                            const valToCopy = currentOrder.paymentMethod.includes('Pago Móvil')
+                              ? currentOrder.totalRefBs.replace(/\./g, '').replace(',', '.').trim()
+                              : String(currentOrder.totalUSD);
+                            handleCopy(valToCopy, 'Monto');
+                          }}
+                          style={{
+                            background: copiedField === 'Monto' ? '#25d366' : 'rgba(0, 240, 255, 0.12)',
+                            border: copiedField === 'Monto' ? '1px solid #25d366' : '1px solid rgba(0, 240, 255, 0.3)',
+                            color: copiedField === 'Monto' ? '#000' : 'var(--neon-cyan)',
+                            borderRadius: '6px',
+                            padding: '0.25rem 0.5rem',
+                            fontSize: '0.72rem',
+                            fontWeight: 800,
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.25rem',
+                          }}
+                        >
+                          <span>{copiedField === 'Monto' ? '✓' : '📋'}</span>
+                          <span>{copiedField === 'Monto' ? 'Copiado' : 'Copiar'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ⚡ Quick 1-Click Banking Copy Button for Pago Móvil (Format: Banco, CI, Tel, Monto) */}
+                  {currentOrder.paymentMethod.includes('Pago Móvil') && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                      <button
+                        type="button"
+                        id="btn-copy-pagomovil-all"
+                        onClick={() => handleCopy(getPagoMovilBankingClipboard(currentOrder.totalRefBs), 'pago_movil_banco')}
+                        style={{
+                          width: '100%',
+                          background: copiedField === 'pago_movil_banco'
+                            ? 'linear-gradient(135deg, #25d366 0%, #128c7e 100%)'
+                            : 'linear-gradient(135deg, rgba(0, 240, 255, 0.22) 0%, rgba(139, 23, 245, 0.3) 100%)',
+                          border: copiedField === 'pago_movil_banco' ? '1px solid #25d366' : '1px solid var(--neon-cyan)',
+                          color: '#ffffff',
+                          fontFamily: 'var(--font-title)',
+                          fontWeight: 900,
+                          fontSize: '0.88rem',
+                          padding: '0.75rem 0.9rem',
+                          borderRadius: '12px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '0.5rem',
+                          boxShadow: '0 4px 16px rgba(0, 240, 255, 0.25)',
+                          transition: 'all 0.2s ease',
+                        }}
+                      >
+                        <span style={{ fontSize: '1.1rem' }}>{copiedField === 'pago_movil_banco' ? '✓' : '⚡'}</span>
+                        <span>
+                          {copiedField === 'pago_movil_banco'
+                            ? '¡Datos copiados para pegar en el Banco!'
+                            : 'Copiar todos los datos con monto (para el Banco)'}
+                        </span>
+                      </button>
+                      <span style={{ fontSize: '0.7rem', color: '#94a3b8', textAlign: 'center', lineHeight: 1.35 }}>
+                        💡 Incluye Banco (0191), Cédula, Teléfono y Monto listo para la opción <em>&ldquo;Pegar datos&rdquo;</em> de tu app bancaria (BNC, Banesco, BDV, etc.)
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Payment Credential Fields with 1-Click Copy */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                    {paymentDetail.fields.map((field, idx) => (
+                      <div
+                        key={idx}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          background: 'rgba(255, 255, 255, 0.025)',
+                          border: '1px solid rgba(255, 255, 255, 0.06)',
+                          borderRadius: '10px',
+                          padding: '0.55rem 0.85rem',
+                          gap: '0.75rem',
+                        }}
+                      >
+                        <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
+                          <span style={{ fontSize: '0.7rem', color: 'var(--text-subtle)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            {field.label}
+                          </span>
+                          <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#ffffff', wordBreak: 'break-word', fontFamily: field.copyable ? 'monospace' : 'inherit' }}>
+                            {field.value}
+                          </span>
+                        </div>
+                        {field.copyable && (
+                          <button
+                            type="button"
+                            onClick={() => handleCopy(field.copyValue || field.value, field.label)}
+                            style={{
+                              background: copiedField === field.label ? '#25d366' : 'rgba(255, 255, 255, 0.08)',
+                              border: copiedField === field.label ? '1px solid #25d366' : '1px solid rgba(255, 255, 255, 0.15)',
+                              color: copiedField === field.label ? '#000' : '#fff',
+                              borderRadius: '6px',
+                              padding: '0.3rem 0.6rem',
+                              fontSize: '0.72rem',
+                              fontWeight: 800,
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.3rem',
+                              flexShrink: 0,
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            <span>{copiedField === field.label ? '✓' : '📋'}</span>
+                            <span>{copiedField === field.label ? 'Copiado' : 'Copiar'}</span>
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Important Notes & Warnings (e.g. Zelle Concept) */}
+                  {paymentDetail.note && (
+                    <div
+                      style={{
+                        background: 'rgba(251, 191, 36, 0.1)',
+                        border: '1px solid rgba(251, 191, 36, 0.35)',
+                        borderRadius: '10px',
+                        padding: '0.6rem 0.85rem',
+                        fontSize: '0.76rem',
+                        color: '#fde047',
+                        lineHeight: 1.4,
+                        fontWeight: 700,
+                      }}
+                    >
+                      {paymentDetail.note}
+                    </div>
+                  )}
+
+                  {/* WhatsApp Submission Action */}
+                  <div style={{ marginTop: '0.35rem', textAlign: 'center' }}>
+                    <p style={{ margin: '0 0 0.65rem', fontSize: '0.78rem', color: '#cbd5e1', lineHeight: 1.45 }}>
+                      Al hacer el pago, enviá el capture o referencia a los organizadores para activar tu entrada:
+                    </p>
+
+                    <a
+                      href={waOrganizersUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      id="btn-whatsapp-organizers"
+                      onClick={handleWhatsappOrganizersClick}
+                      style={{
+                        width: '100%',
+                        background: 'linear-gradient(135deg, #25d366 0%, #128c7e 100%)',
+                        border: 'none',
+                        color: '#ffffff',
+                        fontFamily: 'var(--font-title)',
+                        fontWeight: 900,
+                        fontSize: '0.92rem',
+                        padding: '0.85rem 1rem',
+                        borderRadius: 'var(--radius-pill)',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem',
+                        textDecoration: 'none',
+                        boxShadow: '0 4px 18px rgba(37, 211, 102, 0.35)',
+                        transition: 'all 0.2s',
+                      }}
+                    >
+                      <span>💬 Enviar Comprobante por WhatsApp</span>
+                      <span>→</span>
+                    </a>
+
+                    <span style={{ display: 'block', marginTop: '0.5rem', fontSize: '0.72rem', color: 'var(--text-subtle)', lineHeight: 1.35 }}>
+                      Los organizadores verificarán tu pago y tu boleto oficial con código QR quedará habilitado para el acceso.
+                    </span>
+                  </div>
+                </div>
+              );
+            })()}
+
           </div>
 
           {/* Pass Actions Footer */}
@@ -966,7 +1189,7 @@ Quiero coordinar el pago para que el equipo apruebe mi entrada y me envíe el bo
               type="button"
               className="btn-close-modal"
               id="btn-close-modal"
-              onClick={onClose}
+              onClick={handleClose}
               style={{
                 width: '100%',
                 background: showQrSection ? 'transparent' : 'rgba(255, 255, 255, 0.05)',

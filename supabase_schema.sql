@@ -55,6 +55,14 @@ TO anon, authenticated
 USING (true)
 WITH CHECK (true);
 
+-- Permitir eliminar reservas desde el panel de organizador
+CREATE POLICY "Permitir eliminación de reservas desde el panel"
+ON public.reservations
+FOR DELETE
+TO anon, authenticated
+USING (true);
+
+
 -- ==============================================================================
 -- TABLA DE CONFIGURACIÓN DEL EVENTO Y PLAYLIST DINÁMICA
 -- ==============================================================================
@@ -65,7 +73,7 @@ CREATE TABLE IF NOT EXISTS public.event_settings (
     venue_name VARCHAR(120) DEFAULT 'Óleo Gastrobar (La Viña)' NOT NULL,
     venue_address VARCHAR(200) DEFAULT 'Valencia, Carabobo - Venezuela' NOT NULL,
     official_whatsapp VARCHAR(32) DEFAULT '58412882460' NOT NULL,
-    organizer_pin VARCHAR(32) DEFAULT '1984' NOT NULL,
+    organizer_pin VARCHAR(32) DEFAULT '5401385' NOT NULL,
     price_general NUMERIC(10, 2) DEFAULT 10.00 NOT NULL,
     price_vip NUMERIC(10, 2) DEFAULT 20.00 NOT NULL,
     max_capacity INTEGER DEFAULT 350 NOT NULL,

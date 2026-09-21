@@ -5135,13 +5135,17 @@ body {
 
 .attendee-mobile-actions-row {
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: 0.5rem;
+  grid-template-columns: 1.2fr 1fr auto;
+  gap: 0.45rem;
+  align-items: stretch;
 }
 
-@media (max-width: 360px) {
+@media (max-width: 420px) {
   .attendee-mobile-actions-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+  }
+  .attendee-mobile-btn-delete {
+    grid-column: span 2;
   }
 }
 
@@ -5183,6 +5187,29 @@ body {
   gap: 0.4rem;
   min-height: 48px;
   transition: all 0.2s ease;
+}
+
+.attendee-mobile-btn-delete {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #f87171;
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 48px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.attendee-mobile-btn-delete:active {
+  transform: scale(0.98);
+  background: rgba(239, 68, 68, 0.3);
 }
 
 .attendee-mobile-btn-wa:hover {

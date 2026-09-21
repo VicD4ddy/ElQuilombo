@@ -10,8 +10,9 @@ export const BELLE_AMAR_NAME = ORGANIZERS_NAME;
 export const BELLE_AMAR_PHONE = ORGANIZERS_PHONE;
 export const BELLE_AMAR_PHONE_FORMATTED = ORGANIZERS_PHONE_FORMATTED;
 
-// Fallback de referencia en caso de fallo temporal de la API BCV
-export const REF_EXCHANGE_RATE = 847.44;
+// Fallback de referencia en caso de fallo temporal de la API BCV (Tasa Euro BCV oficial)
+export const REF_EXCHANGE_RATE = 974.42;
+
 
 export const TICKET_TIERS: Record<'general' | 'vip', TicketTier> = {
   general: {

@@ -8,7 +8,7 @@ export async function GET() {
   const timeoutId = setTimeout(() => controller.abort(), 6000);
 
   try {
-    const response = await fetch('https://ve.dolarapi.com/v1/dolares/oficial', {
+    const response = await fetch('https://ve.dolarapi.com/v1/euros/oficial', {
       signal: controller.signal,
       next: { revalidate: 1800 },
       headers: {
@@ -31,8 +31,8 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       rate,
-      currency: data.moneda || 'USD',
-      source: 'BCV (Banco Central de Venezuela)',
+      currency: data.moneda || 'EUR',
+      source: 'Euro BCV (Banco Central de Venezuela)',
       lastUpdated: data.fechaActualizacion || new Date().toISOString(),
       isLive: true,
     }, {
@@ -42,21 +42,22 @@ export async function GET() {
     });
   } catch (error: any) {
     clearTimeout(timeoutId);
-    console.warn('[BCV API] Error fetching live BCV exchange rate:', error?.message || error);
+    console.warn('[BCV API] Error fetching live Euro BCV exchange rate:', error?.message || error);
 
     // Graceful fallback to static reference rate
     return NextResponse.json({
       success: true,
       rate: REF_EXCHANGE_RATE,
-      currency: 'USD',
-      source: 'BCV (Referencia de respaldo)',
+      currency: 'EUR',
+      source: 'Euro BCV (Referencia de respaldo)',
       lastUpdated: new Date().toISOString(),
       isLive: false,
     }, {
-      status: 200, // Return 200 so frontend can safely use fallback without throwing
+      status: 200,
       headers: {
         'Cache-Control': 'no-cache',
       }
     });
   }
+
 }

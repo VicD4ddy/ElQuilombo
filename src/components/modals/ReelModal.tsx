@@ -13,11 +13,14 @@ const TIKTOK_URL = `https://www.tiktok.com/@belleamar_/video/${TIKTOK_VIDEO_ID}`
 const TIKTOK_EMBED_URL = `https://www.tiktok.com/embed/v2/${TIKTOK_VIDEO_ID}`;
 
 const REAL_REACTIONS = [
-  { user: '@carlag_', text: 'NECESITO IRRRR no me lo pierdo por nada en el mundo 😭💜', tag: '🔥 Valencia' },
-  { user: '@valen_trap', text: 'Amiga esto es un sueño hecho realidad en Valencia!', tag: '✨ Confirmada' },
-  { user: '@santi.milo', text: 'Porfa metan música de Bhavi, Duki, Lit, Khea, Ysy y Milo J 🔥', tag: '🎵 Trap Argento' },
-  { user: '@mari_quilombo', text: 'Ya tengo mi preventa asegurada, nos vemos el 9 de Octubre!', tag: '🎟️ Preventa lista' },
-  { user: '@mateo_arg', text: 'La milonista más milonista de Valencia jaja qué locura 🙌', tag: '⚡ Fans Milo J' },
+  { user: '@sugarbite15', nickname: 'Jesús Ruiz', text: 'NECESITO IRRRR', tag: '🔥 Valencia' },
+  { user: '@yuxerneim', nickname: 'yuxerneim', text: 'porfa metan música de bhavi, duki, lit, khea, ysy y neo PORFAVOR', tag: '❤️ 57 likes' },
+  { user: '@daviangely.s', nickname: '𝑫𝒂𝒗𝒊🌷', text: 'Amiga como que en Valencia y no en Caracas? ya me había ilusionado 😔✋🏻', tag: '❤️ 183 likes' },
+  { user: '@cruelwriter', nickname: 'estefany 📚', text: 'POR QUÉ TENGO QUE ESTAR EN CARACAS SI ESTE ES LITERALMENTE MI SUEÑO ?????', tag: '❤️ 21 likes' },
+  { user: '@dalessiooo', nickname: 'D’Alessio ⟭⟬⁷', text: 'La milonista más milonista de Valencia no podrá ir 😔✋🏻', tag: '⚡ Fans Milo J' },
+  { user: '@andres666.00', nickname: '~𝕺𝖇𝖊𝖗𝐲𝖓.🫓🕯️', text: 'Milo vas a venir a Venezuela?', tag: '❤️ 62 likes' },
+  { user: '@zizugd', nickname: 'zizu', text: 'Y pa los larenses??? 🥺', tag: '❤️ 34 likes' },
+  { user: '@soffi_111_', nickname: 'sofi', text: 'cómo que en Valencia?? 😭😭😭😭', tag: '❤️ 31 likes' },
 ];
 
 export default function ReelModal({ isOpen, onClose }: ReelModalProps) {

@@ -20,7 +20,7 @@ export const ARTISTS: Artist[] = [
     name: 'Duki',
     style: 'Trap Argento',
     hits: 'Hits: "Goteo", "She Don\'t Give a FO", "Givenchy"',
-    photo: '/assets/img/artists/duki.jpg',
+    photo: '/assets/img/artists/duki.jpeg',
   },
   {
     id: 'catriel-paco',
@@ -34,21 +34,21 @@ export const ARTISTS: Artist[] = [
     name: 'WOS',
     style: 'Rap Conciencia & Rock',
     hits: 'Hits: "Canguro", "Arrancármelo", "Melón Vino"',
-    photo: '/assets/img/artists/wos.jpg',
+    photo: '/assets/img/artists/wos.webp',
   },
   {
     id: 'dillom',
     name: 'Dillom',
     style: 'Post-Mortem & Hip-Hop',
     hits: 'Hits: "Opa", "Pelotuda", "Cirugía", "La Primera"',
-    photo: '/assets/img/artists/dillom.jpg',
+    photo: '/assets/img/artists/dillom.webp',
   },
   {
     id: 'lit-killah',
     name: 'Lit Killah',
     style: 'Freestyle & Trap',
     hits: 'Hits: "La Trampa es Ley", "Flexin\'", "Entre Nosotros"',
-    photo: '/assets/img/artists/lit-killah.jpg',
+    photo: '/assets/img/artists/lit-killah.avif',
   },
   {
     id: 'bhavi',
@@ -62,7 +62,7 @@ export const ARTISTS: Artist[] = [
     name: 'Khea',
     style: 'Sad Trap & Reggaeton',
     hits: 'Hits: "Loca", "Ayer Me Llamó Mi Ex", "Dónde Estás"',
-    photo: '/assets/img/artists/khea.jpg',
+    photo: '/assets/img/artists/khea.webp',
   },
   {
     id: 'ysy-a',
@@ -83,7 +83,7 @@ export const ARTISTS: Artist[] = [
     name: 'María Becerra',
     style: 'La Nena de Argentina',
     hits: 'Hits: "Automático", "Corazón Vacío", "Ojalá"',
-    photo: '/assets/img/artists/maria-becerra.jpg',
+    photo: '/assets/img/artists/maria-becerra.webp',
   },
   {
     id: 'artistas-en-vivo',

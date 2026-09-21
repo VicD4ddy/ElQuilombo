@@ -60,13 +60,8 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#experiencia" className="footer-link" onClick={(e) => handleSmoothScroll(e, '#experiencia')}>
-                  Experiencia
-                </a>
-              </li>
-              <li>
                 <a href="#lineup" className="footer-link" onClick={(e) => handleSmoothScroll(e, '#lineup')}>
-                  Artistas
+                  Playlist
                 </a>
               </li>
               <li>

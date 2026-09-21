@@ -47,13 +47,8 @@ export default function Navbar() {
 
         <ul className={`nav-links ${isMobileMenuOpen ? 'mobile-open' : ''}`} id="nav-links">
           <li>
-            <a href="#experiencia" className="nav-link" onClick={(e) => handleSmoothScroll(e, '#experiencia')}>
-              Experiencia
-            </a>
-          </li>
-          <li>
             <a href="#lineup" className="nav-link" onClick={(e) => handleSmoothScroll(e, '#lineup')}>
-              Artistas
+              Playlist
             </a>
           </li>
           <li>

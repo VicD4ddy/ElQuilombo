@@ -6,7 +6,6 @@ import Footer from '../components/layout/Footer';
 import HeroSection from '../components/sections/HeroSection';
 import MarqueeTicker from '../components/sections/MarqueeTicker';
 import ArtistsCarousel from '../components/sections/ArtistsCarousel';
-import ExperienceSection from '../components/sections/ExperienceSection';
 import TicketingSection from '../components/sections/TicketingSection';
 import VenueFaqSection from '../components/sections/VenueFaqSection';
 import ReelModal from '../components/modals/ReelModal';
@@ -26,7 +25,6 @@ export default function Home() {
         <HeroSection onOpenReel={() => setIsReelOpen(true)} />
         <MarqueeTicker />
         <ArtistsCarousel />
-        <ExperienceSection />
         <TicketingSection onGenerateTicket={(order) => setTicketOrder(order)} />
         <VenueFaqSection />
       </main>

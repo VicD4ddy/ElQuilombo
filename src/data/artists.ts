@@ -51,13 +51,6 @@ export const ARTISTS: Artist[] = [
     photo: '/assets/img/artists/lit-killah.avif',
   },
   {
-    id: 'bhavi',
-    name: 'Bhavi',
-    style: 'Trap & Psychedelic',
-    hits: 'Hits: "Piso", "Bésame", "Mojaa"',
-    photo: '/assets/img/artists/bhavi.jpg',
-  },
-  {
     id: 'khea',
     name: 'Khea',
     style: 'Sad Trap & Reggaeton',
@@ -65,32 +58,10 @@ export const ARTISTS: Artist[] = [
     photo: '/assets/img/artists/khea.webp',
   },
   {
-    id: 'ysy-a',
-    name: 'YSY A',
-    style: 'Trap de Verdad',
-    hits: 'Hits: "Tamo Loco", "Silbando", "Cómo Chilla Ella"',
-    photo: '/assets/img/artists/ysy-a.jpg',
-  },
-  {
-    id: 'ramma',
-    name: 'Ramma',
-    style: 'RKT & Trap Underground',
-    hits: 'Hits: "Corazón Roto", "Pa\' la Calle", "Flow Argento"',
-    photo: '/assets/img/artists/ramma.jpg',
-  },
-  {
     id: 'maria-becerra',
     name: 'María Becerra',
     style: 'La Nena de Argentina',
     hits: 'Hits: "Automático", "Corazón Vacío", "Ojalá"',
     photo: '/assets/img/artists/maria-becerra.webp',
-  },
-  {
-    id: 'artistas-en-vivo',
-    name: 'Artistas en Vivo',
-    style: 'Talentos Invitados',
-    hits: 'Por confirmar: feat. Cloudboi y talentos invitados en tarima para prender la noche.',
-    photo: '',
-    isSpecial: true,
   },
 ];

@@ -9,14 +9,10 @@ export default function MarqueeTicker() {
     'WOS',
     'DILLOM',
     'LIT KILLAH',
-    'BHAVI',
     'KHEA',
-    'YSY A',
-    'RAMMA',
     'MARÍA BECERRA',
     'VIERNES 09 OCT • ROCK N\' RIFF',
     '🌙 AFTER PARTY CONFIRMADO',
-    '🎤 SHOW EN VIVO (FEAT. CLOUDBOI)',
   ];
 
   return (

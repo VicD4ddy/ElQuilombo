@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     siteName: 'El Quilombo',
     images: [
       {
-        url: '/recursos/fondo.png',
+        url: '/recursos/fondoestatico.png',
         width: 1200,
         height: 630,
         alt: 'El Quilombo - Fiesta Temática Argentina',

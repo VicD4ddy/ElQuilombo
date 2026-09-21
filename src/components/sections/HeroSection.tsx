@@ -1,8 +1,16 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import CountdownTimer from './CountdownTimer';
 import { useAudioPlayer } from '../../context/AudioPlayerContext';
+
+const VIRAL_COMMENTS = [
+  { user: '@carlag_', text: 'NECESITO IRRRR no me lo pierdo por nada 😭💜' },
+  { user: '@valen_trap', text: 'Amiga esto es un sueño en Valencia 🔥' },
+  { user: '@santi.milo', text: 'Porfa metan temas de Milo J, Duki y Lit!' },
+  { user: '@mari_quilombo', text: 'Ya compré mi preventa, nos vemos el 9! ⚡' },
+  { user: '@mateo_arg', text: 'La milonista más milonista de Valencia jaja 🙌' },
+];
 
 interface HeroSectionProps {
   onOpenReel: () => void;
@@ -10,6 +18,14 @@ interface HeroSectionProps {
 
 export default function HeroSection({ onOpenReel }: HeroSectionProps) {
   const { currentTrack, isPlaying, togglePlayPause } = useAudioPlayer();
+  const [commentIndex, setCommentIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCommentIndex((prev) => (prev + 1) % VIRAL_COMMENTS.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <section className="hero-section" id="hero">
@@ -108,20 +124,62 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
                 />
                 <div className="crt-overlay" id="hero-crt-overlay" />
 
-                {/* Play Button Overlay */}
-                <button
-                  type="button"
-                  className="btn-reel-play"
-                  id="btn-reel-play"
-                  aria-label="Reproducir Reel de Instagram"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onOpenReel();
-                  }}
-                >
-                  <span className="play-icon">▶</span>
-                  <span className="play-label">Ver Reel Oficial</span>
-                </button>
+                {/* TikTok Viral FOMO Centerpiece */}
+                <div className="tiktok-card-overlay">
+                  {/* Top Viral Badge */}
+                  <div className="tiktok-viral-tag">
+                    <span className="tiktok-logo-badge">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z" />
+                      </svg>
+                    </span>
+                    <span className="viral-text">VIRAL EN TIKTOK</span>
+                    <span className="live-dot" />
+                    <span className="views-highlight">140K+</span>
+                  </div>
+
+                  {/* Play Button Overlay */}
+                  <button
+                    type="button"
+                    className="btn-tiktok-play"
+                    id="btn-tiktok-play"
+                    aria-label="Ver video viral en TikTok de El Quilombo"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onOpenReel();
+                    }}
+                  >
+                    <span className="tiktok-play-icon">▶</span>
+                    <div className="tiktok-play-text">
+                      <span className="tiktok-play-main">Ver Video Viral</span>
+                      <span className="tiktok-play-sub">@belleamar_ en TikTok</span>
+                    </div>
+                  </button>
+
+                  {/* FOMO Numbers Strip */}
+                  <div className="tiktok-metrics-strip">
+                    <div className="tiktok-stat">
+                      <span className="stat-val">140K</span>
+                      <span className="stat-lbl">Vistas 👁️</span>
+                    </div>
+                    <div className="tiktok-stat-sep" />
+                    <div className="tiktok-stat">
+                      <span className="stat-val">28.8K</span>
+                      <span className="stat-lbl">Likes ❤️</span>
+                    </div>
+                    <div className="tiktok-stat-sep" />
+                    <div className="tiktok-stat">
+                      <span className="stat-val">842</span>
+                      <span className="stat-lbl">Comments 💬</span>
+                    </div>
+                  </div>
+
+                  {/* Live Fan Reactions Pill */}
+                  <div className="tiktok-live-reaction-pill" key={commentIndex}>
+                    <span className="reaction-user">{VIRAL_COMMENTS[commentIndex].user}:</span>
+                    <span className="reaction-text">&ldquo;{VIRAL_COMMENTS[commentIndex].text}&rdquo;</span>
+                  </div>
+                </div>
 
                 {/* Interactive Audio Equalizer Bar */}
                 <div

@@ -178,6 +178,8 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     title="TikTok Viral El Quilombo por @belleamar_"
                     className="inline-tiktok-iframe"
+                    scrolling="no"
+                    style={{ width: '100%', height: '100%', border: 'none', overflow: 'hidden' }}
                   />
                 </div>
               </div>

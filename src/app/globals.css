@@ -1078,6 +1078,16 @@ body::before {
 }
 
 /* Inline TikTok Video Styles */
+.visual-media.is-video-active {
+  aspect-ratio: auto;
+  height: 745px;
+  min-height: 740px;
+  max-height: 760px;
+  width: 100%;
+  cursor: default;
+  overflow: hidden;
+}
+
 .inline-tiktok-wrapper {
   width: 100%;
   height: 100%;
@@ -1090,13 +1100,9 @@ body::before {
 .inline-tiktok-iframe {
   width: 100%;
   height: 100%;
-  min-height: 560px;
   border: none;
   display: block;
-}
-
-.visual-media.is-video-active {
-  cursor: default;
+  overflow: hidden;
 }
 
 .btn-flyer-switch-to-video {

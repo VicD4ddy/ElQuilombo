@@ -89,6 +89,30 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [showControls, setShowControls] = useState(false);
+  const [tiktokStats, setTiktokStats] = useState({
+    views: '140.0K',
+    likes: '28.8K',
+    comments: '842',
+    shares: '4.1K',
+  });
+
+  useEffect(() => {
+    fetch('/api/tiktok-stats')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.views) {
+          setTiktokStats({
+            views: data.views,
+            likes: data.likes,
+            comments: data.comments,
+            shares: data.shares,
+          });
+        }
+      })
+      .catch((err) => {
+        console.warn('Could not load live TikTok stats:', err);
+      });
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -286,7 +310,7 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
                     </span>
                     <span>@belleamar_</span>
                     <span className="live-dot" />
-                    <span className="views-highlight">140K+ VISTAS</span>
+                    <span className="views-highlight">{tiktokStats.views} VISTAS</span>
                   </div>
 
                   <button
@@ -386,22 +410,22 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
                 {/* 4 Real Metrics */}
                 <div className="tiktok-metrics-strip inline-fomo-metrics">
                   <div className="tiktok-stat">
-                    <span className="stat-val">140.0K</span>
+                    <span className="stat-val">{tiktokStats.views}</span>
                     <span className="stat-lbl">Vistas 👁️</span>
                   </div>
                   <div className="tiktok-stat-sep" />
                   <div className="tiktok-stat">
-                    <span className="stat-val">28.8K</span>
+                    <span className="stat-val">{tiktokStats.likes}</span>
                     <span className="stat-lbl">Likes ❤️</span>
                   </div>
                   <div className="tiktok-stat-sep" />
                   <div className="tiktok-stat">
-                    <span className="stat-val">842</span>
+                    <span className="stat-val">{tiktokStats.comments}</span>
                     <span className="stat-lbl">Comments 💬</span>
                   </div>
                   <div className="tiktok-stat-sep" />
                   <div className="tiktok-stat">
-                    <span className="stat-val">4.1K</span>
+                    <span className="stat-val">{tiktokStats.shares}</span>
                     <span className="stat-lbl">Shares ↗</span>
                   </div>
                 </div>

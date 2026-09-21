@@ -27,6 +27,28 @@ export default function ReelModal({ isOpen, onClose }: ReelModalProps) {
   const { pauseAudio } = useAudioPlayer();
   const [isLoading, setIsLoading] = useState(true);
   const [reactionIndex, setReactionIndex] = useState(0);
+  const [tiktokStats, setTiktokStats] = useState({
+    views: '140.0K',
+    likes: '28.8K',
+    comments: '842',
+    shares: '4.1K',
+  });
+
+  useEffect(() => {
+    fetch('/api/tiktok-stats')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.views) {
+          setTiktokStats({
+            views: data.views,
+            likes: data.likes,
+            comments: data.comments,
+            shares: data.shares,
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -94,7 +116,7 @@ export default function ReelModal({ isOpen, onClose }: ReelModalProps) {
               <span className="reel-brand-title">VIRAL EN TIKTOK</span>
               <span className="tiktok-header-creator">@belleamar_</span>
             </div>
-            <span className="tiktok-live-pill">🔥 140K+ VISTAS</span>
+            <span className="tiktok-live-pill">🔥 {tiktokStats.views} VISTAS</span>
           </div>
           <div className="reel-modal-actions">
             <a
@@ -120,22 +142,22 @@ export default function ReelModal({ isOpen, onClose }: ReelModalProps) {
         {/* Top FOMO Metrics Strip */}
         <div className="tiktok-modal-fomo-strip">
           <div className="fomo-strip-stat">
-            <span className="fomo-val">140.0K</span>
+            <span className="fomo-val">{tiktokStats.views}</span>
             <span className="fomo-lbl">Vistas 👁️</span>
           </div>
           <div className="fomo-strip-sep" />
           <div className="fomo-strip-stat">
-            <span className="fomo-val">28.8K</span>
+            <span className="fomo-val">{tiktokStats.likes}</span>
             <span className="fomo-lbl">Likes ❤️</span>
           </div>
           <div className="fomo-strip-sep" />
           <div className="fomo-strip-stat">
-            <span className="fomo-val">842</span>
+            <span className="fomo-val">{tiktokStats.comments}</span>
             <span className="fomo-lbl">Comentarios 💬</span>
           </div>
           <div className="fomo-strip-sep" />
           <div className="fomo-strip-stat">
-            <span className="fomo-val">4.1K</span>
+            <span className="fomo-val">{tiktokStats.shares}</span>
             <span className="fomo-lbl">Compartidos ↗</span>
           </div>
         </div>

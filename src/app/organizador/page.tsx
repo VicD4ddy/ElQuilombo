@@ -34,7 +34,16 @@ export default function OrganizadorPage() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'paid' | 'pending'>('all');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [updatingPaymentId, setUpdatingPaymentId] = useState<string | null>(null);
+  const [updatingQuantityId, setUpdatingQuantityId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const PAYMENT_OPTIONS = [
+    'Pago Móvil',
+    'Zelle',
+    'Binance Pay (USDT)',
+    'Efectivo en Rock & Riff',
+  ];
 
   // Playlist state
   const [customTracks, setCustomTracks] = useState<Track[]>([]);
@@ -217,6 +226,93 @@ export default function OrganizadorPage() {
       alert('⚠️ Error de conexión al eliminar: ' + (err?.message || 'Error desconocido'));
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const handleChangePaymentMethod = async (reservation: any, newMethod: string) => {
+    if (!newMethod || newMethod === reservation.payment_method) return;
+    setUpdatingPaymentId(reservation.id);
+
+    try {
+      const res = await fetch('/api/admin/reservations', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: reservation.id,
+          payment_method: newMethod,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        // Update local state immediately
+        setReservations((prev) =>
+          prev.map((r) => (r.id === reservation.id ? { ...r, payment_method: newMethod } : r))
+        );
+      } else {
+        alert('⚠️ Error al actualizar método de pago en Supabase:\n\n' + (data.error || 'Verifica permisos'));
+      }
+    } catch (err: any) {
+      console.error('Error updating payment method:', err);
+      alert('⚠️ Error de conexión al actualizar método de pago: ' + (err?.message || 'Error desconocido'));
+    } finally {
+      setUpdatingPaymentId(null);
+    }
+  };
+
+  const handleChangeQuantity = async (reservation: any, newQty: number) => {
+    if (!newQty || newQty < 1 || newQty === Number(reservation.quantity)) return;
+    setUpdatingQuantityId(reservation.id);
+
+    const oldQty = Number(reservation.quantity) || 1;
+    const oldUSD = Number(reservation.total_usd) || 10;
+    const oldBs = Number(reservation.total_ref_bs) || 0;
+
+    // Unit price in USD (usually $10)
+    const unitPriceUSD = oldUSD > 0 ? oldUSD / oldQty : 10;
+    const newTotalUSD = Math.round(newQty * unitPriceUSD);
+
+    // Exchange rate per USD
+    const rateBs = oldUSD > 0 && oldBs > 0 ? oldBs / oldUSD : 974.42;
+    const newTotalRefBs = Number((newTotalUSD * rateBs).toFixed(2));
+
+    try {
+      const res = await fetch('/api/admin/reservations', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: reservation.id,
+          quantity: newQty,
+          total_usd: newTotalUSD,
+          total_ref_bs: newTotalRefBs,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        // Update local state immediately
+        setReservations((prev) =>
+          prev.map((r) =>
+            r.id === reservation.id
+              ? {
+                  ...r,
+                  quantity: newQty,
+                  total_usd: newTotalUSD,
+                  total_ref_bs: newTotalRefBs,
+                }
+              : r
+          )
+        );
+        // Refresh live metrics from database
+        fetchReservations();
+      } else {
+        alert('⚠️ Error al actualizar cantidad en Supabase:\n\n' + (data.error || 'Verifica los permisos en Supabase'));
+      }
+    } catch (err: any) {
+      console.error('Error updating quantity:', err);
+      alert('⚠️ Error de conexión al actualizar cantidad: ' + (err?.message || 'Error desconocido'));
+    } finally {
+      setUpdatingQuantityId(null);
     }
   };
 
@@ -709,7 +805,7 @@ export default function OrganizadorPage() {
                   <span style={{ color: '#ffd600' }}>{metrics?.pendingReservationsCount || 0}</span>
                 </div>
                 <span className="organizer-kpi-subtext">
-                  WhatsApp Conciliación
+                  Cobrado: ${metrics?.paidRevenueUSD || 0} USD ({metrics?.paidReservationsCount || 0} órdenes)
                 </span>
               </div>
 
@@ -737,6 +833,203 @@ export default function OrganizadorPage() {
                     }}
                   />
                 </div>
+              </div>
+            </div>
+
+            {/* RECAUDACIÓN POR MÉTODO DE PAGO */}
+            <div
+              style={{
+                background: 'rgba(15, 12, 28, 0.85)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '18px',
+                padding: '1.5rem',
+                marginBottom: '1.5rem',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
+                <div>
+                  <h3 style={{ fontFamily: 'var(--font-title)', fontSize: '1.15rem', fontWeight: 900, color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span>💳</span> RECAUDACIÓN PAGADA POR MÉTODO DE PAGO
+                  </h3>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-subtle)', marginTop: '0.2rem' }}>
+                    Total cobrado y conciliado en tiempo real según el método seleccionado por los asistentes.
+                  </p>
+                </div>
+
+                {/* Badge Global Cobrado */}
+                <div
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(37, 211, 102, 0.15) 0%, rgba(0, 229, 255, 0.15) 100%)',
+                    border: '1px solid #25d366',
+                    borderRadius: '12px',
+                    padding: '0.5rem 1.15rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                  }}
+                >
+                  <span style={{ fontSize: '0.72rem', color: '#86efac', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Total Cobrado (Pagado)
+                  </span>
+                  <span style={{ fontSize: '1.35rem', fontWeight: 900, color: '#25d366', fontFamily: 'monospace' }}>
+                    ${metrics?.paidRevenueUSD || 0} USD
+                  </span>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-subtle)' }}>
+                    {metrics?.paidReservationsCount || 0} órdenes conciliadas
+                  </span>
+                </div>
+              </div>
+
+              {/* Grid de Métodos de Pago */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                  gap: '1rem',
+                }}
+              >
+                {metrics?.paymentMethods && metrics.paymentMethods.length > 0 ? (
+                  metrics.paymentMethods.map((pm) => {
+                    const isPagoMovil = pm.method.toLowerCase().includes('móvil') || pm.method.toLowerCase().includes('movil');
+                    const isZelle = pm.method.toLowerCase().includes('zelle');
+                    const isBinance = pm.method.toLowerCase().includes('binance');
+                    const isCash = pm.method.toLowerCase().includes('efectivo');
+
+                    const icon = isPagoMovil ? '📱' : isZelle ? '💵' : isBinance ? '🟡' : isCash ? '🎟️' : '💳';
+                    const accentColor = isPagoMovil
+                      ? 'var(--neon-cyan)'
+                      : isZelle
+                      ? '#a855f7'
+                      : isBinance
+                      ? '#ffd600'
+                      : isCash
+                      ? '#ec4899'
+                      : 'var(--neon-purple-light)';
+
+                    const bgGradient = isPagoMovil
+                      ? 'linear-gradient(135deg, rgba(0, 229, 255, 0.08) 0%, rgba(15, 12, 28, 0.9) 100%)'
+                      : isZelle
+                      ? 'linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(15, 12, 28, 0.9) 100%)'
+                      : isBinance
+                      ? 'linear-gradient(135deg, rgba(255, 214, 0, 0.08) 0%, rgba(15, 12, 28, 0.9) 100%)'
+                      : isCash
+                      ? 'linear-gradient(135deg, rgba(236, 72, 153, 0.08) 0%, rgba(15, 12, 28, 0.9) 100%)'
+                      : 'linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(15, 12, 28, 0.9) 100%)';
+
+                    const borderStyle = pm.paidUSD > 0
+                      ? `1px solid ${accentColor}`
+                      : '1px solid rgba(255, 255, 255, 0.1)';
+
+                    const percentOfTotalPaid = (metrics.paidRevenueUSD || 0) > 0
+                      ? Math.round((pm.paidUSD / (metrics.paidRevenueUSD || 1)) * 100)
+                      : 0;
+
+                    return (
+                      <div
+                        key={pm.method}
+                        style={{
+                          background: bgGradient,
+                          border: borderStyle,
+                          borderRadius: '14px',
+                          padding: '1.15rem',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '0.65rem',
+                          position: 'relative',
+                          overflow: 'hidden',
+                          boxShadow: pm.paidUSD > 0 ? `0 4px 20px ${accentColor}15` : 'none',
+                        }}
+                      >
+                        {/* Method Header */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontWeight: 800, fontSize: '0.9rem', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                            <span>{icon}</span> {pm.method}
+                          </span>
+                          {pm.paidUSD > 0 ? (
+                            <span
+                              style={{
+                                fontSize: '0.7rem',
+                                fontWeight: 800,
+                                color: '#25d366',
+                                background: 'rgba(37, 211, 102, 0.15)',
+                                border: '1px solid rgba(37, 211, 102, 0.3)',
+                                borderRadius: 'var(--radius-pill)',
+                                padding: '0.15rem 0.5rem',
+                              }}
+                            >
+                              ✓ {pm.paidOrders} pagada{pm.paidOrders !== 1 ? 's' : ''}
+                            </span>
+                          ) : (
+                            <span
+                              style={{
+                                fontSize: '0.7rem',
+                                fontWeight: 600,
+                                color: 'var(--text-subtle)',
+                                background: 'rgba(255, 255, 255, 0.05)',
+                                borderRadius: 'var(--radius-pill)',
+                                padding: '0.15rem 0.45rem',
+                              }}
+                            >
+                              $0 cobrado
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Paid Amount */}
+                        <div>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--text-subtle)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            Total Pagado
+                          </div>
+                          <div style={{ fontSize: '1.45rem', fontWeight: 900, color: pm.paidUSD > 0 ? accentColor : '#64748b', fontFamily: 'monospace', lineHeight: 1.2 }}>
+                            ${pm.paidUSD} USD
+                          </div>
+                          {pm.paidBs > 0 ? (
+                            <div style={{ fontSize: '0.72rem', color: 'var(--text-subtle)', marginTop: '0.15rem' }}>
+                              Ref: Bs. {pm.paidBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </div>
+                          ) : pm.paidUSD > 0 ? (
+                            <div style={{ fontSize: '0.72rem', color: 'var(--text-subtle)', marginTop: '0.15rem' }}>
+                              {pm.paidTickets} entrada{pm.paidTickets !== 1 ? 's' : ''}
+                            </div>
+                          ) : null}
+                        </div>
+
+                        {/* Progress Bar of Collected share */}
+                        <div style={{ width: '100%', height: '4px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '2px', overflow: 'hidden' }}>
+                          <div
+                            style={{
+                              width: `${percentOfTotalPaid}%`,
+                              height: '100%',
+                              background: accentColor,
+                              borderRadius: '2px',
+                            }}
+                          />
+                        </div>
+
+                        {/* Pending Subtext */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.72rem', color: 'var(--text-subtle)', borderTop: '1px solid rgba(255, 255, 255, 0.05)', paddingTop: '0.5rem' }}>
+                          <span>
+                            {pm.pendingOrders > 0 ? (
+                              <span style={{ color: '#ffd600' }}>
+                                ⏳ ${pm.pendingUSD} pendientes ({pm.pendingOrders})
+                              </span>
+                            ) : (
+                              <span style={{ color: '#94a3b8' }}>Sin pendientes</span>
+                            )}
+                          </span>
+                          <span style={{ fontWeight: 700, color: '#cbd5e1' }}>
+                            {pm.totalTickets} entr.
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div style={{ color: 'var(--text-subtle)', fontSize: '0.85rem' }}>
+                    Cargando desglose de métodos...
+                  </div>
+                )}
               </div>
             </div>
 
@@ -929,7 +1222,9 @@ export default function OrganizadorPage() {
                     filteredReservations.map((r) => {
                       const waLink = getWhatsappChatUrl(
                         r.buyer_phone,
-                        `¡Hola ${r.buyer_name}! Te escribimos del equipo de El Quilombo 🇦🇷🔥 con respecto a tu preventa #${r.ticket_code} ($${r.total_usd} USD).`
+                        r.is_paid
+                          ? `🎉 *¡TU ENTRADA HA SIDO APROBADA! - EL QUILOMBO* 🇦🇷🔥\n¡Hola ${r.buyer_name}! Tu preventa ha sido validada y aprobada por el equipo de El Quilombo 💜\n\n🎟️ *Entrada:* ${r.quantity}x ${r.tier_name}\n🪪 *Titular:* ${r.buyer_name} (${r.buyer_dni})\n🔢 *Código Único de Acceso:* #${r.ticket_code}\n📍 *Lugar:* Rock & Riff (La Viña) - antiguo Oleo Gastrobar (asi aparece en google)\n🗺️ *Ubicación / Cómo llegar:* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8\n🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM\n\n*(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).*\n¡Presentalo al llegar y preparate para la fiesta más picante de Valencia! 🇦🇷🔥`
+                          : `¡Hola ${r.buyer_name}! Te escribimos del equipo de El Quilombo 🇦🇷🔥 con respecto a tu preventa #${r.ticket_code} ($${r.total_usd} USD). ¿Deseas concretar tu pago para validar tu entrada?`
                       );
 
                       return (
@@ -948,14 +1243,72 @@ export default function OrganizadorPage() {
                             <div style={{ color: 'var(--text-subtle)', fontSize: '0.74rem' }}>{r.buyer_dni}</div>
                           </td>
                           <td style={{ padding: '0.85rem 1rem' }}>
-                            <span style={{ fontWeight: 700 }}>{r.quantity}x</span> {r.tier_name}
+                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}>
+                              <select
+                                value={r.quantity || 1}
+                                onChange={(e) => handleChangeQuantity(r, parseInt(e.target.value, 10))}
+                                disabled={updatingQuantityId === r.id}
+                                title="Cambiar cantidad de entradas de esta persona"
+                                style={{
+                                  background: updatingQuantityId === r.id ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255, 255, 255, 0.08)',
+                                  color: '#ffffff',
+                                  border: updatingQuantityId === r.id ? '1px solid var(--neon-cyan)' : '1px solid rgba(255, 255, 255, 0.18)',
+                                  borderRadius: '6px',
+                                  padding: '0.28rem 0.45rem',
+                                  fontSize: '0.8rem',
+                                  fontWeight: 800,
+                                  cursor: updatingQuantityId === r.id ? 'wait' : 'pointer',
+                                  outline: 'none',
+                                }}
+                              >
+                                {Array.from(new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, r.quantity || 1]))
+                                  .sort((a, b) => a - b)
+                                  .map((num) => (
+                                    <option key={num} value={num} style={{ background: '#0a061a', color: '#fff' }}>
+                                      {num}x
+                                    </option>
+                                  ))}
+                              </select>
+                              <span style={{ fontSize: '0.78rem', color: '#cbd5e1', whiteSpace: 'nowrap' }}>
+                                {r.tier_name || 'Pase Preventa'}
+                              </span>
+                            </div>
                           </td>
                           <td style={{ padding: '0.85rem 1rem' }}>
                             <div style={{ fontWeight: 800, color: 'var(--neon-cyan)' }}>${r.total_usd} USD</div>
                             <div style={{ color: 'var(--text-subtle)', fontSize: '0.72rem' }}>Ref: Bs. {r.total_ref_bs}</div>
                           </td>
-                          <td style={{ padding: '0.85rem 1rem', color: 'var(--text-muted)' }}>
-                            {r.payment_method}
+                          <td style={{ padding: '0.85rem 1rem' }}>
+                            <select
+                              value={r.payment_method || 'Pago Móvil'}
+                              onChange={(e) => handleChangePaymentMethod(r, e.target.value)}
+                              disabled={updatingPaymentId === r.id}
+                              title="Cambiar método de pago"
+                              style={{
+                                background: updatingPaymentId === r.id ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255, 255, 255, 0.08)',
+                                color: '#ffffff',
+                                border: updatingPaymentId === r.id ? '1px solid var(--neon-cyan)' : '1px solid rgba(255, 255, 255, 0.18)',
+                                borderRadius: '8px',
+                                padding: '0.35rem 0.55rem',
+                                fontSize: '0.78rem',
+                                fontWeight: 700,
+                                cursor: updatingPaymentId === r.id ? 'wait' : 'pointer',
+                                outline: 'none',
+                                width: '100%',
+                                maxWidth: '170px',
+                                transition: 'all 0.2s ease',
+                              }}
+                            >
+                              {r.payment_method && !PAYMENT_OPTIONS.includes(r.payment_method) && (
+                                <option value={r.payment_method} style={{ background: '#0a061a', color: '#fff' }}>
+                                  {r.payment_method}
+                                </option>
+                              )}
+                              <option value="Pago Móvil" style={{ background: '#0a061a', color: '#fff' }}>📱 Pago Móvil</option>
+                              <option value="Zelle" style={{ background: '#0a061a', color: '#fff' }}>💵 Zelle</option>
+                              <option value="Binance Pay (USDT)" style={{ background: '#0a061a', color: '#fff' }}>🟡 Binance Pay</option>
+                              <option value="Efectivo en Rock & Riff" style={{ background: '#0a061a', color: '#fff' }}>🎟️ Efectivo</option>
+                            </select>
                           </td>
                           <td style={{ padding: '0.85rem 1rem' }}>
                             <button
@@ -1070,7 +1423,9 @@ export default function OrganizadorPage() {
                 filteredReservations.map((r) => {
                   const waLink = getWhatsappChatUrl(
                     r.buyer_phone,
-                    `¡Hola ${r.buyer_name}! Te escribimos del equipo de El Quilombo 🇦🇷🔥 con respecto a tu preventa #${r.ticket_code} ($${r.total_usd} USD).`
+                    r.is_paid
+                      ? `🎉 *¡TU ENTRADA HA SIDO APROBADA! - EL QUILOMBO* 🇦🇷🔥\n¡Hola ${r.buyer_name}! Tu preventa ha sido validada y aprobada por el equipo de El Quilombo 💜\n\n🎟️ *Entrada:* ${r.quantity}x ${r.tier_name}\n🪪 *Titular:* ${r.buyer_name} (${r.buyer_dni})\n🔢 *Código Único de Acceso:* #${r.ticket_code}\n📍 *Lugar:* Rock & Riff (La Viña) - antiguo Oleo Gastrobar (asi aparece en google)\n🗺️ *Ubicación / Cómo llegar:* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8\n🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM\n\n*(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).*\n¡Presentalo al llegar y preparate para la fiesta más picante de Valencia! 🇦🇷🔥`
+                      : `¡Hola ${r.buyer_name}! Te escribimos del equipo de El Quilombo 🇦🇷🔥 con respecto a tu preventa #${r.ticket_code} ($${r.total_usd} USD). ¿Deseas concretar tu pago para validar tu entrada?`
                   );
 
                   return (
@@ -1120,9 +1475,33 @@ export default function OrganizadorPage() {
                       <div className="attendee-mobile-details-grid">
                         <div>
                           <div className="attendee-mobile-detail-label">Entradas</div>
-                          <div className="attendee-mobile-detail-value">
-                            {r.quantity}x {r.tier_name || 'Preventa'}
-                          </div>
+                          <select
+                            value={r.quantity || 1}
+                            onChange={(e) => handleChangeQuantity(r, parseInt(e.target.value, 10))}
+                            disabled={updatingQuantityId === r.id}
+                            title="Cambiar cantidad de entradas"
+                            style={{
+                              marginTop: '0.25rem',
+                              width: '100%',
+                              background: updatingQuantityId === r.id ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255, 255, 255, 0.08)',
+                              color: '#ffffff',
+                              border: updatingQuantityId === r.id ? '1px solid var(--neon-cyan)' : '1px solid rgba(255, 255, 255, 0.2)',
+                              borderRadius: '6px',
+                              padding: '0.3rem 0.45rem',
+                              fontSize: '0.76rem',
+                              fontWeight: 800,
+                              cursor: updatingQuantityId === r.id ? 'wait' : 'pointer',
+                              outline: 'none',
+                            }}
+                          >
+                            {Array.from(new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, r.quantity || 1]))
+                              .sort((a, b) => a - b)
+                              .map((num) => (
+                                <option key={num} value={num} style={{ background: '#0a061a', color: '#fff' }}>
+                                  {num}x {r.tier_name || 'Preventa'}
+                                </option>
+                              ))}
+                          </select>
                         </div>
 
                         <div>
@@ -1134,9 +1513,35 @@ export default function OrganizadorPage() {
 
                         <div>
                           <div className="attendee-mobile-detail-label">Método Pago</div>
-                          <div className="attendee-mobile-detail-value" style={{ fontSize: '0.8rem' }}>
-                            {r.payment_method || 'Pago Móvil'}
-                          </div>
+                          <select
+                            value={r.payment_method || 'Pago Móvil'}
+                            onChange={(e) => handleChangePaymentMethod(r, e.target.value)}
+                            disabled={updatingPaymentId === r.id}
+                            title="Cambiar método de pago"
+                            style={{
+                              marginTop: '0.25rem',
+                              width: '100%',
+                              background: updatingPaymentId === r.id ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255, 255, 255, 0.08)',
+                              color: '#ffffff',
+                              border: updatingPaymentId === r.id ? '1px solid var(--neon-cyan)' : '1px solid rgba(255, 255, 255, 0.2)',
+                              borderRadius: '6px',
+                              padding: '0.3rem 0.45rem',
+                              fontSize: '0.76rem',
+                              fontWeight: 700,
+                              cursor: updatingPaymentId === r.id ? 'wait' : 'pointer',
+                              outline: 'none',
+                            }}
+                          >
+                            {r.payment_method && !PAYMENT_OPTIONS.includes(r.payment_method) && (
+                              <option value={r.payment_method} style={{ background: '#0a061a', color: '#fff' }}>
+                                {r.payment_method}
+                              </option>
+                            )}
+                            <option value="Pago Móvil" style={{ background: '#0a061a', color: '#fff' }}>📱 Pago Móvil</option>
+                            <option value="Zelle" style={{ background: '#0a061a', color: '#fff' }}>💵 Zelle</option>
+                            <option value="Binance Pay (USDT)" style={{ background: '#0a061a', color: '#fff' }}>🟡 Binance Pay</option>
+                            <option value="Efectivo en Rock & Riff" style={{ background: '#0a061a', color: '#fff' }}>🎟️ Efectivo</option>
+                          </select>
                         </div>
 
                         <div>

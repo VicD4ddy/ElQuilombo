@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase, supabaseAdmin, isSupabaseConfigured } from '../../../../lib/supabase';
-import { OrganizerMetrics } from '../../../../types/settings';
+import { OrganizerMetrics, PaymentMethodMetric } from '../../../../types/settings';
 
 export async function GET() {
   const client = supabaseAdmin || supabase;
@@ -32,21 +32,92 @@ export async function GET() {
     let totalRevenueBs = 0;
     let paidCount = 0;
     let pendingCount = 0;
+    let paidTicketsCount = 0;
+    let paidRevenueUSD = 0;
+    let paidRevenueBs = 0;
+    let pendingRevenueUSD = 0;
+    let pendingRevenueBs = 0;
     const artistCounts: Record<string, number> = {};
+
+    const STANDARD_METHODS = [
+      'Pago Móvil',
+      'Zelle',
+      'Binance Pay (USDT)',
+      'Efectivo en Rock & Riff',
+    ];
+
+    const methodStats: Record<string, PaymentMethodMetric> = {};
+
+    for (const m of STANDARD_METHODS) {
+      methodStats[m] = {
+        method: m,
+        paidUSD: 0,
+        paidBs: 0,
+        paidTickets: 0,
+        paidOrders: 0,
+        pendingUSD: 0,
+        pendingBs: 0,
+        pendingTickets: 0,
+        pendingOrders: 0,
+        totalUSD: 0,
+        totalTickets: 0,
+        totalOrders: 0,
+      };
+    }
 
     for (const r of items) {
       const qty = Number(r.quantity) || 1;
       const usd = Number(r.total_usd) || 0;
       const bs = Number(r.total_ref_bs) || 0;
+      const methodRaw = (r.payment_method && typeof r.payment_method === 'string' && r.payment_method.trim())
+        ? r.payment_method.trim()
+        : 'Efectivo en Rock & Riff';
 
       totalTicketsCount += qty;
       totalRevenueUSD += usd;
       totalRevenueBs += bs;
 
+      if (!methodStats[methodRaw]) {
+        methodStats[methodRaw] = {
+          method: methodRaw,
+          paidUSD: 0,
+          paidBs: 0,
+          paidTickets: 0,
+          paidOrders: 0,
+          pendingUSD: 0,
+          pendingBs: 0,
+          pendingTickets: 0,
+          pendingOrders: 0,
+          totalUSD: 0,
+          totalTickets: 0,
+          totalOrders: 0,
+        };
+      }
+
+      const m = methodStats[methodRaw];
+      m.totalOrders += 1;
+      m.totalTickets += qty;
+      m.totalUSD += usd;
+
       if (r.is_paid) {
         paidCount += 1;
+        paidTicketsCount += qty;
+        paidRevenueUSD += usd;
+        paidRevenueBs += bs;
+
+        m.paidOrders += 1;
+        m.paidTickets += qty;
+        m.paidUSD += usd;
+        m.paidBs += bs;
       } else {
         pendingCount += 1;
+        pendingRevenueUSD += usd;
+        pendingRevenueBs += bs;
+
+        m.pendingOrders += 1;
+        m.pendingTickets += qty;
+        m.pendingUSD += usd;
+        m.pendingBs += bs;
       }
 
       if (r.favorite_artist && typeof r.favorite_artist === 'string') {
@@ -56,6 +127,15 @@ export async function GET() {
         }
       }
     }
+
+    const paymentMethods = Object.values(methodStats).sort((a, b) => {
+      const aIndex = STANDARD_METHODS.indexOf(a.method);
+      const bIndex = STANDARD_METHODS.indexOf(b.method);
+      if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+      if (aIndex !== -1) return -1;
+      if (bIndex !== -1) return 1;
+      return b.paidUSD - a.paidUSD;
+    });
 
     const topRequestedArtists = Object.entries(artistCounts)
       .map(([name, count]) => ({ name, count }))
@@ -72,9 +152,15 @@ export async function GET() {
       totalRevenueBs,
       paidReservationsCount: paidCount,
       pendingReservationsCount: pendingCount,
+      paidTicketsCount,
+      paidRevenueUSD,
+      paidRevenueBs,
+      pendingRevenueUSD,
+      pendingRevenueBs,
       maxCapacity,
       occupancyPercentage,
       topRequestedArtists,
+      paymentMethods,
     };
 
     return NextResponse.json({
@@ -103,7 +189,7 @@ export async function PATCH(request: Request) {
 
   try {
     const body = await request.json();
-    const { id, ticket_code, is_paid } = body;
+    const { id, ticket_code, is_paid, payment_method, quantity, total_usd, total_ref_bs } = body;
 
     if (!id && !ticket_code) {
       return NextResponse.json({
@@ -112,7 +198,32 @@ export async function PATCH(request: Request) {
       }, { status: 400 });
     }
 
-    let query = client.from('reservations').update({ is_paid: Boolean(is_paid) });
+    const updates: Record<string, any> = {};
+    if (typeof is_paid !== 'undefined') {
+      updates.is_paid = Boolean(is_paid);
+    }
+    if (typeof payment_method === 'string') {
+      updates.payment_method = payment_method.trim();
+    }
+    if (typeof quantity !== 'undefined') {
+      const q = Math.max(1, Math.min(100, parseInt(String(quantity), 10) || 1));
+      updates.quantity = q;
+    }
+    if (typeof total_usd !== 'undefined') {
+      updates.total_usd = Number(total_usd);
+    }
+    if (typeof total_ref_bs !== 'undefined') {
+      updates.total_ref_bs = Number(total_ref_bs);
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return NextResponse.json({
+        success: false,
+        error: 'No fields to update',
+      }, { status: 400 });
+    }
+
+    let query = client.from('reservations').update(updates);
 
     if (id) {
       query = query.eq('id', id);

@@ -16,6 +16,21 @@ export interface EventSettings {
   updatedAt?: string;
 }
 
+export interface PaymentMethodMetric {
+  method: string;
+  paidUSD: number;
+  paidBs: number;
+  paidTickets: number;
+  paidOrders: number;
+  pendingUSD: number;
+  pendingBs: number;
+  pendingTickets: number;
+  pendingOrders: number;
+  totalUSD: number;
+  totalTickets: number;
+  totalOrders: number;
+}
+
 export interface OrganizerMetrics {
   totalReservations: number;
   totalTicketsCount: number;
@@ -23,15 +38,21 @@ export interface OrganizerMetrics {
   totalRevenueBs: number;
   paidReservationsCount: number;
   pendingReservationsCount: number;
+  paidTicketsCount?: number;
+  paidRevenueUSD?: number;
+  paidRevenueBs?: number;
+  pendingRevenueUSD?: number;
+  pendingRevenueBs?: number;
   maxCapacity: number;
   occupancyPercentage: number;
   topRequestedArtists: { name: string; count: number }[];
+  paymentMethods?: PaymentMethodMetric[];
 }
 
 export const DEFAULT_EVENT_SETTINGS: EventSettings = {
   eventDate: '09 OCT • 8:00 PM',
   venueName: 'Rock & Riff',
-  venueAddress: 'Urb. La Viña, Valencia, Carabobo - Venezuela',
+  venueAddress: 'Rock & Riff (antiguo Oleo Gastrobar) - Urb. La Viña, Valencia, Carabobo',
   officialWhatsapp: '58412882460',
   organizerPin: '5401385',
   priceGeneral: 10,

@@ -175,7 +175,8 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
 🎟️ *Entrada:* ${currentOrder.quantity}x ${currentOrder.tier.name}
 🪪 *Titular:* ${currentOrder.buyerName} (${currentOrder.buyerDni})
 🔢 *Código Único de Acceso:* #${currentOrder.ticketCode}
-📍 *Lugar:* Rock & Riff (La Viña)
+📍 *Lugar:* Rock & Riff (La Viña) - antiguo Oleo Gastrobar (asi aparece en google)
+🗺️ *Ubicación / Cómo llegar:* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8
 🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM
 
 *(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).*
@@ -195,7 +196,8 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
 🎶 *Tema/Artista que no puede faltar:* ${currentOrder.favoriteArtist}
 🎯 *${memeText}*
 
-¿Me podrían facilitar los datos para concretar el pago? ¡Nos vemos en Rock & Riff! 🇦🇷🔥`;
+¿Me podrían facilitar los datos para concretar el pago? ¡Nos vemos en Rock & Riff! 🇦🇷🔥
+📍 *Ubicación (antiguo Oleo Gastrobar):* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8`;
 
   const waMessage = isOrganizerView ? waApprovedOrganizerMessage : waClientMessage;
   const waWebUrl = getWhatsappChatUrl(targetPhone, waMessage);
@@ -343,11 +345,11 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
           <div
             ref={ticketRef}
             style={{
-              background: 'linear-gradient(145deg, #181232 0%, #0c0a18 100%)',
-              border: '1px solid rgba(0, 240, 255, 0.45)',
+              background: 'linear-gradient(145deg, #140d2e 0%, #080518 100%)',
+              border: '1px solid rgba(135, 52, 216, 0.45)',
               borderRadius: '24px',
               padding: '1.5rem',
-              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.85), 0 0 35px rgba(0, 240, 255, 0.2)',
+              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.85), 0 0 35px rgba(81, 30, 132, 0.35)',
               position: 'relative',
               overflow: 'hidden',
             }}
@@ -778,7 +780,25 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
               </div>
               <div className="ticket-info-item">
                 <span className="t-label">Lugar del Evento</span>
-                <span className="t-value">Rock &amp; Riff (La Viña)</span>
+                <span className="t-value">
+                  Rock &amp; Riff (La Viña)
+                  <a
+                    href="https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8"
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      display: 'block',
+                      fontSize: '0.72rem',
+                      color: 'var(--neon-cyan)',
+                      textDecoration: 'underline',
+                      marginTop: '0.2rem',
+                      fontWeight: 700,
+                    }}
+                    title="Abrir ubicación en Google Maps"
+                  >
+                    📍 antiguo Oleo Gastrobar (Google Maps) ↗
+                  </a>
+                </span>
               </div>
               <div className="ticket-info-item">
                 <span className="t-label">Total a Pagar</span>
@@ -821,7 +841,7 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
                 <div
                   style={{
                     marginTop: '1.25rem',
-                    background: 'linear-gradient(135deg, rgba(20, 15, 38, 0.96) 0%, rgba(10, 8, 20, 0.98) 100%)',
+                    background: 'linear-gradient(135deg, rgba(18, 12, 42, 0.96) 0%, rgba(8, 5, 24, 0.98) 100%)',
                     border: `1px solid ${paymentDetail.accentColor}55`,
                     borderRadius: '18px',
                     padding: '1.25rem 1.15rem',
@@ -895,8 +915,8 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
                             handleCopy(valToCopy, 'Monto');
                           }}
                           style={{
-                            background: copiedField === 'Monto' ? '#25d366' : 'rgba(0, 240, 255, 0.12)',
-                            border: copiedField === 'Monto' ? '1px solid #25d366' : '1px solid rgba(0, 240, 255, 0.3)',
+                            background: copiedField === 'Monto' ? '#25d366' : 'rgba(0, 229, 255, 0.12)',
+                            border: copiedField === 'Monto' ? '1px solid #25d366' : '1px solid rgba(0, 229, 255, 0.3)',
                             color: copiedField === 'Monto' ? '#000' : 'var(--neon-cyan)',
                             borderRadius: '6px',
                             padding: '0.25rem 0.5rem',
@@ -926,7 +946,7 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
                           width: '100%',
                           background: copiedField === 'pago_movil_banco'
                             ? 'linear-gradient(135deg, #25d366 0%, #128c7e 100%)'
-                            : 'linear-gradient(135deg, rgba(0, 240, 255, 0.22) 0%, rgba(139, 23, 245, 0.3) 100%)',
+                            : 'linear-gradient(135deg, rgba(0, 229, 255, 0.22) 0%, rgba(135, 52, 216, 0.3) 100%)',
                           border: copiedField === 'pago_movil_banco' ? '1px solid #25d366' : '1px solid var(--neon-cyan)',
                           color: '#ffffff',
                           fontFamily: 'var(--font-title)',

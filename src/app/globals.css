@@ -6,31 +6,44 @@
 @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;900&family=Syne:wght@700;800;900&display=swap');
 
 :root {
-  /* Surface & Background Colors */
-  --bg-black: #06050a;
-  --bg-primary: #0a0814;
-  --bg-secondary: #120f24;
-  --bg-card: rgba(22, 17, 43, 0.72);
-  --bg-card-hover: rgba(32, 25, 60, 0.85);
-  --bg-glass: rgba(255, 255, 255, 0.035);
+  /* Official PANTONE® Dominant Brand Identity (from BRANDING.pdf - Drea by kt / Belle Amar) */
+  --brand-reflex-blue: #001489;       /* PANTONE® Reflex Blue C */
+  --brand-reflex-blue-rgb: 0, 20, 137;
+  --brand-pms-purple: #511e84;         /* PANTONE® PMS 3583 C */
+  --brand-pms-purple-rgb: 81, 30, 132;
+
+  /* Surface & Background Colors (Nocturnal club atmosphere rooted in Reflex Blue & PMS 3583) */
+  --bg-black: #05040d;
+  --bg-primary: #080518;
+  --bg-secondary: #0f0a28;
+  --bg-card: rgba(18, 12, 42, 0.78);
+  --bg-card-hover: rgba(28, 18, 64, 0.9);
+  --bg-glass: rgba(255, 255, 255, 0.04);
   --bg-glass-strong: rgba(255, 255, 255, 0.08);
 
-  /* Neon & Theme Accents */
-  --neon-purple: #a855f7;
-  --neon-purple-glow: #c084fc;
-  --neon-purple-deep: #7928ca;
-  --neon-purple-shadow: rgba(168, 85, 247, 0.4);
+  /* Brand Accents & Digital Neons */
+  --neon-purple: #8734d8;              /* Vibrant electric tint of PMS 3583 C */
+  --neon-purple-glow: #a855f7;
+  --neon-purple-deep: #511e84;         /* Base PANTONE® PMS 3583 C */
+  --neon-purple-shadow: rgba(81, 30, 132, 0.55);
 
-  --neon-cyan: #00f0ff;
+  --neon-blue: #1842f5;                /* Electric digital adaptation of Reflex Blue C */
+  --neon-blue-glow: #3b66ff;
+  --neon-blue-shadow: rgba(0, 20, 137, 0.6);
+
+  --neon-cyan: #00e5ff;                /* High contrast digital cyan/ice neon for UI text & CTA */
   --neon-cyan-glow: #38bdf8;
-  --neon-cyan-shadow: rgba(0, 240, 255, 0.45);
+  --neon-cyan-shadow: rgba(0, 229, 255, 0.45);
 
   --neon-pink: #ff007f;
   --neon-pink-glow: #f43f5e;
   --neon-pink-shadow: rgba(255, 0, 127, 0.4);
 
+  /* Set & Protocol Accents from BRANDING.pdf */
+  --brand-lime: #44d62c;               /* Protocol zone accent (Slide 7) */
+  --neon-orange: #ff5500;              /* DJ & Bar ambient lights (Slide 10) */
   --sticker-yellow: #ffd600;
-  --sticker-yellow-text: #0a0814;
+  --sticker-yellow-text: #080518;
 
   --whatsapp-green: #25d366;
   --whatsapp-green-hover: #22bf5b;
@@ -43,16 +56,18 @@
   --text-accent-lilac: #d8b4fe;
 
   /* Borders & Dividers */
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-neon-purple: rgba(168, 85, 247, 0.35);
-  --border-neon-cyan: rgba(0, 240, 255, 0.4);
+  --border-subtle: rgba(255, 255, 255, 0.09);
+  --border-neon-purple: rgba(135, 52, 216, 0.45);
+  --border-neon-blue: rgba(0, 20, 137, 0.55);
+  --border-neon-cyan: rgba(0, 229, 255, 0.45);
   --border-neon-pink: rgba(255, 0, 127, 0.4);
 
-  /* Gradients */
-  --grad-primary: linear-gradient(135deg, #a855f7 0%, #00f0ff 100%);
-  --grad-sunset: linear-gradient(135deg, #ff007f 0%, #a855f7 50%, #00f0ff 100%);
-  --grad-dark-card: linear-gradient(145deg, rgba(26, 20, 51, 0.8) 0%, rgba(13, 10, 26, 0.9) 100%);
-  --grad-glow: radial-gradient(circle at top center, rgba(168, 85, 247, 0.25) 0%, rgba(0, 240, 255, 0.1) 40%, transparent 70%);
+  /* Gradients (Built from PANTONE® Dominants) */
+  --grad-primary: linear-gradient(135deg, #511e84 0%, #001489 100%);
+  --grad-brand-electric: linear-gradient(135deg, #8734d8 0%, #001489 50%, #00e5ff 100%);
+  --grad-sunset: linear-gradient(135deg, #511e84 0%, #8734d8 45%, #1842f5 100%);
+  --grad-dark-card: linear-gradient(145deg, rgba(24, 15, 52, 0.85) 0%, rgba(10, 6, 24, 0.92) 100%);
+  --grad-glow: radial-gradient(circle at 50% 15%, rgba(81, 30, 132, 0.4) 0%, rgba(0, 20, 137, 0.25) 45%, transparent 75%);
 
   /* Typography Fonts */
   --font-display: 'Syne', sans-serif;
@@ -61,12 +76,14 @@
   --font-sticker: 'Permanent Marker', cursive;
 
   /* Shadows & Glows */
-  --glow-purple-sm: 0 0 15px rgba(168, 85, 247, 0.35);
-  --glow-purple-lg: 0 0 30px rgba(168, 85, 247, 0.55), 0 0 60px rgba(168, 85, 247, 0.2);
-  --glow-cyan-sm: 0 0 15px rgba(0, 240, 255, 0.4);
-  --glow-cyan-lg: 0 0 35px rgba(0, 240, 255, 0.6), 0 0 70px rgba(0, 240, 255, 0.25);
+  --glow-purple-sm: 0 0 15px rgba(135, 52, 216, 0.4);
+  --glow-purple-lg: 0 0 30px rgba(81, 30, 132, 0.65), 0 0 60px rgba(81, 30, 132, 0.3);
+  --glow-blue-sm: 0 0 15px rgba(0, 20, 137, 0.5);
+  --glow-blue-lg: 0 0 35px rgba(0, 20, 137, 0.7), 0 0 70px rgba(24, 66, 245, 0.3);
+  --glow-cyan-sm: 0 0 15px rgba(0, 229, 255, 0.4);
+  --glow-cyan-lg: 0 0 35px rgba(0, 229, 255, 0.6), 0 0 70px rgba(0, 229, 255, 0.25);
   --glow-pink-sm: 0 0 15px rgba(255, 0, 127, 0.4);
-  --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--border-subtle);
+  --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.75), 0 0 0 1px var(--border-subtle);
 
   /* Transitions */
   --transition-fast: 0.15s cubic-bezier(0.16, 1, 0.3, 1);
@@ -125,20 +142,21 @@ body {
   pointer-events: none;
 }
 
-/* Atmospheric Gradient & Vignette Overlay */
+/* Atmospheric Gradient & Vignette Overlay (Concentric Aura from BRANDING.pdf) */
 .page-bg-overlay {
   position: fixed;
   inset: 0;
   z-index: -1;
   background: 
     linear-gradient(180deg, 
-      rgba(6, 5, 10, 0.42) 0%, 
-      rgba(10, 8, 20, 0.65) 25%, 
-      rgba(10, 8, 20, 0.82) 60%, 
-      rgba(6, 5, 10, 0.95) 100%
+      rgba(5, 4, 13, 0.45) 0%, 
+      rgba(8, 5, 24, 0.65) 25%, 
+      rgba(8, 5, 24, 0.82) 60%, 
+      rgba(5, 4, 13, 0.95) 100%
     ),
-    radial-gradient(circle at 50% 10%, rgba(0, 240, 255, 0.16) 0%, transparent 50%),
-    radial-gradient(circle at 85% 45%, rgba(168, 85, 247, 0.2) 0%, transparent 55%);
+    radial-gradient(ellipse at 50% 20%, rgba(81, 30, 132, 0.35) 0%, rgba(0, 20, 137, 0.28) 45%, transparent 75%),
+    radial-gradient(circle at 85% 55%, rgba(0, 20, 137, 0.25) 0%, transparent 60%),
+    radial-gradient(circle at 15% 75%, rgba(81, 30, 132, 0.22) 0%, transparent 55%);
   pointer-events: none;
 }
 
@@ -349,7 +367,7 @@ body::before {
 
 .btn-nav-cta {
   background: var(--grad-primary);
-  color: #06050a;
+  color: #ffffff;
   text-decoration: none;
   font-family: var(--font-title);
   font-weight: 800;
@@ -357,8 +375,8 @@ body::before {
   padding: 0.6rem 1.35rem;
   border-radius: var(--radius-pill);
   box-shadow: var(--glow-purple-sm);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-  border: none;
   cursor: pointer;
 }
 

@@ -22,7 +22,7 @@ export const PAYMENT_METHODS: Record<string, PaymentDetail> = {
     name: 'Pago Móvil (BNC)',
     badge: 'Bolívares (Bs.)',
     icon: '📱',
-    accentColor: '#00f0ff',
+    accentColor: '#00e5ff',
     fields: [
       {
         label: 'Banco',
@@ -50,7 +50,7 @@ export const PAYMENT_METHODS: Record<string, PaymentDetail> = {
     name: 'Zelle (USD)',
     badge: 'Dólares USD',
     icon: '💵',
-    accentColor: '#7434db',
+    accentColor: '#8734d8',
     fields: [
       { label: 'Correo Zelle', value: 'buthainarafeh@gmail.com', copyValue: 'buthainarafeh@gmail.com', copyable: true },
       { label: 'Nombre / Titular', value: 'Buthaina Rafeh de Barreto', copyValue: 'Buthaina Rafeh de Barreto', copyable: true },

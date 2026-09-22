@@ -458,7 +458,7 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
                   <div
                     style={{
                       marginTop: '0.75rem',
-                      background: 'linear-gradient(145deg, rgba(20, 15, 38, 0.95) 0%, rgba(10, 8, 20, 0.98) 100%)',
+                      background: 'linear-gradient(145deg, rgba(18, 12, 42, 0.95) 0%, rgba(8, 5, 24, 0.98) 100%)',
                       border: `1px solid ${payDetail.accentColor}55`,
                       borderRadius: '14px',
                       padding: '0.85rem 1rem',
@@ -520,8 +520,8 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
                             handleCopy(val, 'preview_monto');
                           }}
                           style={{
-                            background: copiedField === 'preview_monto' ? '#25d366' : 'rgba(0, 240, 255, 0.12)',
-                            border: copiedField === 'preview_monto' ? '1px solid #25d366' : '1px solid rgba(0, 240, 255, 0.3)',
+                            background: copiedField === 'preview_monto' ? '#25d366' : 'rgba(0, 229, 255, 0.12)',
+                            border: copiedField === 'preview_monto' ? '1px solid #25d366' : '1px solid rgba(0, 229, 255, 0.3)',
                             color: copiedField === 'preview_monto' ? '#000' : 'var(--neon-cyan)',
                             borderRadius: '5px',
                             padding: '0.2rem 0.45rem',
@@ -546,7 +546,7 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
                             width: '100%',
                             background: copiedField === 'preview_pago_movil_banco'
                               ? 'linear-gradient(135deg, #25d366 0%, #128c7e 100%)'
-                              : 'linear-gradient(135deg, rgba(0, 240, 255, 0.22) 0%, rgba(139, 23, 245, 0.3) 100%)',
+                              : 'linear-gradient(135deg, rgba(0, 229, 255, 0.22) 0%, rgba(135, 52, 216, 0.3) 100%)',
                             border: copiedField === 'preview_pago_movil_banco' ? '1px solid #25d366' : '1px solid var(--neon-cyan)',
                             color: '#ffffff',
                             fontFamily: 'var(--font-title)',

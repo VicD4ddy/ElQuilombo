@@ -27,4 +27,8 @@ export const FAQS: FaqItem[] = [
     question: '¿Cuál es el código de vestimenta (Dress Code)?',
     answer: '¡La consigna es urbana! Podés venir con tu mejor outfit streetwear, zapatillas, estilo trap o incluso camisetas de la Selección Argentina / clubes de fútbol. Lo importante es venir con actitud para romper la noche.',
   },
+  {
+    question: '¿Habrá centro de acopio y recaudación para los afectados de La Guaira?',
+    answer: '¡Sí, totalmente! En alianza con Club Sonrisas, durante toda la noche en Rock & Riff tendremos un centro de acopio oficial en puerta y puntos de recaudación solidaria para llevar auxilio directo a las comunidades afectadas por el doble terremoto del 24 de junio en La Guaira. Podés colaborar trayendo alimentos no perecederos, agua potable embotellada, ropa en buen estado o aportes voluntarios en las alcancías oficiales.',
+  },
 ];

@@ -30,11 +30,18 @@ export async function GET() {
     let totalTicketsCount = 0;
     let totalRevenueUSD = 0;
     let totalRevenueBs = 0;
+
     let paidCount = 0;
-    let pendingCount = 0;
     let paidTicketsCount = 0;
     let paidRevenueUSD = 0;
     let paidRevenueBs = 0;
+
+    let cashCount = 0;
+    let cashTicketsCount = 0;
+    let cashRevenueUSD = 0;
+    let cashRevenueBs = 0;
+
+    let pendingCount = 0;
     let pendingRevenueUSD = 0;
     let pendingRevenueBs = 0;
     const artistCounts: Record<string, number> = {};
@@ -55,6 +62,10 @@ export async function GET() {
         paidBs: 0,
         paidTickets: 0,
         paidOrders: 0,
+        cashUSD: 0,
+        cashBs: 0,
+        cashTickets: 0,
+        cashOrders: 0,
         pendingUSD: 0,
         pendingBs: 0,
         pendingTickets: 0,
@@ -73,6 +84,9 @@ export async function GET() {
         ? r.payment_method.trim()
         : 'Efectivo en Rock & Riff';
 
+      const isCash = !r.is_paid && (r.tier_id === 'cash' || r.tier_id === 'efectivo');
+      r.payment_status = r.is_paid ? 'paid' : (isCash ? 'cash' : 'pending');
+
       totalTicketsCount += qty;
       totalRevenueUSD += usd;
       totalRevenueBs += bs;
@@ -84,6 +98,10 @@ export async function GET() {
           paidBs: 0,
           paidTickets: 0,
           paidOrders: 0,
+          cashUSD: 0,
+          cashBs: 0,
+          cashTickets: 0,
+          cashOrders: 0,
           pendingUSD: 0,
           pendingBs: 0,
           pendingTickets: 0,
@@ -109,6 +127,16 @@ export async function GET() {
         m.paidTickets += qty;
         m.paidUSD += usd;
         m.paidBs += bs;
+      } else if (isCash) {
+        cashCount += 1;
+        cashTicketsCount += qty;
+        cashRevenueUSD += usd;
+        cashRevenueBs += bs;
+
+        m.cashOrders = (m.cashOrders || 0) + 1;
+        m.cashTickets = (m.cashTickets || 0) + qty;
+        m.cashUSD = (m.cashUSD || 0) + usd;
+        m.cashBs = (m.cashBs || 0) + bs;
       } else {
         pendingCount += 1;
         pendingRevenueUSD += usd;
@@ -151,10 +179,14 @@ export async function GET() {
       totalRevenueUSD,
       totalRevenueBs,
       paidReservationsCount: paidCount,
+      cashReservationsCount: cashCount,
       pendingReservationsCount: pendingCount,
       paidTicketsCount,
       paidRevenueUSD,
       paidRevenueBs,
+      cashTicketsCount,
+      cashRevenueUSD,
+      cashRevenueBs,
       pendingRevenueUSD,
       pendingRevenueBs,
       maxCapacity,
@@ -189,7 +221,7 @@ export async function PATCH(request: Request) {
 
   try {
     const body = await request.json();
-    const { id, ticket_code, is_paid, payment_method, quantity, total_usd, total_ref_bs } = body;
+    const { id, ticket_code, is_paid, payment_status, payment_method, quantity, total_usd, total_ref_bs } = body;
 
     if (!id && !ticket_code) {
       return NextResponse.json({
@@ -199,9 +231,25 @@ export async function PATCH(request: Request) {
     }
 
     const updates: Record<string, any> = {};
-    if (typeof is_paid !== 'undefined') {
+
+    if (typeof payment_status === 'string') {
+      if (payment_status === 'paid') {
+        updates.is_paid = true;
+        updates.tier_id = 'general';
+      } else if (payment_status === 'cash') {
+        updates.is_paid = false;
+        updates.tier_id = 'cash';
+      } else if (payment_status === 'pending') {
+        updates.is_paid = false;
+        updates.tier_id = 'general';
+      }
+    } else if (typeof is_paid !== 'undefined') {
       updates.is_paid = Boolean(is_paid);
+      if (updates.is_paid) {
+        updates.tier_id = 'general';
+      }
     }
+
     if (typeof payment_method === 'string') {
       updates.payment_method = payment_method.trim();
     }
@@ -242,10 +290,16 @@ export async function PATCH(request: Request) {
       throw error;
     }
 
+    if (data) {
+      const isCash = !data.is_paid && (data.tier_id === 'cash' || data.tier_id === 'efectivo');
+      data.payment_status = data.is_paid ? 'paid' : (isCash ? 'cash' : 'pending');
+    }
+
     return NextResponse.json({
       success: true,
       updated: data,
     });
+
   } catch (error: any) {
     console.error('[Admin Update Reservation] Error:', error);
     return NextResponse.json({

@@ -62,6 +62,11 @@ export default function Navbar() {
             </a>
           </li>
           <li>
+            <a href="#club-sonrisas" className="nav-link" onClick={(e) => handleSmoothScroll(e, '#club-sonrisas')}>
+              Club Sonrisas
+            </a>
+          </li>
+          <li>
             <a href="#faq" className="nav-link" onClick={(e) => handleSmoothScroll(e, '#faq')}>
               FAQ
             </a>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { FAQS } from '../../data/faq';
+import ClubSonrisasSection from './ClubSonrisasSection';
 
 export default function VenueFaqSection() {
   return (
@@ -88,6 +89,9 @@ export default function VenueFaqSection() {
           </div>
         </div>
       </section>
+
+      {/* Club Sonrisas: Recaudación para los Afectados de La Guaira */}
+      <ClubSonrisasSection />
 
       {/* FAQ Accordion Section */}
       <section className="section" id="faq">

@@ -22,6 +22,10 @@ export interface PaymentMethodMetric {
   paidBs: number;
   paidTickets: number;
   paidOrders: number;
+  cashUSD?: number;
+  cashBs?: number;
+  cashTickets?: number;
+  cashOrders?: number;
   pendingUSD: number;
   pendingBs: number;
   pendingTickets: number;
@@ -37,10 +41,14 @@ export interface OrganizerMetrics {
   totalRevenueUSD: number;
   totalRevenueBs: number;
   paidReservationsCount: number;
+  cashReservationsCount?: number;
   pendingReservationsCount: number;
   paidTicketsCount?: number;
   paidRevenueUSD?: number;
   paidRevenueBs?: number;
+  cashTicketsCount?: number;
+  cashRevenueUSD?: number;
+  cashRevenueBs?: number;
   pendingRevenueUSD?: number;
   pendingRevenueBs?: number;
   maxCapacity: number;

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { EventSettings, DEFAULT_EVENT_SETTINGS, OrganizerMetrics } from '../../types/settings';
 import { Track } from '../../types/track';
@@ -17,7 +17,7 @@ export default function OrganizadorPage() {
   const [pinInput, setPinInput] = useState<string>('');
   const [pinError, setPinError] = useState<string | null>(null);
 
-  const [activeTab, setActiveTab] = useState<'metrics' | 'attendees' | 'ticket' | 'playlist'>('metrics');
+  const [activeTab, setActiveTab] = useState<'metrics' | 'attendees' | 'songs' | 'ticket' | 'playlist'>('metrics');
 
   // Selected reservation to generate and send QR ticket
   const [selectedTicketOrder, setSelectedTicketOrder] = useState<TicketOrder | null>(null);
@@ -32,8 +32,17 @@ export default function OrganizadorPage() {
   const [metrics, setMetrics] = useState<OrganizerMetrics | null>(null);
   const [isLoadingReservations, setIsLoadingReservations] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'paid' | 'pending'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'paid' | 'cash' | 'pending'>('all');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+
+  const getReservationStatus = (r: any): 'paid' | 'cash' | 'pending' => {
+    if (r.payment_status === 'paid' || r.payment_status === 'cash' || r.payment_status === 'pending') {
+      return r.payment_status;
+    }
+    if (r.is_paid) return 'paid';
+    if (r.tier_id === 'cash' || r.tier_id === 'efectivo') return 'cash';
+    return 'pending';
+  };
   const [updatingPaymentId, setUpdatingPaymentId] = useState<string | null>(null);
   const [updatingQuantityId, setUpdatingQuantityId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -44,6 +53,24 @@ export default function OrganizadorPage() {
     'Binance Pay (USDT)',
     'Efectivo en Rock & Riff',
   ];
+
+  const formatReservationDateTime = (dateStr?: string): string => {
+    if (!dateStr) return '';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleString('es-VE', {
+        timeZone: 'America/Caracas',
+        day: 'numeric',
+        month: 'short',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      });
+    } catch {
+      return dateStr;
+    }
+  };
 
   // Playlist state
   const [customTracks, setCustomTracks] = useState<Track[]>([]);
@@ -56,6 +83,137 @@ export default function OrganizadorPage() {
   });
   const [previewingTrackId, setPreviewingTrackId] = useState<string | null>(null);
   const [previewAudio, setPreviewAudio] = useState<HTMLAudioElement | null>(null);
+
+  // Temas Pedidos state
+  const [songSearchQuery, setSongSearchQuery] = useState<string>('');
+  const [songStatusFilter, setSongStatusFilter] = useState<'all' | 'paid' | 'cash' | 'pending'>('all');
+  const [copiedSongId, setCopiedSongId] = useState<string | null>(null);
+  const [copiedAllSongs, setCopiedAllSongs] = useState<boolean>(false);
+
+  const songRequests = useMemo(() => {
+    return reservations
+      .filter((r) => r.favorite_artist && typeof r.favorite_artist === 'string' && r.favorite_artist.trim().length > 0)
+      .map((r) => ({
+        id: r.id || r.ticket_code,
+        song: r.favorite_artist.trim(),
+        buyerName: r.buyer_name || 'Sin nombre',
+        buyerDni: r.buyer_dni || '',
+        buyerPhone: r.buyer_phone || '',
+        ticketCode: r.ticket_code || '',
+        status: getReservationStatus(r),
+        paymentMethod: r.payment_method || '',
+        quantity: r.quantity || 1,
+        createdAt: r.created_at || '',
+      }));
+  }, [reservations]);
+
+  const filteredSongRequests = useMemo(() => {
+    return songRequests.filter((s) => {
+      if (songStatusFilter !== 'all' && s.status !== songStatusFilter) {
+        return false;
+      }
+      if (songSearchQuery.trim()) {
+        const q = songSearchQuery.toLowerCase().trim();
+        const matchesSong = s.song.toLowerCase().includes(q);
+        const matchesName = s.buyerName.toLowerCase().includes(q);
+        const matchesDni = s.buyerDni.toLowerCase().includes(q);
+        return matchesSong || matchesName || matchesDni;
+      }
+      return true;
+    });
+  }, [songRequests, songStatusFilter, songSearchQuery]);
+
+  const handleCopySingleSong = async (id: string, songText: string) => {
+    try {
+      await navigator.clipboard.writeText(songText);
+      setCopiedSongId(id);
+      setTimeout(() => setCopiedSongId(null), 2000);
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleCopyDJList = async () => {
+    if (songRequests.length === 0) return;
+
+    let text = `🎧 *LISTA DE TEMAS PEDIDOS - EL QUILOMBO (ROCK & RIFF)* 🇦🇷🔥\n`;
+    text += `📊 Total solicitudes: ${songRequests.length} temas recibidos\n\n`;
+
+    if (metrics?.topRequestedArtists && metrics.topRequestedArtists.length > 0) {
+      text += `🏆 *TOP MÁS PEDIDOS EN PREVENTA:*\n`;
+      metrics.topRequestedArtists.slice(0, 10).forEach((item, idx) => {
+        text += `${idx + 1}. ${item.name} (${item.count} votos)\n`;
+      });
+      text += `\n`;
+    }
+
+    text += `📋 *TODAS LAS SOLICITUDES DE ASISTENTES:*\n`;
+    filteredSongRequests.forEach((s, idx) => {
+      const tag = s.status === 'paid' ? '✓ PAGADO' : s.status === 'cash' ? '💵 EFECTIVO' : '⏳ PEND.';
+      text += `${idx + 1}. "${s.song}" - ${s.buyerName} [${tag}]\n`;
+    });
+
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedAllSongs(true);
+      setTimeout(() => setCopiedAllSongs(false), 2500);
+    } catch {
+      alert('Error al copiar al portapapeles.');
+    }
+  };
+
+  const handleExportSongRequestsCSV = () => {
+    if (songRequests.length === 0) {
+      alert('No hay solicitudes de temas registradas para exportar.');
+      return;
+    }
+
+    const headers = [
+      '#',
+      'Tema / Artista Solicitado',
+      'Titular',
+      'Cedula DNI',
+      'WhatsApp',
+      'Estado Entrada',
+      'Codigo Ticket',
+      'Fecha Solicitud',
+    ];
+
+    const rows = filteredSongRequests.map((s, index) => {
+      const statusLabel = s.status === 'paid' ? 'PAGADO' : s.status === 'cash' ? 'EFECTIVO' : 'PENDIENTE';
+      return [
+        index + 1,
+        `"${s.song.replace(/"/g, '""')}"`,
+        `"${(s.buyerName || '').replace(/"/g, '""')}"`,
+        `"${s.buyerDni || ''}"`,
+        `"${s.buyerPhone || ''}"`,
+        statusLabel,
+        `"${s.ticketCode || ''}"`,
+        `"${s.createdAt || ''}"`,
+      ];
+    });
+
+    const csvContent =
+      'data:text/csv;charset=utf-8,\uFEFF' +
+      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `El_Quilombo_Temas_Pedidos_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleAddSongToWebPlaylist = (songTitle: string) => {
+    setNewTrack((prev) => ({
+      ...prev,
+      title: songTitle,
+      artist: 'Trap Argentino / Sugerencia',
+      badge: 'PEDIDO EN PREVENTA',
+    }));
+    setActiveTab('playlist');
+  };
 
   // Check saved session on mount
   useEffect(() => {
@@ -159,9 +317,16 @@ export default function OrganizadorPage() {
     }
   };
 
-  const handleTogglePaid = async (reservation: any): Promise<boolean> => {
-    const newPaidStatus = !reservation.is_paid;
+  const handleChangePaymentStatus = async (
+    reservation: any,
+    newStatus: 'paid' | 'cash' | 'pending'
+  ): Promise<boolean> => {
+    const currentStatus = getReservationStatus(reservation);
+    if (newStatus === currentStatus) return true;
+
     setUpdatingId(reservation.id);
+    const newIsPaid = newStatus === 'paid';
+    const newTierId = newStatus === 'cash' ? 'cash' : 'general';
 
     try {
       const res = await fetch('/api/admin/reservations', {
@@ -169,7 +334,9 @@ export default function OrganizadorPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id: reservation.id,
-          is_paid: newPaidStatus,
+          ticket_code: reservation.ticket_code,
+          payment_status: newStatus,
+          is_paid: newIsPaid,
         }),
       });
 
@@ -177,9 +344,18 @@ export default function OrganizadorPage() {
       if (data.success) {
         // Update local state immediately
         setReservations((prev) =>
-          prev.map((r) => (r.id === reservation.id ? { ...r, is_paid: newPaidStatus } : r))
+          prev.map((r) =>
+            r.id === reservation.id
+              ? {
+                  ...r,
+                  is_paid: newIsPaid,
+                  tier_id: newTierId,
+                  payment_status: newStatus,
+                }
+              : r
+          )
         );
-        // Refresh metrics
+        // Refresh live metrics from database
         fetchReservations();
         return true;
       } else {
@@ -187,12 +363,18 @@ export default function OrganizadorPage() {
         return false;
       }
     } catch (err: any) {
-      console.error('Error toggling is_paid:', err);
+      console.error('Error updating payment status:', err);
       alert('⚠️ Error de conexión al actualizar en Supabase: ' + (err?.message || 'Error desconocido'));
       return false;
     } finally {
       setUpdatingId(null);
     }
+  };
+
+  const handleTogglePaid = async (reservation: any): Promise<boolean> => {
+    const current = getReservationStatus(reservation);
+    const nextStatus: 'paid' | 'pending' = current === 'paid' ? 'pending' : 'paid';
+    return handleChangePaymentStatus(reservation, nextStatus);
   };
 
   const handleDeleteReservation = async (reservation: any) => {
@@ -317,10 +499,14 @@ export default function OrganizadorPage() {
   };
 
   const handleOpenTicketGenerator = async (reservation: any) => {
-    // Si aún no está aprobada, la marcamos como pagada en el sistema
-    if (!reservation.is_paid) {
-      await handleTogglePaid(reservation);
+    const currentStatus = getReservationStatus(reservation);
+    // Si está pendiente, la marcamos como pagada en el sistema.
+    // Si ya está en efectivo comprometido, preservamos su condición de efectivo!
+    if (currentStatus === 'pending') {
+      await handleChangePaymentStatus(reservation, 'paid');
     }
+
+    const effectiveStatus = currentStatus === 'cash' ? 'cash' : 'paid';
 
     const selectedMeme =
       MEME_STICKERS.find((m) => m.id === reservation.meme_sticker_used) ||
@@ -347,7 +533,8 @@ export default function OrganizadorPage() {
       }),
       ticketCode: reservation.ticket_code,
       createdAt: reservation.created_at,
-      isPaid: true,
+      isPaid: effectiveStatus === 'paid',
+      paymentStatus: effectiveStatus,
       meme: selectedMeme,
     };
 
@@ -377,22 +564,27 @@ export default function OrganizadorPage() {
       'Fecha Creacion',
     ];
 
-    const rows = reservations.map((r) => [
-      `"${r.ticket_code}"`,
-      `"${r.buyer_name || ''}"`,
-      `"${r.buyer_dni || ''}"`,
-      `"${r.buyer_phone || ''}"`,
-      `"${r.buyer_email || ''}"`,
-      `"${r.tier_name || ''}"`,
-      r.quantity || 1,
-      r.total_usd || 0,
-      r.total_ref_bs || 0,
-      `"${r.payment_method || ''}"`,
-      `"${(r.favorite_artist || '').replace(/"/g, '""')}"`,
-      `"${r.meme_sticker_used || ''}"`,
-      r.is_paid ? 'PAGADO' : 'PENDIENTE',
-      `"${r.created_at || ''}"`,
-    ]);
+    const rows = reservations.map((r) => {
+      const status = getReservationStatus(r);
+      const statusLabel = status === 'paid' ? 'PAGADO' : status === 'cash' ? 'EFECTIVO' : 'PENDIENTE';
+
+      return [
+        `"${r.ticket_code}"`,
+        `"${r.buyer_name || ''}"`,
+        `"${r.buyer_dni || ''}"`,
+        `"${r.buyer_phone || ''}"`,
+        `"${r.buyer_email || ''}"`,
+        `"${r.tier_name || ''}"`,
+        r.quantity || 1,
+        r.total_usd || 0,
+        r.total_ref_bs || 0,
+        `"${r.payment_method || ''}"`,
+        `"${(r.favorite_artist || '').replace(/"/g, '""')}"`,
+        `"${r.meme_sticker_used || ''}"`,
+        statusLabel,
+        `"${r.created_at || ''}"`,
+      ];
+    });
 
     const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
     const encodedUri = encodeURI(csvContent);
@@ -468,13 +660,16 @@ export default function OrganizadorPage() {
 
     if (!matchesQuery) return false;
 
-    if (statusFilter === 'paid') return r.is_paid;
-    if (statusFilter === 'pending') return !r.is_paid;
+    const status = getReservationStatus(r);
+    if (statusFilter === 'paid') return status === 'paid';
+    if (statusFilter === 'cash') return status === 'cash';
+    if (statusFilter === 'pending') return status === 'pending';
     return true;
   });
 
-  const paidCount = reservations.filter((r) => r.is_paid).length;
-  const pendingCount = reservations.filter((r) => !r.is_paid).length;
+  const paidCount = reservations.filter((r) => getReservationStatus(r) === 'paid').length;
+  const cashCount = reservations.filter((r) => getReservationStatus(r) === 'cash').length;
+  const pendingCount = reservations.filter((r) => getReservationStatus(r) === 'pending').length;
 
   // -------------------------------------------------------------
   // PIN LOGIN SCREEN
@@ -691,6 +886,15 @@ export default function OrganizadorPage() {
 
           <button
             type="button"
+            id="tab-btn-songs"
+            onClick={() => setActiveTab('songs')}
+            className={`organizer-tab-btn ${activeTab === 'songs' ? 'active' : ''}`}
+          >
+            <span>🎧</span> Temas Pedidos ({songRequests.length})
+          </button>
+
+          <button
+            type="button"
             id="tab-btn-ticket"
             onClick={() => setActiveTab('ticket')}
             className={`organizer-tab-btn ${activeTab === 'ticket' ? 'active' : ''}`}
@@ -792,20 +996,22 @@ export default function OrganizadorPage() {
               <div
                 className="organizer-kpi-card"
                 style={{
-                  background: 'linear-gradient(135deg, rgba(37, 211, 102, 0.12), rgba(15, 12, 28, 0.85))',
+                  background: 'linear-gradient(135deg, rgba(37, 211, 102, 0.12), rgba(0, 229, 255, 0.08) 50%, rgba(15, 12, 28, 0.85) 100%)',
                   border: '1px solid rgba(37, 211, 102, 0.35)',
                 }}
               >
-                <span className="organizer-kpi-title" style={{ color: '#25d366' }}>
-                  ✓ Pagadas vs. ⏳ Pendientes
+                <span className="organizer-kpi-title" style={{ color: '#86efac' }}>
+                  ✓ Pagadas / 💵 Efectivo / ⏳ Pendientes
                 </span>
-                <div className="organizer-kpi-value">
-                  <span style={{ color: '#25d366' }}>{metrics?.paidReservationsCount || 0}</span>
-                  <span style={{ color: 'var(--text-subtle)', fontSize: '1rem' }}> / </span>
-                  <span style={{ color: '#ffd600' }}>{metrics?.pendingReservationsCount || 0}</span>
+                <div className="organizer-kpi-value" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap' }}>
+                  <span style={{ color: '#25d366' }} title="Pagadas">{metrics?.paidReservationsCount || 0}</span>
+                  <span style={{ color: 'var(--text-subtle)', fontSize: '0.9rem' }}>/</span>
+                  <span style={{ color: 'var(--neon-cyan)' }} title="Efectivo comprometido">{metrics?.cashReservationsCount || 0}</span>
+                  <span style={{ color: 'var(--text-subtle)', fontSize: '0.9rem' }}>/</span>
+                  <span style={{ color: '#ffd600' }} title="Pendientes">{metrics?.pendingReservationsCount || 0}</span>
                 </div>
                 <span className="organizer-kpi-subtext">
-                  Cobrado: ${metrics?.paidRevenueUSD || 0} USD ({metrics?.paidReservationsCount || 0} órdenes)
+                  Cobrado: ${metrics?.paidRevenueUSD || 0} USD • Efectivo: ${metrics?.cashRevenueUSD || 0} USD
                 </span>
               </div>
 
@@ -1007,17 +1213,22 @@ export default function OrganizadorPage() {
                           />
                         </div>
 
-                        {/* Pending Subtext */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.72rem', color: 'var(--text-subtle)', borderTop: '1px solid rgba(255, 255, 255, 0.05)', paddingTop: '0.5rem' }}>
-                          <span>
+                        {/* Pending and Cash Subtext */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.72rem', color: 'var(--text-subtle)', borderTop: '1px solid rgba(255, 255, 255, 0.05)', paddingTop: '0.5rem', flexWrap: 'wrap', gap: '0.25rem' }}>
+                          <div style={{ display: 'flex', gap: '0.45rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                            {pm.cashOrders && pm.cashOrders > 0 ? (
+                              <span style={{ color: 'var(--neon-cyan)', fontWeight: 700 }}>
+                                💵 ${pm.cashUSD || 0} efec. ({pm.cashOrders})
+                              </span>
+                            ) : null}
                             {pm.pendingOrders > 0 ? (
                               <span style={{ color: '#ffd600' }}>
-                                ⏳ ${pm.pendingUSD} pendientes ({pm.pendingOrders})
+                                ⏳ ${pm.pendingUSD} pend. ({pm.pendingOrders})
                               </span>
-                            ) : (
+                            ) : (!pm.cashOrders || pm.cashOrders === 0) ? (
                               <span style={{ color: '#94a3b8' }}>Sin pendientes</span>
-                            )}
-                          </span>
+                            ) : null}
+                          </div>
                           <span style={{ fontWeight: 700, color: '#cbd5e1' }}>
                             {pm.totalTickets} entr.
                           </span>
@@ -1190,6 +1401,18 @@ export default function OrganizadorPage() {
                 </button>
                 <button
                   type="button"
+                  onClick={() => setStatusFilter('cash')}
+                  className="organizer-filter-pill-btn"
+                  style={{
+                    background: statusFilter === 'cash' ? 'var(--neon-cyan)' : 'rgba(255, 255, 255, 0.06)',
+                    color: statusFilter === 'cash' ? '#000' : '#fff',
+                    boxShadow: statusFilter === 'cash' ? '0 0 12px rgba(0, 229, 255, 0.45)' : 'none',
+                  }}
+                >
+                  💵 Efectivo ({cashCount})
+                </button>
+                <button
+                  type="button"
                   onClick={() => setStatusFilter('pending')}
                   className="organizer-filter-pill-btn"
                   style={{
@@ -1220,23 +1443,49 @@ export default function OrganizadorPage() {
                 <tbody>
                   {filteredReservations.length > 0 ? (
                     filteredReservations.map((r) => {
-                      const waLink = getWhatsappChatUrl(
-                        r.buyer_phone,
-                        r.is_paid
-                          ? `🎉 *¡TU ENTRADA HA SIDO APROBADA! - EL QUILOMBO* 🇦🇷🔥\n¡Hola ${r.buyer_name}! Tu preventa ha sido validada y aprobada por el equipo de El Quilombo 💜\n\n🎟️ *Entrada:* ${r.quantity}x ${r.tier_name}\n🪪 *Titular:* ${r.buyer_name} (${r.buyer_dni})\n🔢 *Código Único de Acceso:* #${r.ticket_code}\n📍 *Lugar:* Rock & Riff (La Viña) - antiguo Oleo Gastrobar (asi aparece en google)\n🗺️ *Ubicación / Cómo llegar:* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8\n🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM\n\n*(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).*\n¡Presentalo al llegar y preparate para la fiesta más picante de Valencia! 🇦🇷🔥`
-                          : `¡Hola ${r.buyer_name}! Te escribimos del equipo de El Quilombo 🇦🇷🔥 con respecto a tu preventa #${r.ticket_code} ($${r.total_usd} USD). ¿Deseas concretar tu pago para validar tu entrada?`
-                      );
+                      const status = getReservationStatus(r);
+                      let waMsg = '';
+                      if (status === 'paid') {
+                        waMsg = `🎉 *¡TU ENTRADA HA SIDO APROBADA! - EL QUILOMBO* 🇦🇷🔥\n¡Hola ${r.buyer_name}! Tu preventa ha sido validada y aprobada por el equipo de El Quilombo 💜\n\n🎟️ *Entrada:* ${r.quantity}x ${r.tier_name}\n🪪 *Titular:* ${r.buyer_name} (${r.buyer_dni})\n🔢 *Código Único de Acceso:* #${r.ticket_code}\n📍 *Lugar:* Rock & Riff (La Viña) - antiguo Oleo Gastrobar (asi aparece en google)\n🗺️ *Ubicación / Cómo llegar:* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8\n🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM\n\n*(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).*\n¡Presentalo al llegar y preparate para la fiesta más picante de Valencia! 🇦🇷🔥`;
+                      } else if (status === 'cash') {
+                        waMsg = `🎟️ *¡TU ENTRADA ESTÁ RESERVADA (PAGO EN EFECTIVO)! - EL QUILOMBO* 🇦🇷🔥\n¡Hola ${r.buyer_name}! Tu preventa ha sido asegurada por el equipo de El Quilombo 💜\n\n🎟️ *Entrada:* ${r.quantity}x ${r.tier_name}\n🪪 *Titular:* ${r.buyer_name} (${r.buyer_dni})\n🔢 *Código Único de Acceso:* #${r.ticket_code}\n💵 *Monto en Efectivo Comprometido:* $${r.total_usd} USD (Ref: Bs. ${r.total_ref_bs})\n📍 *Lugar:* Rock & Riff (La Viña) - antiguo Oleo Gastrobar (asi aparece en google)\n🗺️ *Ubicación / Cómo llegar:* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8\n🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM\n\n*(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).* Recuerda llevar el monto exacto en efectivo en puerta. ¡Nos vemos en la fiesta más picante de Valencia! 🇦🇷🔥`;
+                      } else {
+                        waMsg = `¡Hola ${r.buyer_name}! Te escribimos del equipo de El Quilombo 🇦🇷🔥 con respecto a tu preventa #${r.ticket_code} ($${r.total_usd} USD). ¿Deseas concretar tu pago para validar tu entrada?`;
+                      }
+                      const waLink = getWhatsappChatUrl(r.buyer_phone, waMsg);
+
+                      const isPaid = status === 'paid';
+                      const isCash = status === 'cash';
 
                       return (
                         <tr
                           key={`desktop-${r.id}`}
                           style={{
                             borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-                            background: r.is_paid ? 'rgba(37, 211, 102, 0.03)' : 'transparent',
+                            background: isPaid ? 'rgba(37, 211, 102, 0.03)' : isCash ? 'rgba(0, 229, 255, 0.03)' : 'transparent',
                           }}
                         >
-                          <td style={{ padding: '0.85rem 1rem', fontFamily: 'monospace', fontWeight: 800, color: 'var(--neon-cyan)' }}>
-                            #{r.ticket_code}
+                          <td style={{ padding: '0.85rem 1rem' }}>
+                            <div style={{ fontFamily: 'monospace', fontWeight: 800, color: 'var(--neon-cyan)', fontSize: '0.86rem' }}>
+                              #{r.ticket_code}
+                            </div>
+                            {r.created_at && (
+                              <div
+                                style={{
+                                  color: 'var(--text-subtle)',
+                                  fontSize: '0.72rem',
+                                  marginTop: '0.25rem',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '0.25rem',
+                                  whiteSpace: 'nowrap',
+                                }}
+                                title={`Fecha y hora de reserva: ${new Date(r.created_at).toLocaleString('es-VE', { timeZone: 'America/Caracas' })}`}
+                              >
+                                <span>🕒</span>
+                                <span>{formatReservationDateTime(r.created_at)}</span>
+                              </div>
+                            )}
                           </td>
                           <td style={{ padding: '0.85rem 1rem' }}>
                             <div style={{ fontWeight: 700, color: '#fff' }}>{r.buyer_name}</div>
@@ -1311,26 +1560,60 @@ export default function OrganizadorPage() {
                             </select>
                           </td>
                           <td style={{ padding: '0.85rem 1rem' }}>
-                            <button
-                              type="button"
-                              onClick={() => handleTogglePaid(r)}
-                              disabled={updatingId === r.id}
-                              style={{
-                                background: r.is_paid ? '#25d366' : 'rgba(255, 214, 0, 0.15)',
-                                border: r.is_paid ? 'none' : '1px solid #ffd600',
-                                color: r.is_paid ? '#fff' : '#ffd600',
-                                borderRadius: 'var(--radius-pill)',
-                                padding: '0.35rem 0.75rem',
-                                fontSize: '0.75rem',
-                                fontWeight: 800,
-                                cursor: 'pointer',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '0.35rem',
-                              }}
-                            >
-                              {updatingId === r.id ? 'Guardando...' : r.is_paid ? '✓ PAGADO' : '⏳ PENDIENTE'}
-                            </button>
+                            {(() => {
+                              const bg = isPaid
+                                ? '#25d366'
+                                : isCash
+                                ? 'rgba(0, 229, 255, 0.16)'
+                                : 'rgba(255, 214, 0, 0.15)';
+                              const border = isPaid
+                                ? 'none'
+                                : isCash
+                                ? '1px solid var(--neon-cyan)'
+                                : '1px solid #ffd600';
+                              const color = isPaid
+                                ? '#fff'
+                                : isCash
+                                ? 'var(--neon-cyan)'
+                                : '#ffd600';
+                              const boxShadow = isPaid
+                                ? '0 0 10px rgba(37, 211, 102, 0.35)'
+                                : isCash
+                                ? '0 0 10px rgba(0, 229, 255, 0.3)'
+                                : 'none';
+
+                              return (
+                                <select
+                                  value={status}
+                                  onChange={(e) => handleChangePaymentStatus(r, e.target.value as 'paid' | 'cash' | 'pending')}
+                                  disabled={updatingId === r.id}
+                                  title="Cambiar estado de pago (Pagado / Efectivo comprometido / Pendiente)"
+                                  style={{
+                                    background: bg,
+                                    border: border,
+                                    color: color,
+                                    borderRadius: 'var(--radius-pill)',
+                                    padding: '0.35rem 0.75rem',
+                                    fontSize: '0.75rem',
+                                    fontWeight: 800,
+                                    cursor: updatingId === r.id ? 'wait' : 'pointer',
+                                    outline: 'none',
+                                    boxShadow: boxShadow,
+                                    transition: 'all 0.2s ease',
+                                  }}
+                                >
+                                  <option value="paid" style={{ background: '#0a061a', color: '#25d366', fontWeight: 800 }}>
+                                    ✓ PAGADO
+                                  </option>
+                                  <option value="cash" style={{ background: '#0a061a', color: 'var(--neon-cyan)', fontWeight: 800 }}>
+                                    💵 EFECTIVO
+                                  </option>
+                                  <option value="pending" style={{ background: '#0a061a', color: '#ffd600', fontWeight: 800 }}>
+                                    ⏳ PENDIENTE
+                                  </option>
+                                </select>
+                              );
+                            })()}
                           </td>
                           <td style={{ padding: '0.85rem 1rem' }}>
                             <div style={{ display: 'flex', gap: '0.45rem', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -1421,37 +1704,60 @@ export default function OrganizadorPage() {
             <div className="organizer-mobile-cards-container">
               {filteredReservations.length > 0 ? (
                 filteredReservations.map((r) => {
-                  const waLink = getWhatsappChatUrl(
-                    r.buyer_phone,
-                    r.is_paid
-                      ? `🎉 *¡TU ENTRADA HA SIDO APROBADA! - EL QUILOMBO* 🇦🇷🔥\n¡Hola ${r.buyer_name}! Tu preventa ha sido validada y aprobada por el equipo de El Quilombo 💜\n\n🎟️ *Entrada:* ${r.quantity}x ${r.tier_name}\n🪪 *Titular:* ${r.buyer_name} (${r.buyer_dni})\n🔢 *Código Único de Acceso:* #${r.ticket_code}\n📍 *Lugar:* Rock & Riff (La Viña) - antiguo Oleo Gastrobar (asi aparece en google)\n🗺️ *Ubicación / Cómo llegar:* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8\n🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM\n\n*(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).*\n¡Presentalo al llegar y preparate para la fiesta más picante de Valencia! 🇦🇷🔥`
-                      : `¡Hola ${r.buyer_name}! Te escribimos del equipo de El Quilombo 🇦🇷🔥 con respecto a tu preventa #${r.ticket_code} ($${r.total_usd} USD). ¿Deseas concretar tu pago para validar tu entrada?`
-                  );
+                  const status = getReservationStatus(r);
+                  let waMsg = '';
+                  if (status === 'paid') {
+                    waMsg = `🎉 *¡TU ENTRADA HA SIDO APROBADA! - EL QUILOMBO* 🇦🇷🔥\n¡Hola ${r.buyer_name}! Tu preventa ha sido validada y aprobada por el equipo de El Quilombo 💜\n\n🎟️ *Entrada:* ${r.quantity}x ${r.tier_name}\n🪪 *Titular:* ${r.buyer_name} (${r.buyer_dni})\n🔢 *Código Único de Acceso:* #${r.ticket_code}\n📍 *Lugar:* Rock & Riff (La Viña) - antiguo Oleo Gastrobar (asi aparece en google)\n🗺️ *Ubicación / Cómo llegar:* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8\n🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM\n\n*(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).*\n¡Presentalo al llegar y preparate para la fiesta más picante de Valencia! 🇦🇷🔥`;
+                  } else if (status === 'cash') {
+                    waMsg = `🎟️ *¡TU ENTRADA ESTÁ RESERVADA (PAGO EN EFECTIVO)! - EL QUILOMBO* 🇦🇷🔥\n¡Hola ${r.buyer_name}! Tu preventa ha sido asegurada por el equipo de El Quilombo 💜\n\n🎟️ *Entrada:* ${r.quantity}x ${r.tier_name}\n🪪 *Titular:* ${r.buyer_name} (${r.buyer_dni})\n🔢 *Código Único de Acceso:* #${r.ticket_code}\n💵 *Monto en Efectivo Comprometido:* $${r.total_usd} USD (Ref: Bs. ${r.total_ref_bs})\n📍 *Lugar:* Rock & Riff (La Viña) - antiguo Oleo Gastrobar (asi aparece en google)\n🗺️ *Ubicación / Cómo llegar:* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8\n🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM\n\n*(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).* Recuerda llevar el monto exacto en efectivo en puerta. ¡Nos vemos en la fiesta más picante de Valencia! 🇦🇷🔥`;
+                  } else {
+                    waMsg = `¡Hola ${r.buyer_name}! Te escribimos del equipo de El Quilombo 🇦🇷🔥 con respecto a tu preventa #${r.ticket_code} ($${r.total_usd} USD). ¿Deseas concretar tu pago para validar tu entrada?`;
+                  }
+                  const waLink = getWhatsappChatUrl(r.buyer_phone, waMsg);
 
                   return (
                     <div
                       key={`mobile-card-${r.id}`}
-                      className={`attendee-mobile-card ${r.is_paid ? 'paid' : 'pending'}`}
+                      className={`attendee-mobile-card ${status}`}
                     >
-                      {/* Card Header: Ticket Code + Status Toggle */}
+                      {/* Card Header: Ticket Code + Timestamp + Status Select */}
                       <div className="attendee-mobile-card-header">
-                        <span className="attendee-mobile-ticket-code">
-                          #{r.ticket_code}
-                        </span>
+                        <div>
+                          <span className="attendee-mobile-ticket-code">
+                            #{r.ticket_code}
+                          </span>
+                          {r.created_at && (
+                            <span
+                              style={{
+                                display: 'block',
+                                fontSize: '0.7rem',
+                                color: 'var(--text-subtle)',
+                                marginTop: '0.2rem',
+                              }}
+                            >
+                              🕒 {formatReservationDateTime(r.created_at)}
+                            </span>
+                          )}
+                        </div>
 
-                        <button
-                          type="button"
-                          onClick={() => handleTogglePaid(r)}
+                        <select
+                          value={status}
+                          onChange={(e) => handleChangePaymentStatus(r, e.target.value as 'paid' | 'cash' | 'pending')}
                           disabled={updatingId === r.id}
-                          className={`attendee-mobile-status-toggle ${r.is_paid ? 'paid' : 'pending'}`}
+                          className={`attendee-mobile-status-toggle ${status}`}
                           title="Tocar para cambiar estado de pago"
+                          style={{ outline: 'none' }}
                         >
-                          {updatingId === r.id
-                            ? 'Guardando...'
-                            : r.is_paid
-                            ? '✓ PAGADO'
-                            : '⏳ PENDIENTE'}
-                        </button>
+                          <option value="paid" style={{ background: '#0a061a', color: '#25d366', fontWeight: 800 }}>
+                            ✓ PAGADO
+                          </option>
+                          <option value="cash" style={{ background: '#0a061a', color: 'var(--neon-cyan)', fontWeight: 800 }}>
+                            💵 EFECTIVO
+                          </option>
+                          <option value="pending" style={{ background: '#0a061a', color: '#ffd600', fontWeight: 800 }}>
+                            ⏳ PENDIENTE
+                          </option>
+                        </select>
                       </div>
 
                       {/* Attendee Name */}
@@ -1622,7 +1928,500 @@ export default function OrganizadorPage() {
         )}
 
         {/* ========================================================= */}
-        {/* TAB 3: CUSTOMIZE DIGITAL TICKET                           */}
+        {/* TAB 3: TEMAS PEDIDOS (SOLICITUDES DE ASISTENTES)          */}
+        {/* ========================================================= */}
+        {activeTab === 'songs' && (
+          <div>
+            {/* Top Bar with Title & Action Buttons */}
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: '1rem',
+                marginBottom: '1.25rem',
+              }}
+            >
+              <div>
+                <h2 style={{ fontFamily: 'var(--font-title)', fontSize: '1.35rem', fontWeight: 900, color: '#fff' }}>
+                  🎧 TEMAS &amp; ARTISTAS PEDIDOS (PARA EL DJ)
+                </h2>
+                <p style={{ color: 'var(--text-subtle)', fontSize: '0.8rem' }}>
+                  Canciones solicitadas en tiempo real por los asistentes en el formulario de preventa.
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={handleCopyDJList}
+                  style={{
+                    background: copiedAllSongs ? 'rgba(37, 211, 102, 0.25)' : 'rgba(168, 85, 247, 0.15)',
+                    border: `1px solid ${copiedAllSongs ? 'var(--neon-green)' : 'var(--border-neon-purple)'}`,
+                    borderRadius: 'var(--radius-pill)',
+                    padding: '0.5rem 1rem',
+                    color: copiedAllSongs ? 'var(--neon-green)' : 'var(--neon-purple-light)',
+                    fontSize: '0.8rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    transition: 'all 0.2s ease',
+                  }}
+                  title="Copiar lista de temas para enviar por WhatsApp al DJ"
+                >
+                  <span>{copiedAllSongs ? '✓' : '📋'}</span>
+                  <span>{copiedAllSongs ? '¡Copiado para WhatsApp!' : 'Copiar Lista para DJ'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleExportSongRequestsCSV}
+                  style={{
+                    background: 'rgba(0, 240, 255, 0.12)',
+                    border: '1px solid var(--border-neon-cyan)',
+                    borderRadius: 'var(--radius-pill)',
+                    padding: '0.5rem 1rem',
+                    color: 'var(--neon-cyan)',
+                    fontSize: '0.8rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                  }}
+                  title="Descargar archivo CSV con todos los temas pedidos"
+                >
+                  <span>📥</span> Descargar Temas (CSV)
+                </button>
+              </div>
+            </div>
+
+            {/* KPI Cards for Songs */}
+            <div className="organizer-metrics-grid" style={{ marginBottom: '1.5rem' }}>
+              <div
+                className="organizer-kpi-card"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.12), rgba(15, 12, 28, 0.85))',
+                  border: '1px solid var(--border-neon-purple)',
+                }}
+              >
+                <span className="organizer-kpi-title" style={{ color: 'var(--neon-purple-light)' }}>
+                  🎵 Total Canciones Pedidas
+                </span>
+                <div className="organizer-kpi-value">{songRequests.length}</div>
+                <span className="organizer-kpi-subtext">Solicitadas en preventa</span>
+              </div>
+
+              <div
+                className="organizer-kpi-card"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(37, 211, 102, 0.12), rgba(15, 12, 28, 0.85))',
+                  border: '1px solid rgba(37, 211, 102, 0.35)',
+                }}
+              >
+                <span className="organizer-kpi-title" style={{ color: '#86efac' }}>
+                  ✓ De Asistentes Pagados
+                </span>
+                <div className="organizer-kpi-value" style={{ color: '#25d366' }}>
+                  {songRequests.filter((s) => s.status === 'paid').length}
+                </div>
+                <span className="organizer-kpi-subtext">Entradas confirmadas (Prioridad DJ)</span>
+              </div>
+
+              <div
+                className="organizer-kpi-card"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(15, 12, 28, 0.85))',
+                  border: '1px solid var(--border-neon-cyan)',
+                }}
+              >
+                <span className="organizer-kpi-title" style={{ color: 'var(--neon-cyan)' }}>
+                  💵 De Pagos en Efectivo
+                </span>
+                <div className="organizer-kpi-value" style={{ color: 'var(--neon-cyan)' }}>
+                  {songRequests.filter((s) => s.status === 'cash').length}
+                </div>
+                <span className="organizer-kpi-subtext">Comprometidos en puerta</span>
+              </div>
+
+              <div
+                className="organizer-kpi-card"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255, 214, 0, 0.12), rgba(15, 12, 28, 0.85))',
+                  border: '1px solid rgba(255, 214, 0, 0.35)',
+                }}
+              >
+                <span className="organizer-kpi-title" style={{ color: '#ffd600' }}>
+                  ⏳ De Preventas Pendientes
+                </span>
+                <div className="organizer-kpi-value" style={{ color: '#ffd600' }}>
+                  {songRequests.filter((s) => s.status === 'pending').length}
+                </div>
+                <span className="organizer-kpi-subtext">Por conciliar comprobante</span>
+              </div>
+            </div>
+
+            {/* Top Trending Podium / Chips */}
+            {metrics && metrics.topRequestedArtists && metrics.topRequestedArtists.length > 0 && (
+              <div
+                style={{
+                  background: 'rgba(15, 12, 28, 0.85)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '16px',
+                  padding: '1.25rem',
+                  marginBottom: '1.5rem',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  <h3 style={{ fontFamily: 'var(--font-title)', fontSize: '1rem', fontWeight: 800, color: '#fff', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <span>🏆</span> TOP ARTISTAS &amp; TEMAS MÁS VOTADOS
+                  </h3>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-subtle)' }}>
+                    Haz clic en cualquiera para filtrar
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {metrics.topRequestedArtists.map((item, idx) => {
+                    const isSelected = songSearchQuery.toLowerCase() === item.name.toLowerCase();
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setSongSearchQuery(isSelected ? '' : item.name)}
+                        style={{
+                          background: isSelected ? 'rgba(0, 240, 255, 0.25)' : 'rgba(255, 255, 255, 0.04)',
+                          border: `1px solid ${isSelected ? 'var(--neon-cyan)' : 'var(--border-neon-purple)'}`,
+                          borderRadius: 'var(--radius-pill)',
+                          padding: '0.4rem 0.85rem',
+                          fontSize: '0.8rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.45rem',
+                          color: '#fff',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                        }}
+                        title={`Filtrar pedidos de ${item.name}`}
+                      >
+                        <span style={{ color: 'var(--neon-cyan)', fontWeight: 900 }}>#{idx + 1}</span>
+                        <span style={{ fontWeight: 600 }}>{item.name}</span>
+                        <span
+                          style={{
+                            background: 'rgba(168, 85, 247, 0.35)',
+                            padding: '0.1rem 0.45rem',
+                            borderRadius: '8px',
+                            fontSize: '0.68rem',
+                            fontWeight: 800,
+                            color: '#fff',
+                          }}
+                        >
+                          {item.count} votos
+                        </span>
+                      </button>
+                    );
+                  })}
+                  {songSearchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSongSearchQuery('')}
+                      style={{
+                        background: 'transparent',
+                        border: '1px dashed rgba(255, 255, 255, 0.25)',
+                        borderRadius: 'var(--radius-pill)',
+                        padding: '0.4rem 0.75rem',
+                        fontSize: '0.75rem',
+                        color: 'var(--text-subtle)',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      ✕ Limpiar filtro
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Search & Filter Bar */}
+            <div className="organizer-filters-bar">
+              <div className="organizer-search-box">
+                <input
+                  type="text"
+                  placeholder="🔍 Buscar por canción, artista o titular..."
+                  value={songSearchQuery}
+                  onChange={(e) => setSongSearchQuery(e.target.value)}
+                  className="organizer-search-input"
+                />
+                {songSearchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSongSearchQuery('')}
+                    className="organizer-search-clear-btn"
+                    title="Limpiar búsqueda"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+
+              <div className="organizer-filter-pills-row">
+                <button
+                  type="button"
+                  onClick={() => setSongStatusFilter('all')}
+                  className={`organizer-filter-pill-btn ${songStatusFilter === 'all' ? 'active' : ''}`}
+                >
+                  Todos ({songRequests.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSongStatusFilter('paid')}
+                  className={`organizer-filter-pill-btn ${songStatusFilter === 'paid' ? 'active' : ''}`}
+                  style={{ color: songStatusFilter === 'paid' ? '#fff' : '#86efac' }}
+                >
+                  ✓ Pagados ({songRequests.filter((s) => s.status === 'paid').length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSongStatusFilter('cash')}
+                  className={`organizer-filter-pill-btn ${songStatusFilter === 'cash' ? 'active' : ''}`}
+                  style={{ color: songStatusFilter === 'cash' ? '#fff' : 'var(--neon-cyan)' }}
+                >
+                  💵 Efectivo ({songRequests.filter((s) => s.status === 'cash').length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSongStatusFilter('pending')}
+                  className={`organizer-filter-pill-btn ${songStatusFilter === 'pending' ? 'active' : ''}`}
+                  style={{ color: songStatusFilter === 'pending' ? '#fff' : '#ffd600' }}
+                >
+                  ⏳ Pendientes ({songRequests.filter((s) => s.status === 'pending').length})
+                </button>
+              </div>
+            </div>
+
+            {/* List / Cards of Requested Songs */}
+            {filteredSongRequests.length === 0 ? (
+              <div
+                style={{
+                  background: 'rgba(15, 12, 28, 0.65)',
+                  border: '1px dashed rgba(255, 255, 255, 0.15)',
+                  borderRadius: '16px',
+                  padding: '3rem 1.5rem',
+                  textAlign: 'center',
+                  color: 'var(--text-subtle)',
+                }}
+              >
+                <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.75rem' }}>🎧</span>
+                <p style={{ fontSize: '1rem', color: '#fff', fontWeight: 700, marginBottom: '0.35rem' }}>
+                  No se encontraron canciones pedidas
+                </p>
+                <p style={{ fontSize: '0.8rem' }}>
+                  Probá ajustando la búsqueda o el filtro de estado de pago.
+                </p>
+              </div>
+            ) : (
+              <div className="song-requests-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {filteredSongRequests.map((req, idx) => (
+                  <div
+                    key={req.id || idx}
+                    className="song-request-card"
+                    style={{
+                      background: 'rgba(15, 12, 28, 0.85)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '14px',
+                      padding: '1rem 1.25rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      flexWrap: 'wrap',
+                      gap: '0.85rem',
+                      transition: 'border-color 0.2s ease, transform 0.2s ease',
+                    }}
+                  >
+                    {/* Left: Number + Song + Requester Info */}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.9rem', flex: 1, minWidth: '260px' }}>
+                      <span
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.06)',
+                          color: 'var(--neon-cyan)',
+                          fontWeight: 900,
+                          fontSize: '0.85rem',
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                          marginTop: '2px',
+                        }}
+                      >
+                        {idx + 1}
+                      </span>
+
+                      <div>
+                        {/* Song Title / Request */}
+                        <div
+                          style={{
+                            fontSize: '1.05rem',
+                            fontWeight: 800,
+                            color: '#fff',
+                            marginBottom: '0.35rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            flexWrap: 'wrap',
+                          }}
+                        >
+                          <span>🎶 &ldquo;{req.song}&rdquo;</span>
+                          <button
+                            type="button"
+                            onClick={() => handleCopySingleSong(req.id, req.song)}
+                            style={{
+                              background: 'transparent',
+                              border: 'none',
+                              color: copiedSongId === req.id ? 'var(--neon-green)' : 'var(--text-subtle)',
+                              cursor: 'pointer',
+                              fontSize: '0.75rem',
+                              padding: '0.1rem 0.35rem',
+                              borderRadius: '4px',
+                            }}
+                            title="Copiar nombre del tema"
+                          >
+                            {copiedSongId === req.id ? '✓ ¡Copiado!' : '📋'}
+                          </button>
+                        </div>
+
+                        {/* Requester details */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap', fontSize: '0.78rem', color: 'var(--text-subtle)' }}>
+                          <span>
+                            👤 <strong>{req.buyerName}</strong> {req.buyerDni && `(${req.buyerDni})`}
+                          </span>
+                          <span>•</span>
+                          <span>🎟️ {req.quantity}x entrada(s)</span>
+                          {req.createdAt && (
+                            <>
+                              <span>•</span>
+                              <span>🕒 {formatReservationDateTime(req.createdAt)}</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right: Payment Status Badge & DJ Player Shortcuts */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                      {/* Status Badge */}
+                      <span
+                        style={{
+                          padding: '0.3rem 0.65rem',
+                          borderRadius: 'var(--radius-pill)',
+                          fontSize: '0.72rem',
+                          fontWeight: 800,
+                          background:
+                            req.status === 'paid'
+                              ? 'rgba(37, 211, 102, 0.15)'
+                              : req.status === 'cash'
+                              ? 'rgba(0, 240, 255, 0.15)'
+                              : 'rgba(255, 214, 0, 0.15)',
+                          color:
+                            req.status === 'paid'
+                              ? '#25d366'
+                              : req.status === 'cash'
+                              ? 'var(--neon-cyan)'
+                              : '#ffd600',
+                          border: `1px solid ${
+                            req.status === 'paid'
+                              ? 'rgba(37, 211, 102, 0.35)'
+                              : req.status === 'cash'
+                              ? 'var(--border-neon-cyan)'
+                              : 'rgba(255, 214, 0, 0.35)'
+                          }`,
+                        }}
+                      >
+                        {req.status === 'paid' ? '✓ PAGADO' : req.status === 'cash' ? '💵 EFECTIVO' : '⏳ PENDIENTE'}
+                      </span>
+
+                      {/* YouTube Search Link */}
+                      <a
+                        href={`https://www.youtube.com/results?search_query=${encodeURIComponent(req.song + ' trap argentino')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          background: 'rgba(255, 0, 0, 0.12)',
+                          border: '1px solid rgba(255, 0, 0, 0.35)',
+                          borderRadius: 'var(--radius-pill)',
+                          color: '#ff4d4d',
+                          padding: '0.35rem 0.75rem',
+                          fontSize: '0.72rem',
+                          fontWeight: 800,
+                          textDecoration: 'none',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.3rem',
+                        }}
+                        title="Buscar y reproducir en YouTube"
+                      >
+                        <span>▶</span> YouTube ↗
+                      </a>
+
+                      {/* Spotify Search Link */}
+                      <a
+                        href={`https://open.spotify.com/search/${encodeURIComponent(req.song)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          background: 'rgba(30, 215, 96, 0.12)',
+                          border: '1px solid rgba(30, 215, 96, 0.35)',
+                          borderRadius: 'var(--radius-pill)',
+                          color: '#1ed760',
+                          padding: '0.35rem 0.75rem',
+                          fontSize: '0.72rem',
+                          fontWeight: 800,
+                          textDecoration: 'none',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.3rem',
+                        }}
+                        title="Buscar en Spotify"
+                      >
+                        <span>🟢</span> Spotify ↗
+                      </a>
+
+                      {/* Add to Web Playlist shortcut */}
+                      <button
+                        type="button"
+                        onClick={() => handleAddSongToWebPlaylist(req.song)}
+                        style={{
+                          background: 'rgba(168, 85, 247, 0.12)',
+                          border: '1px solid var(--border-neon-purple)',
+                          borderRadius: 'var(--radius-pill)',
+                          color: 'var(--neon-purple-light)',
+                          padding: '0.35rem 0.75rem',
+                          fontSize: '0.72rem',
+                          fontWeight: 800,
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.3rem',
+                        }}
+                        title="Cargar este tema en el formulario de la Playlist Web"
+                      >
+                        <span>+</span> Playlist Web
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ========================================================= */}
+        {/* TAB 4: CUSTOMIZE DIGITAL TICKET                           */}
         {/* ========================================================= */}
         {activeTab === 'ticket' && (
           <div>

@@ -25,5 +25,6 @@ export interface TicketOrder {
   meme?: MemeSticker;
   isExisting?: boolean;
   isPaid?: boolean;
+  paymentStatus?: 'pending' | 'cash' | 'paid';
   noticeMessage?: string;
 }

@@ -138,7 +138,8 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated, isOrgani
   if (!order || !currentOrder || !currentMeme) return null;
 
   const isApproved = Boolean(currentOrder.isPaid);
-  const showQrSection = isApproved || Boolean(isOrganizerView);
+  const isCashCommitted = currentOrder.paymentStatus === 'cash';
+  const showQrSection = isApproved || isCashCommitted || Boolean(isOrganizerView);
 
   const whatsappNumber = OFFICIAL_WHATSAPP_NUMBER;
   const memeText = `Sticker: ${currentMeme.name} ("${currentMeme.tagline}")`;
@@ -169,7 +170,22 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
   const buyerFormattedPhone = formatWhatsappPhone(currentOrder.buyerPhone);
   const targetPhone = isOrganizerView ? buyerFormattedPhone : formatWhatsappPhone(whatsappNumber);
 
-  const waApprovedOrganizerMessage = `🎉 *¡TU ENTRADA HA SIDO APROBADA! - EL QUILOMBO* 🇦🇷🔥
+  const waApprovedOrganizerMessage = isCashCommitted
+    ? `🎟️ *¡TU ENTRADA ESTÁ RESERVADA (PAGO EN EFECTIVO)! - EL QUILOMBO* 🇦🇷🔥
+¡Hola ${currentOrder.buyerName}! Tu preventa ha sido asegurada por el equipo de El Quilombo 💜
+
+🎟️ *Entrada:* ${currentOrder.quantity}x ${currentOrder.tier.name}
+🪪 *Titular:* ${currentOrder.buyerName} (${currentOrder.buyerDni})
+🔢 *Código Único de Acceso:* #${currentOrder.ticketCode}
+💵 *Monto en Efectivo Comprometido:* $${currentOrder.totalUSD} USD (Ref: Bs. ${currentOrder.totalRefBs})
+📍 *Lugar:* Rock & Riff (La Viña) - antiguo Oleo Gastrobar (asi aparece en google)
+🗺️ *Ubicación / Cómo llegar:* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8
+🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM
+
+*(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).*
+⚠️ *Recuerda tener preparado tu monto exacto en efectivo al llegar a la puerta.*
+¡Presentalo al llegar y preparate para la fiesta más picante de Valencia! 🇦🇷🔥`
+    : `🎉 *¡TU ENTRADA HA SIDO APROBADA! - EL QUILOMBO* 🇦🇷🔥
 ¡Hola ${currentOrder.buyerName}! Tu preventa ha sido validada y aprobada por el equipo de El Quilombo 💜
 
 🎟️ *Entrada:* ${currentOrder.quantity}x ${currentOrder.tier.name}
@@ -677,7 +693,7 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
                 textAlign: 'center',
               }}
             >
-              ℹ️ {isOrganizerView ? `Boleto Oficial con QR listo para enviar a ${currentOrder.buyerName}` : currentOrder.noticeMessage}
+              ℹ️ {isOrganizerView ? (isCashCommitted ? `💵 Boleto con Pago en Efectivo Comprometido para ${currentOrder.buyerName}` : `Boleto Oficial con QR listo para enviar a ${currentOrder.buyerName}`) : currentOrder.noticeMessage}
             </div>
           )}
 
@@ -730,6 +746,31 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
                 Tu lugar está reservado para la noche más picante de Valencia 🔥
               </span>
             </div>
+
+            {/* Cash Committed Badge */}
+            {isCashCommitted && (
+              <div
+                style={{
+                  background: 'rgba(0, 229, 255, 0.12)',
+                  border: '1px solid var(--neon-cyan)',
+                  borderRadius: '8px',
+                  padding: '0.4rem 0.75rem',
+                  fontSize: '0.76rem',
+                  fontWeight: 800,
+                  color: 'var(--neon-cyan)',
+                  textAlign: 'center',
+                  marginBottom: '0.85rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.4rem',
+                  boxShadow: '0 0 12px rgba(0, 229, 255, 0.2)',
+                }}
+              >
+                <span>💵</span>
+                <span>PAGO EN EFECTIVO COMPROMETIDO (PAGAR EN PUERTA)</span>
+              </div>
+            )}
 
             {/* Meme Sticker Stamped on Ticket */}
             <div

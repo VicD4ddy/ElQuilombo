@@ -203,13 +203,51 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
   return (
     <section className="hero-section" id="hero">
       <div className="container">
-        {/* Top Presenter: Club Sonrisas */}
-        <div className="hero-sponsor-wrap">
-          <img
-            src="/assets/img/club-sonrisas.png"
-            alt="Club Sonrisas"
-            className="hero-sponsor-logo"
-          />
+        {/* Top Presenters & Allies: Club Sonrisas, Rock & Riff, ANDY */}
+        <div className="hero-sponsor-wrap" aria-label="Aliados y Presentadores">
+          <a
+            href="#club-sonrisas"
+            className="hero-sponsor-item"
+            title="Club Sonrisas • Causa Solidaria"
+          >
+            <img
+              src="/assets/img/club-sonrisas.png"
+              alt="Club Sonrisas"
+              className="hero-sponsor-logo club-sonrisas"
+            />
+          </a>
+
+          <span className="hero-sponsor-divider" aria-hidden="true" />
+
+          <a
+            href="https://www.instagram.com/rocknriffbar/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hero-sponsor-item"
+            title="Rock & Riff • Venue Oficial"
+          >
+            <img
+              src="/assets/img/rocknriff.png"
+              alt="Rock & Riff Bar"
+              className="hero-sponsor-logo rocknriff"
+            />
+          </a>
+
+          <span className="hero-sponsor-divider" aria-hidden="true" />
+
+          <a
+            href="https://www.instagram.com/andrea_calanche/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hero-sponsor-item"
+            title="ANDY • Diseño Gráfico Oficial"
+          >
+            <img
+              src="/assets/img/andy.png"
+              alt="ANDY Diseñadora"
+              className="hero-sponsor-logo andy"
+            />
+          </a>
         </div>
 
         <div className="hero-grid">

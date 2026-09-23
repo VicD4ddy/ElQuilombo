@@ -19,6 +19,7 @@ interface TicketQrModalProps {
 export default function TicketQrModal({ order, onClose, onOrderUpdated, isOrganizerView = false }: TicketQrModalProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const ticketRef = useRef<HTMLDivElement | null>(null);
+  const memeCardRef = useRef<HTMLDivElement | null>(null);
 
   // Local state for active meme and order
   const [currentMeme, setCurrentMeme] = useState<MemeSticker | null>(null);
@@ -347,37 +348,38 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
     }
   };
 
-  // 4. Compartir en Instagram (Stories / Feed)
+  // 4. Compartir en Instagram (Stories / Feed) - Exporta la imagen del meme con el logo de El Quilombo y la frase
   const handleShareInstagram = async () => {
-    if (!ticketRef.current || !currentOrder) return;
+    const targetElement = memeCardRef.current || ticketRef.current;
+    if (!targetElement || !currentMeme) return;
     setIsSharingInstagram(true);
     setExportNotice(null);
 
-    const shareCaption = `¡Ya aseguré mi lugar pal Quilombo este Viernes 09 de Octubre en Rock & Riff! 🔥🇦🇷 @elquilombo.vzla`;
+    const shareCaption = `"${currentMeme.tagline}" 🇦🇷🔥 ¡Nos vemos este Viernes 09 de Octubre en El Quilombo (Rock & Riff, Valencia)! @elquilombo.vzla`;
 
     try {
-      const dataUrl = await toPng(ticketRef.current, {
+      const dataUrl = await toPng(targetElement, {
         cacheBust: true,
-        pixelRatio: 2,
-        backgroundColor: '#0a0814',
+        pixelRatio: 3, // Ultra alta resolución para Instagram Stories
+        backgroundColor: '#0c081e',
       });
 
       // Convertir dataUrl a Blob y File para Web Share API
       const res = await fetch(dataUrl);
       const blob = await res.blob();
-      const file = new File([blob], `Boleto_ElQuilombo_${currentOrder.ticketCode}.png`, { type: 'image/png' });
+      const file = new File([blob], `ElQuilombo_Meme_${currentMeme.id}.png`, { type: 'image/png' });
 
       if (typeof navigator !== 'undefined' && navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({
           files: [file],
-          title: 'El Quilombo - Mi Entrada',
+          title: 'Meme de El Quilombo',
           text: shareCaption,
         });
-        setExportNotice('¡Listo para compartir en Instagram Stories!');
+        setExportNotice('¡Listo para compartir tu meme en Instagram Stories!');
       } else {
-        // Fallback: descargar imagen, copiar texto al portapapeles y abrir Instagram
+        // Fallback: descargar imagen del meme, copiar texto al portapapeles y abrir Instagram
         const link = document.createElement('a');
-        link.download = `Boleto_ElQuilombo_${currentOrder.ticketCode}.png`;
+        link.download = `ElQuilombo_Meme_${currentMeme.id}.png`;
         link.href = dataUrl;
         link.click();
 
@@ -387,7 +389,7 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
           } catch (_) {}
         }
 
-        setExportNotice('📸 ¡Boleto guardado y texto copiado! Ya podés subirlo a tus Stories de Instagram etiquetando a @elquilombo.vzla');
+        setExportNotice('📸 ¡Meme guardado y frase copiada! Ya podés subirlo a tus Stories de Instagram etiquetando a @elquilombo.vzla');
         window.open('https://www.instagram.com/', '_blank');
       }
     } catch (err: any) {
@@ -395,7 +397,7 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
         // Usuario cerró el diálogo nativo de compartir
       } else {
         console.error('Error sharing on Instagram:', err);
-        setExportNotice('Podés tomarle captura al boleto y subirlo a tus Stories de Instagram mencionando a @elquilombo.vzla');
+        setExportNotice('Podés tomarle captura al meme y subirlo a tus Stories mencionando a @elquilombo.vzla');
       }
     } finally {
       setIsSharingInstagram(false);
@@ -867,6 +869,7 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
 
             {/* Full Width Non-Minimalist Meme Quilombero Showcase */}
             <div
+              ref={memeCardRef}
               className={`meme-fullwidth-showcase ${currentMeme.animationClass}`}
               style={{
                 width: '100%',
@@ -881,7 +884,7 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
                 position: 'relative',
               }}
             >
-              {/* Top Meme Header Bar */}
+              {/* Top Meme Header Bar with El Quilombo Logo in Top-Left */}
               <div
                 style={{
                   display: 'flex',
@@ -890,28 +893,38 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
                   padding: '0.65rem 0.95rem',
                   background: 'rgba(255, 255, 255, 0.05)',
                   borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-                  gap: '0.5rem',
+                  gap: '0.6rem',
                 }}
               >
-                <span
-                  style={{
-                    fontSize: '0.72rem',
-                    background: 'linear-gradient(135deg, #ec4899 0%, #8b17f5 100%)',
-                    color: '#ffffff',
-                    padding: '3px 8px',
-                    borderRadius: 'var(--radius-pill)',
-                    fontWeight: 900,
-                    letterSpacing: '0.6px',
-                    textTransform: 'uppercase',
-                    boxShadow: '0 2px 8px rgba(236, 72, 153, 0.4)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
-                >
-                  <span>🔥</span>
-                  <span>MEME QUILOMBERO</span>
-                </span>
+                {/* Logo El Quilombo in Top-Left Corner */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+                  <img
+                    src="/assets/img/el-quilombo-logo.png"
+                    alt="El Quilombo"
+                    style={{
+                      height: '34px',
+                      width: 'auto',
+                      display: 'block',
+                      filter: 'drop-shadow(0 2px 8px rgba(0, 0, 0, 0.8))',
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontSize: '0.68rem',
+                      background: 'linear-gradient(135deg, #ec4899 0%, #8b17f5 100%)',
+                      color: '#ffffff',
+                      padding: '2px 7px',
+                      borderRadius: 'var(--radius-pill)',
+                      fontWeight: 900,
+                      letterSpacing: '0.5px',
+                      textTransform: 'uppercase',
+                      boxShadow: '0 2px 8px rgba(236, 72, 153, 0.35)',
+                    }}
+                  >
+                    MEME OFICIAL
+                  </span>
+                </div>
+
                 <span
                   style={{
                     fontSize: '0.82rem',
@@ -978,6 +991,24 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
                 >
                   &ldquo;{currentMeme.tagline}&rdquo;
                 </div>
+              </div>
+
+              {/* Event Watermark Footer for Instagram */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '0.45rem 1rem 0.55rem',
+                  background: 'rgba(0, 0, 0, 0.45)',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                  fontSize: '0.72rem',
+                  color: '#94a3b8',
+                  fontWeight: 700,
+                }}
+              >
+                <span>📍 Viernes 09 OCT • Rock &amp; Riff</span>
+                <span style={{ color: 'var(--neon-cyan)', fontWeight: 800 }}>@elquilombo.vzla 🔥</span>
               </div>
             </div>
 

@@ -446,6 +446,7 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
                 <option value="Pago Móvil">Pago Móvil (BNC)</option>
                 <option value="Zelle">Zelle (USD)</option>
                 <option value="Binance Pay (USDT)">Binance Pay (USDT)</option>
+                <option value="Efectivo en Rock & Riff">Efectivo en Rock & Riff (USD / Bs)</option>
               </select>
               <span className="form-hint">Al reservar se mostrarán los datos de tu método seleccionado</span>
 
@@ -453,6 +454,7 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
               {(() => {
                 const payDetail = getPaymentDetail(formData.paymentMethod);
                 const isPagoMovil = formData.paymentMethod.includes('Pago Móvil');
+                const isCash = formData.paymentMethod.toLowerCase().includes('efectivo');
 
                 return (
                   <div
@@ -501,7 +503,7 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
                       }}
                     >
                       <span style={{ fontSize: '0.75rem', color: 'var(--text-subtle)', fontWeight: 600 }}>
-                        Monto a transferir:
+                        {isCash ? 'Monto a pagar en taquilla:' : 'Monto a transferir:'}
                       </span>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                         <strong style={{ fontSize: '1.05rem', color: 'var(--neon-cyan)', fontFamily: 'monospace' }}>
@@ -509,6 +511,8 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
                             ? `Bs. ${totalRefBs}`
                             : formData.paymentMethod.includes('Binance')
                             ? `${totalUSD} USDT`
+                            : isCash
+                            ? `$${totalUSD} USD (o Bs. ${totalRefBs})`
                             : `$${totalUSD} USD`}
                         </strong>
                         <button
@@ -572,6 +576,43 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
                         </button>
                         <span style={{ display: 'block', fontSize: '0.68rem', color: '#94a3b8', textAlign: 'center', marginTop: '0.3rem' }}>
                           💡 Copia Banco (0191), Cédula, Teléfono y Monto exacto para pegar directo en tu app de banco.
+                        </span>
+                      </div>
+                    )}
+
+                    {/* 📍 Quick Google Maps Location Button for Cash */}
+                    {isCash && (
+                      <div style={{ marginBottom: '0.65rem' }}>
+                        <a
+                          href="https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          id="btn-location-rocknriff-preview"
+                          style={{
+                            width: '100%',
+                            background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.18) 0%, rgba(139, 23, 245, 0.25) 100%)',
+                            border: '1px solid var(--neon-cyan)',
+                            color: '#ffffff',
+                            fontFamily: 'var(--font-title)',
+                            fontWeight: 900,
+                            fontSize: '0.82rem',
+                            padding: '0.6rem 0.8rem',
+                            borderRadius: '10px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '0.45rem',
+                            boxShadow: '0 3px 12px rgba(0, 240, 255, 0.15)',
+                            textDecoration: 'none',
+                            transition: 'all 0.2s ease',
+                          }}
+                        >
+                          <span>📍</span>
+                          <span>Ver Ubicación de Rock &amp; Riff en Google Maps</span>
+                        </a>
+                        <span style={{ display: 'block', fontSize: '0.68rem', color: '#94a3b8', textAlign: 'center', marginTop: '0.3rem' }}>
+                          💡 Rock &amp; Riff (antiguo Oleo Gastrobar, El Viñedo). Pagás en efectivo al llegar el 09 de octubre.
                         </span>
                       </div>
                     )}

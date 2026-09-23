@@ -40,7 +40,7 @@ export default function OrganizadorPage() {
       return r.payment_status;
     }
     if (r.is_paid) return 'paid';
-    if (r.tier_id === 'cash' || r.tier_id === 'efectivo') return 'cash';
+    if (r.tier_id === 'cash' || r.tier_id === 'efectivo' || (typeof r.payment_method === 'string' && r.payment_method.toLowerCase().includes('efectivo'))) return 'cash';
     return 'pending';
   };
   const [updatingPaymentId, setUpdatingPaymentId] = useState<string | null>(null);

@@ -7,7 +7,7 @@ export interface FaqItem {
 export const FAQS: FaqItem[] = [
   {
     question: '¿Cómo funciona el proceso de reserva y pago?',
-    answer: 'Al llenar el formulario en esta web, se generará tu Boleto Digital con código QR. Luego serás redirigido directamente a nuestro WhatsApp oficial con los datos de tu reserva listos para que el equipo de El Quilombo verifique tu transferencia (Pago Móvil, Zelle o Binance Pay) y confirme tu lugar.',
+    answer: 'Al llenar el formulario en esta web, se generará tu Boleto Digital con código QR. Si pagás por transferencia (Pago Móvil, Zelle o Binance Pay) o en efectivo en puerta, serás redirigido directamente a nuestro WhatsApp oficial con los datos de tu reserva listos para coordinar y asegurar tu lugar.',
     defaultOpen: true,
   },
   {

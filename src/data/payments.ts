@@ -72,11 +72,26 @@ export const PAYMENT_METHODS: Record<string, PaymentDetail> = {
     note: 'Recibimos USDT sin comisiones a través de Binance Pay directo.',
     instructions: 'Enviá el monto exacto en USDT por Binance Pay y compartí el ID de orden o captura al WhatsApp.',
   },
+  'Efectivo en Rock & Riff': {
+    id: 'Efectivo en Rock & Riff',
+    name: 'Efectivo en Rock & Riff',
+    badge: 'Pago en Puerta / Efectivo',
+    icon: '💵',
+    accentColor: '#00f0ff',
+    fields: [
+      { label: 'Lugar de Pago', value: 'Rock & Riff (El Viñedo, Valencia)', copyValue: 'Rock & Riff, Valencia', copyable: true },
+      { label: 'Moneda Aceptada', value: 'USD Efectivo o Bolívares (Tasa BCV)', copyable: false },
+      { label: 'Ubicación Google Maps', value: 'antiguo Oleo Gastrobar', copyValue: 'https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8', copyable: true },
+    ],
+    note: '💡 Tu preventa queda apartada en el sistema. Llevá el monto exacto en efectivo el día del evento en taquilla.',
+    instructions: 'Completá tu reserva para generar tu código y boleto digital. El pago se efectúa directamente en la puerta de Rock & Riff.',
+  },
 };
 
 export function getPaymentDetail(methodName: string): PaymentDetail {
   if (methodName.includes('Zelle')) return PAYMENT_METHODS['Zelle'];
   if (methodName.includes('Binance')) return PAYMENT_METHODS['Binance Pay (USDT)'];
+  if (methodName.toLowerCase().includes('efectivo')) return PAYMENT_METHODS['Efectivo en Rock & Riff'];
   return PAYMENT_METHODS['Pago Móvil'];
 }
 
@@ -108,6 +123,9 @@ export function getPaymentFullSummary(methodName: string, amountDisplay: string)
   }
   if (detail.id === 'Zelle') {
     return `*DATOS ZELLE EL QUILOMBO*\nCorreo: buthainarafeh@gmail.com\nTitular: Buthaina Rafeh de Barreto\nConcepto obligatorio: El quilombo\nMonto: ${amountDisplay}`;
+  }
+  if (detail.id === 'Efectivo en Rock & Riff') {
+    return `*PAGO EN EFECTIVO EL QUILOMBO*\nLugar: Rock & Riff (El Viñedo, Valencia - antiguo Oleo Gastrobar)\nUbicación: https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8\nMonto a pagar en taquilla: ${amountDisplay}`;
   }
   return `*DATOS BINANCE PAY EL QUILOMBO*\nBinance ID: 1182025220\nUsuario: Belife BR\nMonto: ${amountDisplay}`;
 }

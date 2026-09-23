@@ -84,7 +84,11 @@ export async function GET() {
         ? r.payment_method.trim()
         : 'Efectivo en Rock & Riff';
 
-      const isCash = !r.is_paid && (r.tier_id === 'cash' || r.tier_id === 'efectivo');
+      const isCash = !r.is_paid && (
+        r.tier_id === 'cash' ||
+        r.tier_id === 'efectivo' ||
+        (typeof r.payment_method === 'string' && r.payment_method.toLowerCase().includes('efectivo'))
+      );
       r.payment_status = r.is_paid ? 'paid' : (isCash ? 'cash' : 'pending');
 
       totalTicketsCount += qty;

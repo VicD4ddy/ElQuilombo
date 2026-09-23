@@ -105,6 +105,7 @@ export async function processReservation(
   if (!isSupabaseConfigured || !supabase) {
     recordClientReservation();
     const fallbackCode = `QLB-26-${Math.floor(1000 + Math.random() * 9000)}`;
+    const isCashOrder = orderData.paymentMethod?.toLowerCase().includes('efectivo') || orderData.tier?.id === 'cash';
     return {
       success: true,
       isExisting: false,
@@ -112,6 +113,7 @@ export async function processReservation(
         ...orderData,
         ticketCode: fallbackCode,
         createdAt: new Date().toISOString(),
+        paymentStatus: isCashOrder ? 'cash' : 'pending',
       },
     };
   }
@@ -130,6 +132,12 @@ export async function processReservation(
 
     if (existing) {
       // Return existing reservation to user
+      const isExistingCash = !existing.is_paid && (
+        existing.tier_id === 'cash' ||
+        existing.tier_id === 'efectivo' ||
+        (typeof existing.payment_method === 'string' && existing.payment_method.toLowerCase().includes('efectivo'))
+      );
+
       const existingOrder: TicketOrder = {
         tier: {
           id: existing.tier_id,
@@ -152,6 +160,7 @@ export async function processReservation(
         ticketCode: existing.ticket_code,
         createdAt: existing.created_at,
         isPaid: Boolean(existing.is_paid),
+        paymentStatus: existing.is_paid ? 'paid' : (isExistingCash ? 'cash' : 'pending'),
       };
 
       return {
@@ -218,11 +227,18 @@ export async function processReservation(
 
     recordClientReservation();
 
+    const isCreatedCash = !inserted.is_paid && (
+      inserted.tier_id === 'cash' ||
+      inserted.tier_id === 'efectivo' ||
+      (typeof inserted.payment_method === 'string' && inserted.payment_method.toLowerCase().includes('efectivo'))
+    );
+
     const createdOrder: TicketOrder = {
       ...orderData,
       ticketCode: inserted.ticket_code,
       createdAt: inserted.created_at,
       isPaid: Boolean(inserted.is_paid),
+      paymentStatus: inserted.is_paid ? 'paid' : (isCreatedCash ? 'cash' : 'pending'),
     };
 
     return {
@@ -235,6 +251,7 @@ export async function processReservation(
     console.error('Supabase reservation error:', err);
     // Fallback gracefully so user can still get a ticket & WhatsApp link
     const fallbackCode = `QLB-26-${Math.floor(1000 + Math.random() * 9000)}`;
+    const isFallbackCash = orderData.paymentMethod?.toLowerCase().includes('efectivo') || orderData.tier?.id === 'cash';
     return {
       success: true,
       isExisting: false,
@@ -243,6 +260,7 @@ export async function processReservation(
         ticketCode: fallbackCode,
         createdAt: new Date().toISOString(),
         isPaid: false,
+        paymentStatus: isFallbackCash ? 'cash' : 'pending',
       },
       message: 'Reserva generada localmente.',
     };

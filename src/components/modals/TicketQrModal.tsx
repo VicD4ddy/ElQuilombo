@@ -138,14 +138,34 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated, isOrgani
   if (!order || !currentOrder || !currentMeme) return null;
 
   const isApproved = Boolean(currentOrder.isPaid);
-  const isCashCommitted = currentOrder.paymentStatus === 'cash';
+  const isCashCommitted =
+    currentOrder.paymentStatus === 'cash' ||
+    currentOrder.tier?.id === 'cash' ||
+    currentOrder.tier?.id === 'efectivo' ||
+    Boolean(currentOrder.paymentMethod?.toLowerCase().includes('efectivo'));
   const showQrSection = isApproved || isCashCommitted || Boolean(isOrganizerView);
 
   const whatsappNumber = OFFICIAL_WHATSAPP_NUMBER;
   const memeText = `Sticker: ${currentMeme.name} ("${currentMeme.tagline}")`;
 
   // Pre-filled WhatsApp message for Organizers (Payment Coordination & Approval)
-  const organizersMessage = `⚡ *RESERVA Y PAGO - EL QUILOMBO* 💜
+  const organizersMessage = isCashCommitted
+    ? `⚡ *RESERVA EN EFECTIVO - EL QUILOMBO* 💵🇦🇷🔥
+¡Hola organizadores de El Quilombo! Acabo de apartar mi preventa para pagar en efectivo en taquilla:
+
+🎫 *Código de Reserva:* #${currentOrder.ticketCode}
+👤 *Titular:* ${currentOrder.buyerName}
+🪪 *Cédula/DNI:* ${currentOrder.buyerDni}
+📱 *WhatsApp:* ${currentOrder.buyerPhone}
+📧 *Email:* ${currentOrder.buyerEmail}
+🎟️ *Entradas:* ${currentOrder.quantity}x ${currentOrder.tier.name}
+💵 *Monto en Efectivo a Pagar en Puerta:* $${currentOrder.totalUSD} USD (o Ref: Bs. ${currentOrder.totalRefBs})
+💳 *Método de pago:* Efectivo en Rock & Riff
+🎶 *Tema pedido:* ${currentOrder.favoriteArtist}
+🎯 *${memeText}*
+
+Ya cuento con mi código de reserva generado. Llevo el monto en efectivo el día del evento en taquilla para ingresar. ¡Muchas gracias! 🔥`
+    : `⚡ *RESERVA Y PAGO - EL QUILOMBO* 💜
 ¡Hola organizadores de El Quilombo! Acabo de apartar mi preventa 🇦🇷🔥:
 
 🎫 *Código de Reserva:* #${currentOrder.ticketCode}
@@ -198,7 +218,24 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
 *(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).*
 ¡Presentalo al llegar y preparate para la fiesta más picante de Valencia! 🇦🇷🔥`;
 
-  const waClientMessage = `⚡ *RESERVA PREVENTA - EL QUILOMBO* 💜
+  const waClientMessage = isCashCommitted
+    ? `⚡ *RESERVA EN EFECTIVO - EL QUILOMBO* 💵🇦🇷🔥
+¡Hola equipo de @elquilombo.vzla! Aparté mi preventa para pagar en efectivo en taquilla:
+
+🎫 *Código:* #${currentOrder.ticketCode}
+👤 *Titular:* ${currentOrder.buyerName}
+🪪 *Cédula/DNI:* ${currentOrder.buyerDni}
+📱 *WhatsApp:* ${currentOrder.buyerPhone}
+📧 *Email:* ${currentOrder.buyerEmail}
+🎟️ *Entradas:* ${currentOrder.quantity}x ${currentOrder.tier.name}
+💵 *Total a pagar en efectivo:* $${currentOrder.totalUSD} USD (o Ref: Bs. ${currentOrder.totalRefBs})
+💳 *Método de pago:* Efectivo en Rock & Riff
+🎶 *Tema/Artista que no puede faltar:* ${currentOrder.favoriteArtist}
+🎯 *${memeText}*
+
+¡Nos vemos en Rock & Riff el viernes 09 de octubre! 🇦🇷🔥
+📍 *Ubicación (antiguo Oleo Gastrobar):* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8`
+    : `⚡ *RESERVA PREVENTA - EL QUILOMBO* 💜
 ¡Hola equipo de @elquilombo.vzla! Quiero confirmar mi entrada:
 
 🎫 *Código:* #${currentOrder.ticketCode}
@@ -935,7 +972,7 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
                     }}
                   >
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-subtle)', fontWeight: 600 }}>
-                      Monto a transferir:
+                      {isCashCommitted ? 'Monto a pagar en taquilla:' : 'Monto a transferir:'}
                     </span>
                     <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.2rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
@@ -944,6 +981,8 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
                             ? `Bs. ${currentOrder.totalRefBs}`
                             : currentOrder.paymentMethod.includes('Binance')
                             ? `${currentOrder.totalUSD} USDT`
+                            : isCashCommitted
+                            ? `$${currentOrder.totalUSD} USD (o Bs. ${currentOrder.totalRefBs})`
                             : `$${currentOrder.totalUSD} USD`}
                         </span>
                         <button
@@ -1013,6 +1052,43 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
                       </button>
                       <span style={{ fontSize: '0.7rem', color: '#94a3b8', textAlign: 'center', lineHeight: 1.35 }}>
                         💡 Incluye Banco (0191), Cédula, Teléfono y Monto listo para la opción <em>&ldquo;Pegar datos&rdquo;</em> de tu app bancaria (BNC, Banesco, BDV, etc.)
+                      </span>
+                    </div>
+                  )}
+
+                  {/* 📍 Quick Google Maps Location Button for Cash */}
+                  {isCashCommitted && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                      <a
+                        href="https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        id="btn-modal-location-rocknriff"
+                        style={{
+                          width: '100%',
+                          background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.18) 0%, rgba(139, 23, 245, 0.25) 100%)',
+                          border: '1px solid var(--neon-cyan)',
+                          color: '#ffffff',
+                          fontFamily: 'var(--font-title)',
+                          fontWeight: 900,
+                          fontSize: '0.88rem',
+                          padding: '0.75rem 0.9rem',
+                          borderRadius: '12px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '0.5rem',
+                          boxShadow: '0 4px 16px rgba(0, 240, 255, 0.2)',
+                          textDecoration: 'none',
+                          transition: 'all 0.2s ease',
+                        }}
+                      >
+                        <span style={{ fontSize: '1.1rem' }}>📍</span>
+                        <span>Ver Ubicación de Rock &amp; Riff en Google Maps</span>
+                      </a>
+                      <span style={{ fontSize: '0.7rem', color: '#94a3b8', textAlign: 'center', lineHeight: 1.35 }}>
+                        💡 Rock &amp; Riff (antiguo Oleo Gastrobar, El Viñedo). Pagás en taquilla al llegar el 09 de octubre.
                       </span>
                     </div>
                   )}
@@ -1090,7 +1166,9 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
                   {/* WhatsApp Submission Action */}
                   <div style={{ marginTop: '0.35rem', textAlign: 'center' }}>
                     <p style={{ margin: '0 0 0.65rem', fontSize: '0.78rem', color: '#cbd5e1', lineHeight: 1.45 }}>
-                      Al hacer el pago, enviá el capture o referencia a los organizadores para activar tu entrada:
+                      {isCashCommitted
+                        ? 'Tu reserva en taquilla está apartada. Podés notificar a los organizadores por WhatsApp o guardar tu boleto:'
+                        : 'Al hacer el pago, enviá el capture o referencia a los organizadores para activar tu entrada:'}
                     </p>
 
                     <a
@@ -1119,12 +1197,14 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
                         transition: 'all 0.2s',
                       }}
                     >
-                      <span>💬 Enviar Comprobante por WhatsApp</span>
+                      <span>{isCashCommitted ? '💬 Notificar Reserva en Efectivo por WhatsApp' : '💬 Enviar Comprobante por WhatsApp'}</span>
                       <span>→</span>
                     </a>
 
                     <span style={{ display: 'block', marginTop: '0.5rem', fontSize: '0.72rem', color: 'var(--text-subtle)', lineHeight: 1.35 }}>
-                      Los organizadores verificarán tu pago y tu boleto oficial con código QR quedará habilitado para el acceso.
+                      {isCashCommitted
+                        ? 'Presentá tu código de reserva o boleto con código QR en la entrada de Rock & Riff para pagar e ingresar.'
+                        : 'Los organizadores verificarán tu pago y tu boleto oficial con código QR quedará habilitado para el acceso.'}
                     </span>
                   </div>
                 </div>
@@ -1238,6 +1318,8 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
                   <span>
                     {isOrganizerView
                       ? `💬 Enviar Boleto por WhatsApp a ${currentOrder.buyerName}`
+                      : isCashCommitted
+                      ? '💬 Notificar Reserva en Efectivo por WhatsApp'
                       : '💬 Enviar Comprobante por WhatsApp'}
                   </span>
                   <span>→</span>

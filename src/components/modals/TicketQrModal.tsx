@@ -31,7 +31,6 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated, isOrgani
   const [isExportingPng, setIsExportingPng] = useState<boolean>(false);
   const [isSharingInstagram, setIsSharingInstagram] = useState<boolean>(false);
   const [exportProgressText, setExportProgressText] = useState<string | null>(null);
-  const [exportNotice, setExportNotice] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const handleCopy = (text: string, label: string) => {
@@ -45,7 +44,6 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated, isOrgani
   const handleClose = () => {
     setCurrentOrder(null);
     setCurrentMeme(null);
-    setExportNotice(null);
     onClose();
   };
 
@@ -54,11 +52,9 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated, isOrgani
     if (order) {
       setCurrentOrder(order);
       setCurrentMeme(order.meme || getRandomMemeSticker());
-      setExportNotice(null);
     } else {
       setCurrentOrder(null);
       setCurrentMeme(null);
-      setExportNotice(null);
     }
   }, [order]);
 
@@ -268,7 +264,6 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
   // 1. Export 9:16 Video Story
   const handleExportVideo = async () => {
     setIsExportingVideo(true);
-    setExportNotice(null);
     setExportProgressText('Iniciando grabación...');
 
     try {
@@ -279,18 +274,11 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
         (pct, txt) => setExportProgressText(`${txt} (${pct}%)`)
       );
 
-      if (res.success) {
-        if (res.shared) {
-          setExportNotice('¡Listo! Video enviado a tu menú de compartir para Instagram / WhatsApp.');
-        } else {
-          setExportNotice('¡Video descargado con éxito! Subilo a tus historias de Instagram o Estados de WhatsApp con sonido.');
-        }
-      } else {
-        setExportNotice(`Inconveniente al exportar video: ${res.error || 'intenta nuevamente'}.`);
+      if (!res.success) {
+        console.error('Error exporting video:', res.error);
       }
     } catch (err: any) {
       console.error('Error generating video story:', err);
-      setExportNotice('No se pudo generar el video en este dispositivo. Podés descargar el PNG o GIF.');
     } finally {
       setIsExportingVideo(false);
       setExportProgressText(null);
@@ -300,21 +288,17 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
   // 2. Export Animated GIF
   const handleExportGif = async () => {
     setIsExportingGif(true);
-    setExportNotice(null);
     setExportProgressText('Generando GIF animado...');
 
     try {
       const res = await exportStoryGif(currentOrder, currentMeme, (pct, txt) =>
         setExportProgressText(`${txt} (${pct}%)`)
       );
-      if (res.success) {
-        setExportNotice('¡GIF animado descargado! Compartilo por tus chats de WhatsApp.');
-      } else {
-        setExportNotice('Error al crear GIF animado.');
+      if (!res.success) {
+        console.error('Error generating GIF');
       }
     } catch (err: any) {
       console.error('Error generating GIF:', err);
-      setExportNotice('No se pudo generar el GIF.');
     } finally {
       setIsExportingGif(false);
       setExportProgressText(null);
@@ -325,7 +309,6 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
   const handleExportPng = async () => {
     if (!ticketRef.current) return;
     setIsExportingPng(true);
-    setExportNotice(null);
 
     try {
       const dataUrl = await toPng(ticketRef.current, {
@@ -338,11 +321,8 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
       link.download = `Boleto_ElQuilombo_${currentOrder.ticketCode}.png`;
       link.href = dataUrl;
       link.click();
-
-      setExportNotice('¡Boleto descargado en alta resolución (PNG) para mostrar en puerta!');
     } catch (err) {
       console.error('Error exporting story image:', err);
-      setExportNotice('Hubo un inconveniente al exportar. Podés tomarle captura al boleto.');
     } finally {
       setIsExportingPng(false);
     }
@@ -353,7 +333,6 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
     const targetElement = memeCardRef.current || ticketRef.current;
     if (!targetElement || !currentMeme) return;
     setIsSharingInstagram(true);
-    setExportNotice(null);
 
     const shareCaption = `"${currentMeme.tagline}" 🇦🇷🔥 ¡Nos vemos este Viernes 09 de Octubre en El Quilombo (Rock & Riff, Valencia)! @elquilombo.vzla`;
 
@@ -375,7 +354,6 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
           title: 'Meme de El Quilombo',
           text: shareCaption,
         });
-        setExportNotice('¡Listo para compartir tu meme en Instagram Stories!');
       } else {
         // Fallback: descargar imagen del meme, copiar texto al portapapeles y abrir Instagram
         const link = document.createElement('a');
@@ -389,7 +367,6 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
           } catch (_) {}
         }
 
-        setExportNotice('📸 ¡Meme guardado y frase copiada! Ya podés subirlo a tus Stories de Instagram etiquetando a @elquilombo.vzla');
         window.open('https://www.instagram.com/', '_blank');
       }
     } catch (err: any) {
@@ -397,7 +374,6 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
         // Usuario cerró el diálogo nativo de compartir
       } else {
         console.error('Error sharing on Instagram:', err);
-        setExportNotice('Podés tomarle captura al meme y subirlo a tus Stories mencionando a @elquilombo.vzla');
       }
     } finally {
       setIsSharingInstagram(false);
@@ -627,23 +603,6 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
 
           {/* Action Buttons (Outside ticketRef so they are NOT in the exported PNG) */}
           <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-            {exportNotice && (
-              <div
-                style={{
-                  fontSize: '0.82rem',
-                  color: '#ffd600',
-                  textAlign: 'center',
-                  fontWeight: 700,
-                  background: 'rgba(255, 214, 0, 0.1)',
-                  padding: '0.5rem',
-                  borderRadius: '8px',
-                  border: '1px solid rgba(255, 214, 0, 0.25)',
-                }}
-              >
-                {exportNotice}
-              </div>
-            )}
-
             {/* 1. Send via WhatsApp to Attendee */}
             <a
               href={waWebUrl}
@@ -1422,174 +1381,144 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
 
           </div>
 
-          {/* Pass Actions Footer */}
-          <div className="ticket-pass-footer">
-            {exportProgressText && (
-              <div style={{ fontSize: '0.82rem', color: 'var(--neon-cyan)', textAlign: 'center', marginBottom: '0.25rem', fontWeight: 700 }}>
-                ⏳ {exportProgressText}
-              </div>
-            )}
-            {exportNotice && (
-              <div style={{ fontSize: '0.82rem', color: '#ffd600', textAlign: 'center', marginBottom: '0.25rem', fontWeight: 700 }}>
-                {exportNotice}
-              </div>
-            )}
+          {/* Pass Actions Footer (Only for Approved Pass with QR) */}
+          {showQrSection && (
+            <div className="ticket-pass-footer">
+              {exportProgressText && (
+                <div style={{ fontSize: '0.82rem', color: 'var(--neon-cyan)', textAlign: 'center', marginBottom: '0.25rem', fontWeight: 700 }}>
+                  ⏳ {exportProgressText}
+                </div>
+              )}
 
-            {showQrSection ? (
-              <>
-                {/* 1. Share Direct on Instagram */}
+              {/* 1. Share Direct on Instagram */}
+              <button
+                type="button"
+                id="btn-share-instagram-approved"
+                onClick={handleShareInstagram}
+                disabled={isSharingInstagram || isExportingVideo || isExportingGif || isExportingPng}
+                style={{
+                  width: '100%',
+                  background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
+                  border: 'none',
+                  color: '#fff',
+                  fontFamily: 'var(--font-title)',
+                  fontWeight: 900,
+                  fontSize: '0.95rem',
+                  padding: '0.85rem',
+                  borderRadius: 'var(--radius-pill)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  boxShadow: '0 4px 20px rgba(220, 39, 67, 0.45)',
+                  transition: 'transform 0.2s',
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+                <span>{isSharingInstagram ? 'Preparando...' : 'Compartir en Instagram'}</span>
+              </button>
+
+              {/* 2. Share / Export Video 9:16 for Instagram Stories */}
+              <button
+                type="button"
+                id="btn-export-story-video"
+                onClick={handleExportVideo}
+                disabled={isExportingVideo || isExportingGif || isExportingPng || isSharingInstagram}
+                style={{
+                  width: '100%',
+                  background: 'linear-gradient(135deg, #8b17f5 0%, #ec4899 100%)',
+                  border: 'none',
+                  color: '#fff',
+                  fontFamily: 'var(--font-title)',
+                  fontWeight: 800,
+                  fontSize: '0.88rem',
+                  padding: '0.75rem',
+                  borderRadius: 'var(--radius-pill)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  boxShadow: '0 4px 15px rgba(139, 23, 245, 0.35)',
+                  transition: 'transform 0.2s',
+                }}
+              >
+                <span>🎬 {isExportingVideo ? 'Generando Video Stories...' : 'Exportar Video Stories (9:16)'}</span>
+              </button>
+
+              {/* 3. Secondary Export Options: GIF & PNG */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', width: '100%' }}>
                 <button
                   type="button"
-                  id="btn-share-instagram-approved"
-                  onClick={handleShareInstagram}
-                  disabled={isSharingInstagram || isExportingVideo || isExportingGif || isExportingPng}
-                  style={{
-                    width: '100%',
-                    background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
-                    border: 'none',
-                    color: '#fff',
-                    fontFamily: 'var(--font-title)',
-                    fontWeight: 900,
-                    fontSize: '0.95rem',
-                    padding: '0.85rem',
-                    borderRadius: 'var(--radius-pill)',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.5rem',
-                    boxShadow: '0 4px 20px rgba(220, 39, 67, 0.45)',
-                    transition: 'transform 0.2s',
-                  }}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                  </svg>
-                  <span>{isSharingInstagram ? 'Preparando...' : 'Compartir en Instagram'}</span>
-                </button>
-
-                {/* 2. Share / Export Video 9:16 for Instagram Stories */}
-                <button
-                  type="button"
-                  id="btn-export-story-video"
-                  onClick={handleExportVideo}
+                  id="btn-export-gif"
+                  onClick={handleExportGif}
                   disabled={isExportingVideo || isExportingGif || isExportingPng || isSharingInstagram}
                   style={{
-                    width: '100%',
-                    background: 'linear-gradient(135deg, #8b17f5 0%, #ec4899 100%)',
-                    border: 'none',
-                    color: '#fff',
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    border: '1px solid var(--border-neon-cyan)',
+                    color: 'var(--neon-cyan)',
                     fontFamily: 'var(--font-title)',
-                    fontWeight: 800,
-                    fontSize: '0.88rem',
-                    padding: '0.75rem',
+                    fontWeight: 700,
+                    fontSize: '0.82rem',
+                    padding: '0.65rem 0.5rem',
                     borderRadius: 'var(--radius-pill)',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '0.5rem',
-                    boxShadow: '0 4px 15px rgba(139, 23, 245, 0.35)',
-                    transition: 'transform 0.2s',
+                    gap: '0.35rem',
                   }}
                 >
-                  <span>🎬 {isExportingVideo ? 'Generando Video Stories...' : 'Exportar Video Stories (9:16)'}</span>
+                  <span>🎞️ {isExportingGif ? 'Creando GIF...' : 'Descargar GIF'}</span>
                 </button>
 
-                {/* 3. Secondary Export Options: GIF & PNG */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', width: '100%' }}>
-                  <button
-                    type="button"
-                    id="btn-export-gif"
-                    onClick={handleExportGif}
-                    disabled={isExportingVideo || isExportingGif || isExportingPng || isSharingInstagram}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      border: '1px solid var(--border-neon-cyan)',
-                      color: 'var(--neon-cyan)',
-                      fontFamily: 'var(--font-title)',
-                      fontWeight: 700,
-                      fontSize: '0.82rem',
-                      padding: '0.65rem 0.5rem',
-                      borderRadius: 'var(--radius-pill)',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '0.35rem',
-                    }}
-                  >
-                    <span>🎞️ {isExportingGif ? 'Creando GIF...' : 'Descargar GIF'}</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    id="btn-export-png"
-                    onClick={handleExportPng}
-                    disabled={isExportingVideo || isExportingGif || isExportingPng || isSharingInstagram}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      border: '1px solid var(--border-neon-purple)',
-                      color: '#fff',
-                      fontFamily: 'var(--font-title)',
-                      fontWeight: 700,
-                      fontSize: '0.82rem',
-                      padding: '0.65rem 0.5rem',
-                      borderRadius: 'var(--radius-pill)',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '0.35rem',
-                    }}
-                  >
-                    <span>📸 {isExportingPng ? 'Guardando...' : 'Boleto PNG'}</span>
-                  </button>
-                </div>
-
-                {/* 4. WhatsApp Direct Link */}
-                <a
-                  href={waWebUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-whatsapp-confirm"
-                  onClick={handleWhatsappClick}
+                <button
+                  type="button"
+                  id="btn-export-png"
+                  onClick={handleExportPng}
+                  disabled={isExportingVideo || isExportingGif || isExportingPng || isSharingInstagram}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    border: '1px solid var(--border-neon-purple)',
+                    color: '#fff',
+                    fontFamily: 'var(--font-title)',
+                    fontWeight: 700,
+                    fontSize: '0.82rem',
+                    padding: '0.65rem 0.5rem',
+                    borderRadius: 'var(--radius-pill)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.35rem',
+                  }}
                 >
-                  <span>
-                    {isOrganizerView
-                      ? `💬 Enviar Boleto por WhatsApp a ${currentOrder.buyerName}`
-                      : isCashCommitted
-                      ? '💬 Notificar Reserva en Efectivo por WhatsApp'
-                      : '💬 Enviar Comprobante por WhatsApp'}
-                  </span>
-                  <span>→</span>
-                </a>
-              </>
-            ) : null}
+                  <span>📸 {isExportingPng ? 'Guardando...' : 'Boleto PNG'}</span>
+                </button>
+              </div>
 
-            {/* Close Button */}
-            <button
-              type="button"
-              className="btn-close-modal"
-              id="btn-close-modal"
-              onClick={handleClose}
-              style={{
-                width: '100%',
-                background: showQrSection ? 'transparent' : 'rgba(255, 255, 255, 0.05)',
-                border: showQrSection ? 'none' : '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: 'var(--radius-pill)',
-                color: 'var(--text-subtle)',
-                fontSize: '0.82rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                padding: '0.65rem 1rem',
-                marginTop: showQrSection ? '0.25rem' : '0.5rem',
-                textDecoration: showQrSection ? 'underline' : 'none',
-              }}
-            >
-              {showQrSection ? 'Cerrar Comprobante' : 'Entendido, Cerrar Ventana'}
-            </button>
-          </div>
+              {/* 4. WhatsApp Direct Link */}
+              <a
+                href={waWebUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-whatsapp-confirm"
+                onClick={handleWhatsappClick}
+              >
+                <span>
+                  {isOrganizerView
+                    ? `💬 Enviar Boleto por WhatsApp a ${currentOrder.buyerName}`
+                    : isCashCommitted
+                    ? '💬 Notificar Reserva en Efectivo por WhatsApp'
+                    : '💬 Enviar Comprobante por WhatsApp'}
+                </span>
+                <span>→</span>
+              </a>
+            </div>
+          )}
         </div>
       </dialog>
     </div>

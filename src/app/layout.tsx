@@ -34,17 +34,32 @@ export const metadata: Metadata = {
     url: 'https://elquilombo.club',
     title: 'El Quilombo • La Fiesta Temática Argentina en Valencia',
     description:
-      'Vení a vivir la noche más picante del trap, freestyle y cultura argentina en Rock & Riff, La Viña. Preventa oficial activa $10 USD.',
+      'Vení a vivir la noche más picante del trap, freestyle y cultura argentina en Rock & Riff, La Viña. Viernes 09 de Octubre. Preventa oficial activa $10 USD.',
     siteName: 'El Quilombo',
     images: [
       {
-        url: '/recursos/fondoestatico.png',
-        width: 1200,
-        height: 630,
+        url: '/assets/img/el-quilombo-seo.png',
+        width: 378,
+        height: 350,
+        type: 'image/png',
+        alt: 'El Quilombo - 09 de Octubre en Rock & Riff',
+      },
+      {
+        url: '/recursos/El%20quilombo%20SEO.png',
+        width: 378,
+        height: 350,
+        type: 'image/png',
         alt: 'El Quilombo - Fiesta Temática Argentina',
       },
     ],
     locale: 'es_VE',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'El Quilombo • La Fiesta Temática Argentina en Valencia',
+    description:
+      'Vení a vivir la noche más picante del trap, freestyle y cultura argentina en Rock & Riff, La Viña. Viernes 09 de Octubre. Preventa oficial activa $10 USD.',
+    images: ['/assets/img/el-quilombo-seo.png'],
   },
   icons: {
     icon: '/recursos/El Quilombo.png',

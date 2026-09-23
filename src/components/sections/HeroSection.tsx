@@ -206,9 +206,11 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
         {/* Top Presenters & Allies: Club Sonrisas, Rock & Riff, ANDY */}
         <div className="hero-sponsor-wrap" aria-label="Aliados y Presentadores">
           <a
-            href="#club-sonrisas"
+            href="https://www.instagram.com/clubsonrisasproject?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw=="
+            target="_blank"
+            rel="noopener noreferrer"
             className="hero-sponsor-item"
-            title="Club Sonrisas • Causa Solidaria"
+            title="Club Sonrisas • Causa Solidaria (@clubsonrisasproject)"
           >
             <img
               src="/assets/img/club-sonrisas.png"

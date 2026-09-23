@@ -47,6 +47,20 @@ export default function Footer() {
               >
                 @rocknriffbar ↗
               </a>
+              <a
+                href="https://www.instagram.com/clubsonrisasproject?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="tag-badge"
+                style={{
+                  textDecoration: 'none',
+                  background: 'rgba(255, 214, 0, 0.12)',
+                  border: '1px solid rgba(255, 214, 0, 0.35)',
+                  color: '#ffd600',
+                }}
+              >
+                @clubsonrisasproject ↗
+              </a>
             </div>
           </div>
 

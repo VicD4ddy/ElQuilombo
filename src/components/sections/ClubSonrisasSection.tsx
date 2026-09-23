@@ -22,17 +22,29 @@ export default function ClubSonrisasSection() {
           <div className="club-sonrisas-hero-grid">
             {/* Left: Logo & Partnership Badge */}
             <div className="club-sonrisas-brand-col">
-              <div className="club-sonrisas-logo-box">
+              <a
+                href="https://www.instagram.com/clubsonrisasproject?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="club-sonrisas-logo-box"
+                title="Visitar Instagram de @clubsonrisasproject"
+              >
                 <img
                   src="/assets/img/club-sonrisas.png"
                   alt="Club Sonrisas Logo Oficial"
                   className="club-sonrisas-logo-img"
                   loading="lazy"
                 />
-              </div>
-              <div className="club-sonrisas-badge">
-                <span>✨</span> ALIANZA OFICIAL EL QUILOMBO
-              </div>
+              </a>
+              <a
+                href="https://www.instagram.com/clubsonrisasproject?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="club-sonrisas-badge"
+                title="Visitar Instagram de @clubsonrisasproject"
+              >
+                <span>✨</span> ALIANZA OFICIAL EL QUILOMBO ↗
+              </a>
             </div>
 
             {/* Right: Mission Statement */}
@@ -43,6 +55,17 @@ export default function ClubSonrisasSection() {
               <p className="club-sonrisas-hero-desc">
                 Durante toda la noche de <strong>El Quilombo</strong>, el equipo voluntario de <strong>Club Sonrisas</strong> tendrá habilitado un <strong>Centro de Acopio en Puerta</strong> y alcancías de recaudación solidaria dentro de <strong>Rock &amp; Riff</strong>.
               </p>
+              <div style={{ marginTop: '0.35rem' }}>
+                <a
+                  href="https://www.instagram.com/clubsonrisasproject?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw=="
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="club-sonrisas-ig-btn"
+                  title="Visitar @clubsonrisasproject en Instagram"
+                >
+                  <span>📸</span> Conocer más en @clubsonrisasproject ↗
+                </a>
+              </div>
             </div>
           </div>
         </div>

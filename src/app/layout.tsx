@@ -10,8 +10,13 @@ export const viewport: Viewport = {
   themeColor: '#080518',
 };
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  process.env.URL ||
+  'https://elquilombo.netlify.app';
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://elquilombo.club'),
+  metadataBase: new URL(SITE_URL),
   title: 'El Quilombo • La Fiesta Temática Argentina en Valencia | Preventa Oficial',
   description:
     'Asegurá tu entrada para El Quilombo en Rock & Riff, La Viña, Valencia. Lo mejor del trap, freestyle y cultura urbana argentina. Viernes 09 de Octubre.',
@@ -31,25 +36,19 @@ export const metadata: Metadata = {
   authors: [{ name: 'El Quilombo Team' }, { name: 'Vicdaddy.js', url: 'https://www.instagram.com/Vicdaddy.js/' }],
   openGraph: {
     type: 'website',
-    url: 'https://elquilombo.club',
+    url: SITE_URL,
     title: 'El Quilombo • La Fiesta Temática Argentina en Valencia',
     description:
       'Vení a vivir la noche más picante del trap, freestyle y cultura argentina en Rock & Riff, La Viña. Viernes 09 de Octubre. Preventa oficial activa $10 USD.',
     siteName: 'El Quilombo',
     images: [
       {
-        url: '/assets/img/el-quilombo-seo.png',
+        url: `${SITE_URL}/assets/img/el-quilombo-seo.png`,
+        secureUrl: `${SITE_URL}/assets/img/el-quilombo-seo.png`,
         width: 378,
         height: 350,
         type: 'image/png',
         alt: 'El Quilombo - 09 de Octubre en Rock & Riff',
-      },
-      {
-        url: '/recursos/El%20quilombo%20SEO.png',
-        width: 378,
-        height: 350,
-        type: 'image/png',
-        alt: 'El Quilombo - Fiesta Temática Argentina',
       },
     ],
     locale: 'es_VE',
@@ -59,7 +58,7 @@ export const metadata: Metadata = {
     title: 'El Quilombo • La Fiesta Temática Argentina en Valencia',
     description:
       'Vení a vivir la noche más picante del trap, freestyle y cultura argentina en Rock & Riff, La Viña. Viernes 09 de Octubre. Preventa oficial activa $10 USD.',
-    images: ['/assets/img/el-quilombo-seo.png'],
+    images: [`${SITE_URL}/assets/img/el-quilombo-seo.png`],
   },
   icons: {
     icon: '/recursos/El Quilombo.png',
@@ -74,6 +73,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
+      <head>
+        <meta property="og:image" content={`${SITE_URL}/assets/img/el-quilombo-seo.png`} />
+        <meta property="og:image:secure_url" content={`${SITE_URL}/assets/img/el-quilombo-seo.png`} />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="378" />
+        <meta property="og:image:height" content="350" />
+        <link rel="image_src" href={`${SITE_URL}/assets/img/el-quilombo-seo.png`} />
+      </head>
       <body>
         <div className="page-bg-layer" aria-hidden="true" />
         <div className="page-bg-overlay" aria-hidden="true" />

@@ -83,14 +83,14 @@ export default function AdminTicketPreview({ settings }: AdminTicketPreviewProps
               }}
             >
               <img
-                src="/assets/img/memes/perrito-ia.jpg"
-                alt="Perrito"
+                src="/assets/img/memes/meme-perro-anteojos.jpg"
+                alt="Perrito con Flow"
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
             <div>
               <div style={{ fontWeight: 800, fontSize: '0.8rem', color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
-                STICKER: PERRITO BAILARÍN CON IA
+                MEME: PERRITO CON FLOW
               </div>
               <div style={{ fontSize: '0.72rem', color: '#94a3b8', fontStyle: 'italic' }}>
                 &ldquo;Tirando unos pasos prohibidos pal 9 de Octubre&rdquo;

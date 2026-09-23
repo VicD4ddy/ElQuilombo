@@ -360,7 +360,7 @@ export async function exportStoryVideo(
         ctx.textAlign = 'left';
         ctx.font = '800 20px sans-serif';
         ctx.fillStyle = '#ffffff';
-        ctx.fillText(`STICKER: ${meme.name}`, cardX + 140, stickerY + 45);
+        ctx.fillText(`MEME: ${meme.name}`, cardX + 140, stickerY + 45);
 
         ctx.font = '600 14px sans-serif';
         ctx.fillStyle = '#cbd5e1';

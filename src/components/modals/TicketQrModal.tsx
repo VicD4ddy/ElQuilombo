@@ -865,57 +865,118 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
               </div>
             )}
 
-            {/* Meme Quilombero Stamped on Ticket */}
+            {/* Full Width Non-Minimalist Meme Quilombero Showcase */}
             <div
-              className={`meme-sticker-interactive-card ${currentMeme.animationClass}`}
+              className={`meme-fullwidth-showcase ${currentMeme.animationClass}`}
               style={{
-                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%)',
-                border: '1px solid rgba(255, 255, 255, 0.14)',
-                borderLeft: `4px solid ${currentMeme.borderColor || 'var(--neon-purple)'}`,
+                width: '100%',
+                background: 'linear-gradient(180deg, #130d2a 0%, #090616 100%)',
+                border: `2px solid ${currentMeme.borderColor || '#a855f7'}`,
+                borderRadius: '18px',
+                overflow: 'hidden',
+                boxShadow: `0 12px 36px rgba(0, 0, 0, 0.7), 0 0 25px ${currentMeme.accentGlow || 'rgba(168, 85, 247, 0.45)'}`,
                 display: 'flex',
-                alignItems: 'center',
-                gap: '0.85rem',
-                padding: '0.8rem',
-                borderRadius: '12px',
+                flexDirection: 'column',
+                margin: '0.4rem 0 0.85rem',
+                position: 'relative',
               }}
             >
+              {/* Top Meme Header Bar */}
               <div
-                className="meme-sticker-img-container"
                 style={{
-                  width: '68px',
-                  height: '68px',
-                  minWidth: '68px',
-                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '0.65rem 0.95rem',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                  gap: '0.5rem',
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: '0.72rem',
+                    background: 'linear-gradient(135deg, #ec4899 0%, #8b17f5 100%)',
+                    color: '#ffffff',
+                    padding: '3px 8px',
+                    borderRadius: 'var(--radius-pill)',
+                    fontWeight: 900,
+                    letterSpacing: '0.6px',
+                    textTransform: 'uppercase',
+                    boxShadow: '0 2px 8px rgba(236, 72, 153, 0.4)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                >
+                  <span>🔥</span>
+                  <span>MEME QUILOMBERO</span>
+                </span>
+                <span
+                  style={{
+                    fontSize: '0.82rem',
+                    fontWeight: 800,
+                    color: '#ffffff',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.3px',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {currentMeme.emoji} {currentMeme.name}
+                </span>
+              </div>
+
+              {/* Full Width Meme Image */}
+              <div
+                style={{
+                  width: '100%',
+                  background: '#05040a',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   overflow: 'hidden',
-                  boxShadow: '0 4px 14px rgba(0,0,0,0.5)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  background: '#090714',
+                  position: 'relative',
+                  minHeight: '220px',
+                  maxHeight: '380px',
                 }}
               >
                 <img
                   src={currentMeme.imageUrl}
                   alt={currentMeme.name}
-                  className="meme-sticker-img"
                   loading="eager"
                   style={{
                     width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
+                    height: 'auto',
+                    maxHeight: '380px',
+                    objectFit: 'contain',
                     display: 'block',
+                    margin: '0 auto',
                   }}
                 />
               </div>
-              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <span style={{ fontSize: '0.66rem', background: 'rgba(236, 72, 153, 0.2)', color: '#f472b6', padding: '2px 6px', borderRadius: '4px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    MEME QUILOMBERO
-                  </span>
-                </div>
-                <div style={{ fontWeight: 800, fontSize: '0.86rem', color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.3px', lineHeight: 1.2 }}>
-                  {currentMeme.name}
-                </div>
-                <div style={{ fontSize: '0.74rem', color: '#cbd5e1', fontStyle: 'italic', fontWeight: 500, lineHeight: 1.3 }}>
-                  "{currentMeme.tagline}"
+
+              {/* Meme Tagline / Punchline Banner */}
+              <div
+                style={{
+                  padding: '0.85rem 1rem',
+                  background: 'linear-gradient(180deg, rgba(20, 15, 38, 0.98) 0%, rgba(10, 8, 20, 0.98) 100%)',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '0.98rem',
+                    fontWeight: 800,
+                    fontStyle: 'italic',
+                    color: '#ffffff',
+                    lineHeight: 1.4,
+                    textShadow: '0 2px 8px rgba(0, 0, 0, 0.8)',
+                  }}
+                >
+                  &ldquo;{currentMeme.tagline}&rdquo;
                 </div>
               </div>
             </div>
@@ -932,24 +993,25 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
                 border: 'none',
                 color: '#ffffff',
                 fontFamily: 'var(--font-title)',
-                fontWeight: 800,
-                fontSize: '0.85rem',
-                padding: '0.7rem 1rem',
+                fontWeight: 900,
+                fontSize: '0.95rem',
+                padding: '0.85rem 1.25rem',
                 borderRadius: 'var(--radius-pill)',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '0.5rem',
-                boxShadow: '0 4px 16px rgba(220, 39, 67, 0.4)',
+                gap: '0.55rem',
+                boxShadow: '0 6px 22px rgba(220, 39, 67, 0.45)',
                 transition: 'all 0.2s ease',
-                marginTop: '0.65rem',
+                marginTop: '0.2rem',
+                marginBottom: '0.5rem',
               }}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
               </svg>
-              <span>{isSharingInstagram ? 'Preparando...' : 'Compartir en Instagram'}</span>
+              <span>{isSharingInstagram ? 'Generando imagen...' : 'Compartir en Instagram'}</span>
             </button>
 
             {/* Ticket Info Grid */}

@@ -4705,6 +4705,14 @@ body {
   transform: scale(1.08);
 }
 
+.meme-fullwidth-showcase {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.meme-fullwidth-showcase:hover {
+  transform: translateY(-3px);
+}
+
 /* ==========================================================================
    ORGANIZER DASHBOARD - MOBILE RESPONSIVE ARCHITECTURE & TOUCH UX
    Squad: mobile-layout-architect + mobile-touch-ux + mobile-perf-optimizer

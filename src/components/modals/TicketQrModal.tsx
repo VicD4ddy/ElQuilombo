@@ -8,6 +8,7 @@ import { MemeSticker, getRandomMemeSticker } from '../../data/memes';
 import { exportStoryVideo, exportStoryGif } from '../../lib/storyVideoExporter';
 import { formatWhatsappPhone, getWhatsappChatUrl, getAllWhatsappChatUrls, formatPhoneDisplay } from '../../lib/whatsapp';
 import { getPaymentDetail, getPagoMovilBankingClipboard } from '../../data/payments';
+import Tilt3DCard from '../effects/Tilt3DCard';
 
 interface TicketQrModalProps {
   order: TicketOrder | null;
@@ -429,9 +430,10 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
             width: '100%',
           }}
         >
-          {/* Official Pass Card To Export (Attached to ticketRef) */}
-          <div
-            ref={ticketRef}
+          {/* Official Pass Card To Export with 3D Tilt */}
+          <Tilt3DCard maxTilt={8} scale={1.015} glare={true} glareOpacity={0.2}>
+            <div
+              ref={ticketRef}
             style={{
               background: 'linear-gradient(145deg, #140d2e 0%, #080518 100%)',
               border: '1px solid rgba(135, 52, 216, 0.45)',
@@ -601,6 +603,7 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
               Verificado por el Equipo Oficial de El Quilombo 🇦🇷🔥
             </div>
           </div>
+        </Tilt3DCard>
 
           {/* Action Buttons (Outside ticketRef so they are NOT in the exported PNG) */}
           <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
@@ -732,7 +735,8 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
           width: '100%',
         }}
       >
-        <div className="ticket-pass" ref={ticketRef}>
+        <Tilt3DCard maxTilt={8} scale={1.015} glare={true} glareOpacity={0.2}>
+          <div className="ticket-pass" ref={ticketRef}>
           {/* Notification Alert for existing reservations or organizer view */}
           {(currentOrder.noticeMessage || isOrganizerView) && (
             <div
@@ -1544,7 +1548,8 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
             </div>
           )}
         </div>
-      </dialog>
+      </Tilt3DCard>
+    </dialog>
     </div>
   );
 }

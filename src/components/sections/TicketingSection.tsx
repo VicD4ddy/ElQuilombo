@@ -7,6 +7,8 @@ import { TicketTier, TicketOrder } from '../../types/ticket';
 import { getRandomMemeSticker } from '../../data/memes';
 import { processReservation, checkClientRateLimit, RateLimitStatus } from '../../lib/reservations';
 import { getPaymentDetail, getPagoMovilBankingClipboard } from '../../data/payments';
+import Tilt3DCard from '../effects/Tilt3DCard';
+import ScrollReveal3D from '../effects/ScrollReveal3D';
 
 interface TicketingSectionProps {
   onGenerateTicket: (order: TicketOrder) => void;
@@ -231,65 +233,72 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
   };
 
   return (
-    <section className="section ticketing-section" id="entradas">
+    <section className="section ticketing-section" id="entradas" style={{ position: 'relative' }}>
       <div className="container">
-        <div className="section-header">
-          <span className="section-pill">Fase de Preventa Oficial</span>
-          <h2 className="section-title">
-            ELEGÍ TU <span className="text-gradient">TIPO DE ENTRADA</span>
-          </h2>
-          <p className="section-subtitle">
-            Entradas limitadas para el <strong>Viernes 09 de Octubre en Rock &amp; Riff</strong>. Asegurá tu preventa a $10 USD antes de que suba a $15 USD en puerta.
-          </p>
-        </div>
+        <ScrollReveal3D direction="up">
+          <div className="section-header">
+            <span className="section-pill badge-3d-float">Fase de Preventa Oficial</span>
+            <h2 className="section-title">
+              ELEGÍ TU <span className="text-gradient">TIPO DE ENTRADA</span>{' '}
+              <span className="badge-3d-float" style={{ display: 'inline-block', verticalAlign: 'middle' }}>🎟️</span>
+            </h2>
+            <p className="section-subtitle">
+              Entradas limitadas para el <strong>Viernes 09 de Octubre en Rock &amp; Riff</strong>. Asegurá tu preventa a $10 USD antes de que suba a $15 USD en puerta.
+            </p>
+          </div>
+        </ScrollReveal3D>
 
         {/* Pricing Cards Grid */}
         <div className="pricing-grid">
-          {/* General Pass */}
-          <div
-            className="ticket-card popular selected"
-            data-tier="general"
-          >
-            <div className="badge-popular" style={{ background: '#8b17f5' }}>🔥 PREVENTA OFICIAL (AHORRO $5)</div>
-            <div className="ticket-header">
-              <h3 className="ticket-name">{TICKET_TIERS.general.name}</h3>
-              <div className="ticket-sub">⚡ Preventa Limitada ($15 en puerta)</div>
-            </div>
-            <div className="ticket-price-box">
-              <span className="ticket-currency">$</span>
-              <span className="ticket-amount">{TICKET_TIERS.general.priceUSD}</span>
-              <span className="ticket-period">USD</span>
-            </div>
-            <ul className="ticket-features">
-              {TICKET_TIERS.general.features.map((feat, idx) => (
-                <li key={idx} className="ticket-feature-item">
-                  <span className="check">✓</span> <span>{feat}</span>
-                </li>
-              ))}
-            </ul>
-            <a
-              href="#reserva"
-              className="btn-select-tier"
-              style={{
-                textDecoration: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
+          {/* General Pass with 3D Tilt */}
+          <Tilt3DCard maxTilt={10} scale={1.02} glare={true} glareOpacity={0.25} style={{ width: '100%', maxWidth: '380px', margin: '0 auto' }}>
+            <div
+              className="ticket-card popular selected holo-foil-border"
+              data-tier="general"
             >
-              ✓ Pase Seleccionado
-            </a>
-          </div>
+              <div className="badge-popular" style={{ background: '#8b17f5', transform: 'translateZ(30px)' }}>🔥 PREVENTA OFICIAL (AHORRO $5)</div>
+              <div className="ticket-header" style={{ transform: 'translateZ(20px)' }}>
+                <h3 className="ticket-name">{TICKET_TIERS.general.name}</h3>
+                <div className="ticket-sub">⚡ Preventa Limitada ($15 en puerta)</div>
+              </div>
+              <div className="ticket-price-box" style={{ transform: 'translateZ(25px)' }}>
+                <span className="ticket-currency">$</span>
+                <span className="ticket-amount">{TICKET_TIERS.general.priceUSD}</span>
+                <span className="ticket-period">USD</span>
+              </div>
+              <ul className="ticket-features" style={{ transform: 'translateZ(15px)' }}>
+                {TICKET_TIERS.general.features.map((feat, idx) => (
+                  <li key={idx} className="ticket-feature-item">
+                    <span className="check">✓</span> <span>{feat}</span>
+                  </li>
+                ))}
+              </ul>
+              <a
+                href="#reserva"
+                className="btn-select-tier btn-3d-tactile"
+                style={{
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transform: 'translateZ(25px)',
+                }}
+              >
+                ✓ Pase Seleccionado
+              </a>
+            </div>
+          </Tilt3DCard>
         </div>
 
-        {/* Reservation Box */}
-        <div className="reservation-box" id="reserva">
-          <div className="res-header">
-            <h3 className="res-title">APARTÁ TU ENTRADA EN PREVENTA</h3>
-            <p className="res-subtitle">
-              Completá tus datos para generar tu <strong>Ticket Digital con Código QR</strong> y confirmar tu reserva directamente por WhatsApp.
-            </p>
-          </div>
+        {/* Reservation Box with 3D Scroll Reveal */}
+        <ScrollReveal3D direction="up" delayMs={150}>
+          <div className="reservation-box" id="reserva">
+            <div className="res-header">
+              <h3 className="res-title">APARTÁ TU ENTRADA EN PREVENTA</h3>
+              <p className="res-subtitle">
+                Completá tus datos para generar tu <strong>Ticket Digital con Código QR</strong> y confirmar tu reserva directamente por WhatsApp.
+              </p>
+            </div>
 
           {/* Live Calculator Bar */}
           <div className="calculator-bar">
@@ -722,7 +731,7 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
                     <button
                       type="submit"
                       id="btn-submit-reservation"
-                      className="btn-checkout"
+                      className="btn-checkout btn-3d-tactile"
                       disabled={isDisabled}
                       style={
                         isDisabled && !isSubmitting
@@ -783,7 +792,8 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
             </div>
           </form>
         </div>
-      </div>
-    </section>
+      </ScrollReveal3D>
+    </div>
+  </section>
   );
 }

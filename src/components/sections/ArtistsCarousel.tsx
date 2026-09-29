@@ -2,6 +2,8 @@
 
 import React, { useRef } from 'react';
 import { ARTISTS } from '../../data/artists';
+import Tilt3DCard from '../effects/Tilt3DCard';
+import ScrollReveal3D from '../effects/ScrollReveal3D';
 
 export default function ArtistsCarousel() {
   const trackRef = useRef<HTMLDivElement | null>(null);
@@ -17,17 +19,20 @@ export default function ArtistsCarousel() {
   };
 
   return (
-    <section className="section" id="lineup">
+    <section className="section" id="lineup" style={{ position: 'relative', overflow: 'hidden' }}>
       <div className="container">
-        <div className="section-header">
-          <span className="section-pill">Talento & Sonido</span>
-          <h2 className="section-title">
-            LA PLAYLIST QUE <span className="text-gradient">VA A DETONAR</span>
-          </h2>
-          <p className="section-subtitle">
-            Lo más pesado del trap, hip-hop, R&amp;B y cumbia villera de la escena argentina sonando en la pista de Rock &amp; Riff.
-          </p>
-        </div>
+        <ScrollReveal3D direction="up">
+          <div className="section-header">
+            <span className="section-pill badge-3d-float">Talento &amp; Sonido</span>
+            <h2 className="section-title">
+              LA PLAYLIST QUE <span className="text-gradient">VA A DETONAR</span>{' '}
+              <span className="badge-3d-float" style={{ display: 'inline-block', verticalAlign: 'middle' }}>💿</span>
+            </h2>
+            <p className="section-subtitle">
+              Lo más pesado del trap, hip-hop, R&amp;B y cumbia villera de la escena argentina sonando en la pista de Rock &amp; Riff.
+            </p>
+          </div>
+        </ScrollReveal3D>
 
         {/* Swipeable Carousel */}
         <div className="artists-carousel-wrapper" id="artists-carousel-wrapper">
@@ -38,7 +43,7 @@ export default function ArtistsCarousel() {
             <div className="carousel-nav-btns">
               <button
                 type="button"
-                className="btn-carousel-nav"
+                className="btn-carousel-nav btn-3d-tactile"
                 id="btn-artists-prev"
                 aria-label="Artistas anteriores"
                 onClick={() => scroll('prev')}
@@ -47,7 +52,7 @@ export default function ArtistsCarousel() {
               </button>
               <button
                 type="button"
-                className="btn-carousel-nav"
+                className="btn-carousel-nav btn-3d-tactile"
                 id="btn-artists-next"
                 aria-label="Artistas siguientes"
                 onClick={() => scroll('next')}
@@ -68,33 +73,38 @@ export default function ArtistsCarousel() {
               if (artist.isSpecial) {
                 return (
                   <article key={artist.id} className="artist-card-slide special-after-card">
-                    <div className="artist-photo-box special-after-box">
-                      <div className="special-after-glow" />
-                      <span className="artist-genre-pill special-badge-pill">⚡ NOCHE ARGENTA</span>
-                      <div className="special-after-content">
-                        <span className="special-icon">🌙</span>
-                        <h3 className="artist-name">{artist.name}</h3>
-                        <p className="special-desc">{artist.hits}</p>
+                    <Tilt3DCard maxTilt={12} scale={1.03} glare={true} glareOpacity={0.25} style={{ height: '100%' }}>
+                      <div className="artist-photo-box special-after-box" style={{ height: '100%' }}>
+                        <div className="special-after-glow" />
+                        <span className="artist-genre-pill special-badge-pill" style={{ transform: 'translateZ(30px)' }}>⚡ NOCHE ARGENTA</span>
+                        <div className="special-after-content" style={{ transform: 'translateZ(20px)' }}>
+                          <span className="special-icon">🌙</span>
+                          <h3 className="artist-name">{artist.name}</h3>
+                          <p className="special-desc">{artist.hits}</p>
+                        </div>
                       </div>
-                    </div>
+                    </Tilt3DCard>
                   </article>
                 );
               }
 
               return (
                 <article key={artist.id} className="artist-card-slide">
-                  <div className="artist-photo-box">
-                    <img
-                      src={artist.photo}
-                      alt={`${artist.name} en El Quilombo`}
-                      loading="lazy"
-                    />
-                    <div className="artist-photo-overlay" />
-                    <span className="artist-genre-pill">{artist.style}</span>
-                  </div>
-                  <div className="artist-info-bar">
-                    <h3 className="artist-name">{artist.name}</h3>
-                  </div>
+                  <Tilt3DCard maxTilt={10} scale={1.03} glare={true} glareOpacity={0.2} style={{ height: '100%', borderRadius: '16px', overflow: 'hidden' }}>
+                    <div className="artist-photo-box">
+                      <img
+                        src={artist.photo}
+                        alt={`${artist.name} en El Quilombo`}
+                        loading="lazy"
+                        style={{ transform: 'translateZ(10px)' }}
+                      />
+                      <div className="artist-photo-overlay" />
+                      <span className="artist-genre-pill" style={{ transform: 'translateZ(35px)' }}>{artist.style}</span>
+                    </div>
+                    <div className="artist-info-bar" style={{ transform: 'translateZ(20px)' }}>
+                      <h3 className="artist-name">{artist.name}</h3>
+                    </div>
+                  </Tilt3DCard>
                 </article>
               );
             })}

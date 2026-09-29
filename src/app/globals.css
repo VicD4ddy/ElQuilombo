@@ -5874,3 +5874,412 @@ body {
     padding: 0.85rem 1rem !important;
   }
 }
+
+/* ==============================================================================
+   3D EFFECTS, PERSPECTIVE ENGINE & AMBIENT ANIMATIONS (Antigravity 3D Suite)
+   ============================================================================== */
+
+/* Hardware-accelerated 3D Transform Utilities */
+.perspective-1000 {
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
+}
+
+.perspective-1500 {
+  perspective: 1500px;
+  -webkit-perspective: 1500px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+/* 3D Pop Z-Index Translation for nested child elements */
+.pop-3d-xs {
+  transform: translateZ(10px);
+  transform-style: preserve-3d;
+}
+
+.pop-3d-sm {
+  transform: translateZ(20px);
+  transform-style: preserve-3d;
+}
+
+.pop-3d-md {
+  transform: translateZ(35px);
+  transform-style: preserve-3d;
+}
+
+.pop-3d-lg {
+  transform: translateZ(50px);
+  transform-style: preserve-3d;
+}
+
+/* 3D Tilt Card Base */
+.tilt-3d-card {
+  position: relative;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+.tilt-3d-glare-overlay {
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+/* Floating 3D Vinyl Record */
+.floating-vinyl-3d-wrap {
+  width: 180px;
+  height: 180px;
+  pointer-events: none;
+  filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 25px rgba(168, 85, 247, 0.4));
+  animation: floatVinylBob 6s ease-in-out infinite;
+}
+
+@keyframes floatVinylBob {
+  0%, 100% {
+    transform: translate3d(0, 0, 50px) rotateX(25deg) rotateY(-20deg);
+  }
+  50% {
+    transform: translate3d(0, -18px, 70px) rotateX(20deg) rotateY(-15deg);
+  }
+}
+
+.vinyl-disc-3d {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, #151124 0%, #090614 60%, #020108 100%);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(168, 85, 247, 0.4);
+  box-shadow: inset 0 0 0 4px #0c081d, inset 0 0 0 8px #181331, inset 0 0 0 14px #0a0718;
+  animation: spinVinyl 12s linear infinite;
+  transform-style: preserve-3d;
+}
+
+@keyframes spinVinyl {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.vinyl-groove-rings {
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 0 8px rgba(255, 255, 255, 0.02),
+              inset 0 0 0 16px rgba(255, 255, 255, 0.03),
+              inset 0 0 0 24px rgba(255, 255, 255, 0.02),
+              inset 0 0 0 32px rgba(255, 255, 255, 0.03);
+}
+
+.vinyl-center-label {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a855f7 0%, #00f0ff 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.8);
+  z-index: 2;
+}
+
+.vinyl-center-logo {
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 1.15rem;
+  color: #fff;
+  line-height: 1;
+}
+
+.vinyl-center-text {
+  font-size: 0.35rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.vinyl-spindle-hole {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  z-index: 3;
+}
+
+.vinyl-glare-reflection {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(255, 255, 255, 0.12) 45deg,
+    transparent 90deg,
+    rgba(255, 255, 255, 0.12) 135deg,
+    transparent 180deg,
+    rgba(255, 255, 255, 0.12) 225deg,
+    transparent 270deg,
+    rgba(255, 255, 255, 0.12) 315deg,
+    transparent 360deg
+  );
+  pointer-events: none;
+}
+
+/* Floating 3D Neon Gems */
+.floating-neon-gem {
+  width: 32px;
+  height: 32px;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: gemSpinFloat 8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+.floating-neon-gem.gem-2 {
+  width: 42px;
+  height: 42px;
+  animation-duration: 11s;
+  animation-delay: -3s;
+}
+
+.floating-neon-gem.gem-3 {
+  width: 24px;
+  height: 24px;
+  animation-duration: 9s;
+  animation-delay: -5s;
+}
+
+@keyframes gemSpinFloat {
+  0% {
+    transform: translateY(0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+  50% {
+    transform: translateY(-24px) rotateX(180deg) rotateY(180deg) rotateZ(45deg);
+  }
+  100% {
+    transform: translateY(0px) rotateX(360deg) rotateY(360deg) rotateZ(0deg);
+  }
+}
+
+.gem-3d-face {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.6) 0%, rgba(255, 0, 127, 0.3) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.7);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+.gem-3d-face.cyan {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.6) 0%, rgba(139, 23, 245, 0.3) 100%);
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.7);
+}
+
+.gem-3d-face.pink {
+  background: linear-gradient(135deg, rgba(255, 0, 127, 0.6) 0%, rgba(255, 214, 0, 0.3) 100%);
+  box-shadow: 0 0 15px rgba(255, 0, 127, 0.7);
+}
+
+.gem-3d-face.back {
+  transform: rotateY(90deg);
+}
+
+/* Ambient 3D Volumetric Orbs */
+.ambient-orb-3d {
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  animation: orbPulse3d 8s ease-in-out infinite;
+}
+
+.ambient-orb-3d.orb-purple {
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.35) 0%, rgba(168, 85, 247, 0) 70%);
+}
+
+.ambient-orb-3d.orb-cyan {
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.3) 0%, rgba(0, 240, 255, 0) 70%);
+  animation-duration: 10s;
+  animation-delay: -4s;
+}
+
+@keyframes orbPulse3d {
+  0%, 100% {
+    transform: scale(1) translateZ(-80px);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.2) translateZ(-40px);
+    opacity: 0.55;
+  }
+}
+
+/* Scroll 3D Reveal Engine */
+.scroll-reveal-3d {
+  opacity: 0;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal-3d.up {
+  transform: perspective(1000px) rotateX(12deg) translateY(40px) scale(0.96);
+}
+
+.scroll-reveal-3d.down {
+  transform: perspective(1000px) rotateX(-12deg) translateY(-40px) scale(0.96);
+}
+
+.scroll-reveal-3d.flip {
+  transform: perspective(1000px) rotateY(-18deg) scale(0.95);
+}
+
+.scroll-reveal-3d.is-revealed {
+  opacity: 1;
+  transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1);
+}
+
+/* Tactile 3D Buttons */
+.btn-3d-tactile {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.4, 1), box-shadow 0.15s cubic-bezier(0.2, 0.8, 0.4, 1);
+  box-shadow: 0 6px 0 #5b11a8, 0 12px 24px rgba(168, 85, 247, 0.4);
+}
+
+.btn-3d-tactile:hover {
+  transform: perspective(600px) translateZ(8px) translateY(-3px);
+  box-shadow: 0 9px 0 #5b11a8, 0 16px 30px rgba(168, 85, 247, 0.6);
+}
+
+.btn-3d-tactile:active {
+  transform: perspective(600px) translateZ(0px) translateY(4px);
+  box-shadow: 0 2px 0 #5b11a8, 0 6px 12px rgba(168, 85, 247, 0.3);
+}
+
+/* Holographic Rainbow Foil Sheen */
+.holo-foil-border {
+  position: relative;
+  background-clip: padding-box;
+}
+
+.holo-foil-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(
+    115deg,
+    #ff007f 0%,
+    #a855f7 25%,
+    #00f0ff 50%,
+    #25d366 75%,
+    #ffd600 100%
+  );
+  background-size: 200% 200%;
+  animation: holoRotate 4s linear infinite;
+  z-index: -1;
+  opacity: 0.75;
+}
+
+@keyframes holoRotate {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Enhanced 3D Artist Lineup Cards */
+.artist-card-slide {
+  transform-style: preserve-3d;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+}
+
+.artist-card-slide:hover {
+  transform: perspective(800px) translateY(-8px) rotateX(4deg) scale(1.02);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7), 0 0 25px rgba(168, 85, 247, 0.4);
+}
+
+.artist-card-slide .artist-photo-box img {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateZ(10px);
+}
+
+.artist-card-slide:hover .artist-photo-box img {
+  transform: scale(1.08) translateZ(25px);
+}
+
+.artist-card-slide .artist-genre-pill {
+  transform: translateZ(35px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.artist-card-slide:hover .artist-genre-pill {
+  transform: translateZ(45px);
+  box-shadow: 0 6px 16px rgba(0, 240, 255, 0.5);
+}
+
+/* 3D Floating Badges */
+.badge-3d-float {
+  display: inline-flex;
+  align-items: center;
+  transform-style: preserve-3d;
+  animation: badgeFloat3d 5s ease-in-out infinite;
+}
+
+@keyframes badgeFloat3d {
+  0%, 100% {
+    transform: perspective(500px) translateY(0px) rotateX(0deg) translateZ(10px);
+  }
+  50% {
+    transform: perspective(500px) translateY(-5px) rotateX(6deg) translateZ(20px);
+  }
+}
+
+/* Mobile Responsiveness for 3D Elements */
+@media (max-width: 768px) {
+  .floating-vinyl-3d-wrap {
+    width: 110px;
+    height: 110px;
+    top: 5%;
+    right: 2%;
+    opacity: 0.75;
+  }
+
+  .floating-neon-gem {
+    transform: scale(0.7);
+  }
+
+  .ambient-orb-3d {
+    width: 180px;
+    height: 180px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-vinyl-3d-wrap,
+  .vinyl-disc-3d,
+  .floating-neon-gem,
+  .ambient-orb-3d,
+  .badge-3d-float,
+  .holo-foil-border::before {
+    animation: none !important;
+  }
+
+  .scroll-reveal-3d {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+

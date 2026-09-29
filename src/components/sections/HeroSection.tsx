@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import CountdownTimer from './CountdownTimer';
 import { useAudioPlayer } from '../../context/AudioPlayerContext';
+import Tilt3DCard from '../effects/Tilt3DCard';
+import Floating3DScene from '../effects/Floating3DScene';
 
 // Real verified comments extracted directly from the viral TikTok video by @belleamar_ (ID: 7677661590254046482)
 const REAL_TIKTOK_COMMENTS = [
@@ -201,8 +203,11 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
   const currentComment = REAL_TIKTOK_COMMENTS[commentIndex];
 
   return (
-    <section className="hero-section" id="hero">
-      <div className="container">
+    <section className="hero-section" id="hero" style={{ position: 'relative', overflow: 'hidden' }}>
+      {/* 3D Ambient Floating Scene */}
+      <Floating3DScene intensity="vibrant" showVinyl={true} />
+
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         {/* Top Presenters & Allies: Club Sonrisas, Rock & Riff, ANDY */}
         <div className="hero-sponsor-wrap" aria-label="Aliados y Presentadores">
           <a
@@ -287,7 +292,7 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
             </div>
 
             {/* Age Restriction Notice */}
-            <div className="age-restriction-pill" style={{ marginBottom: '1.25rem' }}>
+            <div className="age-restriction-pill badge-3d-float" style={{ marginBottom: '1.25rem' }}>
               <span>PARA MAYORES DE <strong>+15</strong> (SI ES MENOR DEBE IR CON UN REPRESENTANTE)</span>
             </div>
 
@@ -296,7 +301,7 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
 
             {/* Hero Action Buttons */}
             <div className="hero-actions">
-              <a href="#entradas" className="btn-primary">
+              <a href="#entradas" className="btn-primary btn-3d-tactile">
                 <span>🔥 Apartar Preventa $10</span>
                 <span>→</span>
               </a>
@@ -314,15 +319,16 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
 
           {/* Right: Interactive Visual Card (Direct TikTok Video & Real FOMO Reactions) */}
           <div className="hero-visual">
-            <div className="visual-card">
-              {/* Direct Native TikTok Video Player Showcase */}
-              <div
-                className={`visual-media is-video-active ${isVideoPlaying ? 'video-playing' : ''}`}
-                id="hero-visual-media"
-                onClick={handleVideoCardClick}
-                onMouseEnter={() => setShowControls(true)}
-                onMouseLeave={() => isVideoPlaying && setShowControls(false)}
-              >
+            <Tilt3DCard maxTilt={8} scale={1.015} glare={true} glareOpacity={0.18}>
+              <div className="visual-card">
+                {/* Direct Native TikTok Video Player Showcase */}
+                <div
+                  className={`visual-media is-video-active ${isVideoPlaying ? 'video-playing' : ''}`}
+                  id="hero-visual-media"
+                  onClick={handleVideoCardClick}
+                  onMouseEnter={() => setShowControls(true)}
+                  onMouseLeave={() => isVideoPlaying && setShowControls(false)}
+                >
                 <video
                   ref={videoRef}
                   src="/assets/video/tiktok-viral-quilombo.mp4"
@@ -506,9 +512,10 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
                 </div>
               </div>
             </div>
-          </div>
+          </Tilt3DCard>
         </div>
       </div>
-    </section>
-  );
+    </div>
+  </section>
+);
 }

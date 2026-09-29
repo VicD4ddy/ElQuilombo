@@ -28,7 +28,13 @@ export default function Navbar() {
       e.preventDefault();
       const elem = document.querySelector(href);
       if (elem) {
-        elem.scrollIntoView({ behavior: 'smooth' });
+        const navHeight = 84;
+        const elementPosition = elem.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - navHeight;
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
         setIsMobileMenuOpen(false);
       }
     }

@@ -250,14 +250,24 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
 
         {/* Pricing Cards Grid */}
         <div className="pricing-grid">
-          {/* General Pass with 3D Tilt */}
-          <Tilt3DCard maxTilt={10} scale={1.02} glare={true} glareOpacity={0.25} style={{ width: '100%', maxWidth: '380px', margin: '0 auto' }}>
+          {/* General Pass with subtle 3D Tilt */}
+          <Tilt3DCard maxTilt={5} scale={1.01} glare={false} style={{ width: '100%', maxWidth: '360px', margin: '0 auto' }}>
             <div
-              className="ticket-card popular selected holo-foil-border"
+              className="ticket-card popular selected"
               data-tier="general"
             >
-              <div className="badge-popular" style={{ background: '#8b17f5', transform: 'translateZ(30px)' }}>🔥 PREVENTA OFICIAL (AHORRO $5)</div>
-              <div className="ticket-header" style={{ transform: 'translateZ(20px)' }}>
+              <div
+                className="badge-popular"
+                style={{
+                  background: '#23133e',
+                  border: '1px solid rgba(168, 85, 247, 0.45)',
+                  color: '#f1f5f9',
+                  transform: 'translateX(-50%) translateZ(20px)',
+                }}
+              >
+                🔥 PREVENTA OFICIAL (AHORRO $5)
+              </div>
+              <div className="ticket-header" style={{ transform: 'translateZ(15px)' }}>
                 <h3 className="ticket-name">{TICKET_TIERS.general.name}</h3>
                 <div className="ticket-sub">⚡ Preventa Limitada ($15 en puerta)</div>
               </div>

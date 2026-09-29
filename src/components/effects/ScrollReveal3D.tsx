@@ -23,6 +23,13 @@ export default function ScrollReveal3D({
   useEffect(() => {
     if (!containerRef.current) return;
 
+    // Immediately reveal if already visible in initial viewport
+    const rect = containerRef.current.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      setIsRevealed(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -33,8 +40,8 @@ export default function ScrollReveal3D({
         });
       },
       {
-        threshold: 0.1,
-        rootMargin: '0px 0px -40px 0px',
+        threshold: 0.05,
+        rootMargin: '40px 0px -20px 0px',
       }
     );
 

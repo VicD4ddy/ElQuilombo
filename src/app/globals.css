@@ -1952,6 +1952,11 @@ body::before {
 .section {
   padding: 90px 0;
   position: relative;
+  scroll-margin-top: 86px;
+}
+
+section[id], [id].section, #entradas, #reserva, #lineup, #ubicacion, #faq, #club-sonrisas, #hero {
+  scroll-margin-top: 86px;
 }
 
 .section-header {
@@ -2351,10 +2356,10 @@ body::before {
 }
 
 .ticket-card {
-  background: var(--bg-card);
+  background: #110d24;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-xl);
   padding: 2.25rem 1.75rem;
   position: relative;
@@ -2362,46 +2367,88 @@ body::before {
   flex-direction: column;
   transition: transform var(--transition-bounce), border-color var(--transition-fast), box-shadow var(--transition-fast);
   cursor: pointer;
+  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.75);
 }
 
 .ticket-card:hover {
-  transform: translateY(-6px);
-  border-color: var(--border-neon-cyan);
+  transform: translateY(-4px);
+  border-color: rgba(168, 85, 247, 0.4);
 }
 
 .ticket-card.selected {
-  background: var(--grad-dark-card);
-  border: 2px solid var(--neon-cyan);
-  box-shadow: 0 0 30px rgba(0, 240, 255, 0.35), var(--card-shadow);
-  transform: translateY(-8px);
+  background: linear-gradient(165deg, #160e2e 0%, #0d091e 100%);
+  border: 1.5px solid rgba(168, 85, 247, 0.5);
+  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(139, 92, 246, 0.15);
+  transform: translateY(-4px);
 }
 
 .ticket-card.popular {
-  border-color: var(--neon-purple);
-  box-shadow: 0 0 25px rgba(168, 85, 247, 0.3);
+  border-color: rgba(168, 85, 247, 0.4);
 }
 
 .ticket-card.popular.selected {
-  border: 2px solid var(--neon-purple-glow);
-  box-shadow: var(--glow-purple-lg);
+  border: 1.5px solid rgba(168, 85, 247, 0.6);
+  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(81, 30, 132, 0.3);
 }
 
 .badge-popular {
   position: absolute;
   top: -14px;
   left: 50%;
-  transform: translateX(-50%);
-  background: var(--grad-sunset);
-  color: #fff;
+  transform: translateX(-50%) translateZ(20px);
+  transform-style: preserve-3d;
+  background: #23133e;
+  border: 1px solid rgba(168, 85, 247, 0.45);
+  color: #f1f5f9;
   font-family: var(--font-title);
   font-weight: 800;
   font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   padding: 0.35rem 1rem;
   border-radius: var(--radius-pill);
-  box-shadow: var(--glow-pink-sm);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
   white-space: nowrap;
+  max-width: calc(100% - 24px);
+  box-sizing: border-box;
+  text-align: center;
+  z-index: 25;
+  pointer-events: none;
+}
+
+@media (max-width: 480px) {
+  .badge-popular {
+    top: -12px;
+    font-size: 0.68rem;
+    padding: 0.3rem 0.75rem;
+    letter-spacing: 0.4px;
+    max-width: 92%;
+  }
+
+  .ticketing-section {
+    padding: 55px 0;
+  }
+
+  .pricing-grid {
+    margin-bottom: 2.25rem;
+    padding-inline: 0.25rem;
+  }
+
+  .ticket-card {
+    padding: 1.85rem 1.25rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .ticket-name {
+    font-size: 1.35rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .badge-popular {
+    font-size: 0.62rem;
+    padding: 0.25rem 0.6rem;
+  }
 }
 
 .ticket-header {
@@ -2435,7 +2482,7 @@ body::before {
   font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 800;
-  color: var(--neon-cyan);
+  color: #c084fc;
 }
 
 .ticket-amount {
@@ -2469,7 +2516,7 @@ body::before {
 }
 
 .ticket-feature-item .check {
-  color: var(--neon-cyan);
+  color: #a78bfa;
   font-size: 1.1rem;
   line-height: 1;
 }
@@ -2493,17 +2540,17 @@ body::before {
 }
 
 .ticket-card.selected .btn-select-tier {
-  background: var(--neon-cyan);
-  color: #06050a;
-  border-color: var(--neon-cyan);
-  box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+  background: #5b21b6;
+  color: #fff;
+  border-color: #6d28d9;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 }
 
 .ticket-card.popular.selected .btn-select-tier {
-  background: var(--grad-sunset);
+  background: linear-gradient(135deg, #581c87 0%, #3b0764 100%);
   color: #fff;
-  border-color: transparent;
-  box-shadow: var(--glow-pink-sm);
+  border: 1px solid rgba(168, 85, 247, 0.45);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
 }
 
 /* --------------------------------------------------------------------------

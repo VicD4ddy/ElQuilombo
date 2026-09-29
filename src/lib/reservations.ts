@@ -88,6 +88,39 @@ export function recordClientReservation(): void {
   } catch (e) {}
 }
 
+/**
+ * Envía una notificación en segundo plano a los organizadores por WhatsApp.
+ * No bloquea la interfaz de usuario ni interrumpe la generación del boleto.
+ */
+export async function sendOrganizerNotification(order: {
+  ticketCode: string;
+  buyerName: string;
+  buyerDni: string;
+  buyerPhone: string;
+  buyerEmail?: string;
+  tierName?: string;
+  quantity: number;
+  totalUSD: number;
+  totalRefBs: number | string;
+  paymentMethod: string;
+  favoriteArtist?: string;
+  referralSource?: string;
+}): Promise<void> {
+  try {
+    if (typeof window !== 'undefined') {
+      fetch('/api/reservations/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(order),
+      }).catch((err) => {
+        console.warn('[Notify] Notificación en segundo plano no enviada:', err);
+      });
+    }
+  } catch (e) {
+    // Fail silently in background
+  }
+}
+
 export async function processReservation(
   orderData: Omit<TicketOrder, 'ticketCode' | 'createdAt'>,
   selectedMeme: MemeSticker
@@ -257,6 +290,22 @@ export async function processReservation(
       paymentStatus: inserted.is_paid ? 'paid' : (isCreatedCash ? 'cash' : 'pending'),
     };
 
+    // Notificar automáticamente a los organizadores por WhatsApp en segundo plano
+    sendOrganizerNotification({
+      ticketCode: createdOrder.ticketCode,
+      buyerName: createdOrder.buyerName,
+      buyerDni: createdOrder.buyerDni,
+      buyerPhone: createdOrder.buyerPhone,
+      buyerEmail: createdOrder.buyerEmail,
+      tierName: createdOrder.tier.name,
+      quantity: createdOrder.quantity,
+      totalUSD: createdOrder.totalUSD,
+      totalRefBs: createdOrder.totalRefBs,
+      paymentMethod: createdOrder.paymentMethod,
+      favoriteArtist: createdOrder.favoriteArtist,
+      referralSource: createdOrder.referralSource,
+    });
+
     return {
       success: true,
       isExisting: false,
@@ -364,6 +413,22 @@ export async function addTicketsToReservation(
       isExisting: true,
       noticeMessage: `¡Se han sumado +${additionalQty} entrada(s)! Ahora tenés un total de ${updated.quantity} entradas.`,
     };
+
+    // Notificar a los organizadores de la ampliación de entradas
+    sendOrganizerNotification({
+      ticketCode: updatedOrder.ticketCode,
+      buyerName: updatedOrder.buyerName,
+      buyerDni: updatedOrder.buyerDni,
+      buyerPhone: updatedOrder.buyerPhone,
+      buyerEmail: updatedOrder.buyerEmail,
+      tierName: `${updatedOrder.tier.name} (+${additionalQty} adicionales)`,
+      quantity: updatedOrder.quantity,
+      totalUSD: updatedOrder.totalUSD,
+      totalRefBs: updatedOrder.totalRefBs,
+      paymentMethod: updatedOrder.paymentMethod,
+      favoriteArtist: updatedOrder.favoriteArtist,
+      referralSource: `Ampliación (+${additionalQty})`,
+    });
 
     return {
       success: true,

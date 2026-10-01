@@ -135,6 +135,55 @@ export async function processReservation(
     );
   }
 
+  // 1. Priorizar llamada al Endpoint Server-Side (/api/reservations/create)
+  // Esto previene que bloqueadores móviles (Brave Shields, AdGuard, uBlock) o problemas de CORS bloqueen la conexión a Supabase
+  if (typeof window !== 'undefined') {
+    try {
+      const response = await fetch('/api/reservations/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderData, selectedMeme }),
+      });
+
+      if (response.ok) {
+        const resJson = await response.json();
+        if (resJson.success && resJson.order) {
+          recordClientReservation();
+
+          // Notificar automáticamente a los organizadores por WhatsApp en segundo plano si es nueva
+          if (!resJson.isExisting) {
+            sendOrganizerNotification({
+              ticketCode: resJson.order.ticketCode,
+              buyerName: resJson.order.buyerName,
+              buyerDni: resJson.order.buyerDni,
+              buyerPhone: resJson.order.buyerPhone,
+              buyerEmail: resJson.order.buyerEmail,
+              tierName: resJson.order.tier?.name,
+              quantity: resJson.order.quantity,
+              totalUSD: resJson.order.totalUSD,
+              totalRefBs: resJson.order.totalRefBs,
+              paymentMethod: resJson.order.paymentMethod,
+              favoriteArtist: resJson.order.favoriteArtist,
+              referralSource: resJson.order.referralSource,
+            });
+          }
+
+          return {
+            success: true,
+            isExisting: Boolean(resJson.isExisting),
+            order: resJson.order,
+            message: resJson.message,
+          };
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        console.warn('[Reservations] Server API returned non-OK status:', response.status, errorData);
+      }
+    } catch (apiErr) {
+      console.warn('[Reservations] Error conectando con API server-side, reintentando con cliente directo:', apiErr);
+    }
+  }
+
   // If Supabase is not configured, fallback to client-side order
   if (!isSupabaseConfigured || !supabase) {
     recordClientReservation();

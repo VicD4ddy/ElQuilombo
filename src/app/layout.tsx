@@ -13,7 +13,7 @@ export const viewport: Viewport = {
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ||
   process.env.URL ||
-  'https://elquilombo.netlify.app';
+  'https://elquilomboo.netlify.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

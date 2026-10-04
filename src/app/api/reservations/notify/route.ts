@@ -34,7 +34,7 @@ export async function POST(request: Request) {
 ⏰ *Hora:* ${caracasTime}
 
 👉 *Ver en el Panel de Control:*
-https://elquilombo.netlify.app/organizador`;
+https://elquilomboo.netlify.app/organizador`;
 
     const channelsTriggered: string[] = [];
     let isDelivered = false;

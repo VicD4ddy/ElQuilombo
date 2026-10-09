@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import CountdownTimer from './CountdownTimer';
 import { useAudioPlayer } from '../../context/AudioPlayerContext';
 import Tilt3DCard from '../effects/Tilt3DCard';
-import Floating3DScene from '../effects/Floating3DScene';
 
 // Real verified comments extracted directly from the viral TikTok video by @belleamar_ (ID: 7677661590254046482)
 const REAL_TIKTOK_COMMENTS = [
@@ -204,9 +203,6 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
 
   return (
     <section className="hero-section" id="hero" style={{ position: 'relative', overflow: 'hidden' }}>
-      {/* 3D Ambient Floating Scene */}
-      <Floating3DScene intensity="vibrant" showVinyl={true} />
-
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         {/* Top Presenters & Allies: Club Sonrisas, Rock & Riff, ANDY */}
         <div className="hero-sponsor-wrap" aria-label="Aliados y Presentadores">
@@ -292,7 +288,7 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
             </div>
 
             {/* Age Restriction Notice */}
-            <div className="age-restriction-pill badge-3d-float" style={{ marginBottom: '1.25rem' }}>
+            <div className="age-restriction-pill" style={{ marginBottom: '1.25rem' }}>
               <span>PARA MAYORES DE <strong>+15</strong> (SI ES MENOR DEBE IR CON UN REPRESENTANTE)</span>
             </div>
 

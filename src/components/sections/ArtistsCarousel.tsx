@@ -23,10 +23,9 @@ export default function ArtistsCarousel() {
       <div className="container">
         <ScrollReveal3D direction="up">
           <div className="section-header">
-            <span className="section-pill badge-3d-float">Talento &amp; Sonido</span>
+            <span className="section-pill">Talento &amp; Sonido</span>
             <h2 className="section-title">
-              LA PLAYLIST QUE <span className="text-gradient">VA A DETONAR</span>{' '}
-              <span className="badge-3d-float" style={{ display: 'inline-block', verticalAlign: 'middle' }}>💿</span>
+              LA PLAYLIST QUE <span className="text-gradient">VA A DETONAR</span>
             </h2>
             <p className="section-subtitle">
               Lo más pesado del trap, hip-hop, R&amp;B y cumbia villera de la escena argentina sonando en la pista de Rock &amp; Riff.

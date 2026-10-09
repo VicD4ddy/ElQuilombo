@@ -12,10 +12,9 @@ export default function VenueFaqSection() {
         <div className="container">
           <ScrollReveal3D direction="up">
             <div className="section-header">
-              <span className="section-pill badge-3d-float">Punto de Encuentro</span>
+              <span className="section-pill">Punto de Encuentro</span>
               <h2 className="section-title">
-                EL LUGAR: <span className="text-gradient">ROCK &amp; RIFF</span>{' '}
-                <span className="badge-3d-float" style={{ display: 'inline-block', verticalAlign: 'middle' }}>📍</span>
+                EL LUGAR: <span className="text-gradient">ROCK &amp; RIFF</span>
               </h2>
             </div>
           </ScrollReveal3D>
@@ -106,10 +105,9 @@ export default function VenueFaqSection() {
         <div className="container">
           <ScrollReveal3D direction="up">
             <div className="section-header">
-              <span className="section-pill badge-3d-float">Resolvemos tus Dudas</span>
+              <span className="section-pill">Resolvemos tus Dudas</span>
               <h2 className="section-title">
-                PREGUNTAS <span className="text-gradient">FRECUENTES</span>{' '}
-                <span className="badge-3d-float" style={{ display: 'inline-block', verticalAlign: 'middle' }}>❓</span>
+                PREGUNTAS <span className="text-gradient">FRECUENTES</span>
               </h2>
               <p className="section-subtitle">
                 Todo lo que necesitás saber antes de llegar al Quilombo.

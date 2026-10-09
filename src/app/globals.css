@@ -6276,21 +6276,10 @@ body {
   box-shadow: 0 6px 16px rgba(0, 240, 255, 0.5);
 }
 
-/* 3D Floating Badges */
+/* Badges */
 .badge-3d-float {
   display: inline-flex;
   align-items: center;
-  transform-style: preserve-3d;
-  animation: badgeFloat3d 5s ease-in-out infinite;
-}
-
-@keyframes badgeFloat3d {
-  0%, 100% {
-    transform: perspective(500px) translateY(0px) rotateX(0deg) translateZ(10px);
-  }
-  50% {
-    transform: perspective(500px) translateY(-5px) rotateX(6deg) translateZ(20px);
-  }
 }
 
 /* Mobile Responsiveness for 3D Elements */

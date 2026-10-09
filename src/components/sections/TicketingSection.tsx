@@ -237,10 +237,9 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
       <div className="container">
         <ScrollReveal3D direction="up">
           <div className="section-header">
-            <span className="section-pill badge-3d-float">Entradas Oficiales</span>
+            <span className="section-pill">Entradas Oficiales</span>
             <h2 className="section-title">
-              ELEGÍ TU <span className="text-gradient">TIPO DE ENTRADA</span>{' '}
-              <span className="badge-3d-float" style={{ display: 'inline-block', verticalAlign: 'middle' }}>🎟️</span>
+              ELEGÍ TU <span className="text-gradient">TIPO DE ENTRADA</span>
             </h2>
             <p className="section-subtitle">
               Entradas para hoy <strong>Viernes 09 de Octubre en Rock &amp; Riff</strong> a precio oficial de $15 USD.

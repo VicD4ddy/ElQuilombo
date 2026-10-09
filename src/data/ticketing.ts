@@ -17,13 +17,13 @@ export const REF_EXCHANGE_RATE = 974.42;
 export const TICKET_TIERS: Record<'general' | 'vip', TicketTier> = {
   general: {
     id: 'general',
-    name: 'Pase Preventa Oficial',
-    priceUSD: 10,
-    badge: 'Ahorro $5 (Limitadas)',
+    name: 'Pase General Oficial',
+    priceUSD: 15,
+    badge: '¡Hoy en Rock & Riff!',
     description: 'Acceso general al evento en Rock & Riff + sticker pack exclusivo + trago de bienvenida',
     features: [
       'Acceso general a Rock & Riff',
-      'Precio especial de preventa $10 (En puerta: $15)',
+      'Precio oficial $15 USD (Precio en Puerta)',
       '1 Trago de bienvenida de cortesía',
       'Sticker Pack oficial de El Quilombo',
       'Acceso confirmado a dinámicas y After Party',

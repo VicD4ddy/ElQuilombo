@@ -82,7 +82,9 @@ export default function Navbar() {
         <div className="nav-right-actions">
           <div className="nav-pill-date">
             <span className="dot" />
-            <span id="nav-cd-pill">09 Oct • Preventa $10 ({daysLeft}d)</span>
+            <span id="nav-cd-pill">
+              {daysLeft > 0 ? `09 Oct • Entradas $15 (${daysLeft}d)` : `¡HOY! 09 Oct • Entradas $15`}
+            </span>
           </div>
           <a
             href="#entradas"

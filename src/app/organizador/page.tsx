@@ -698,8 +698,8 @@ export default function OrganizadorPage() {
     const oldUSD = Number(reservation.total_usd) || 10;
     const oldBs = Number(reservation.total_ref_bs) || 0;
 
-    // Unit price in USD (usually $10)
-    const unitPriceUSD = oldUSD > 0 ? oldUSD / oldQty : 10;
+    // Unit price in USD (usually $15)
+    const unitPriceUSD = oldUSD > 0 ? oldUSD / oldQty : 15;
     const newTotalUSD = Math.round(newQty * unitPriceUSD);
 
     // Exchange rate per USD
@@ -763,8 +763,8 @@ export default function OrganizadorPage() {
     const order: TicketOrder = {
       tier: {
         id: reservation.tier_id || 'general',
-        name: reservation.tier_name || 'Pase Preventa Oficial',
-        priceUSD: reservation.quantity ? Math.round(reservation.total_usd / reservation.quantity) : 10,
+        name: reservation.tier_name || 'Pase General Oficial',
+        priceUSD: reservation.quantity ? Math.round(reservation.total_usd / reservation.quantity) : 15,
         features: [],
       },
       quantity: reservation.quantity || 1,
@@ -1661,11 +1661,11 @@ export default function OrganizadorPage() {
                       const status = getReservationStatus(r);
                       let waMsg = '';
                       if (status === 'paid') {
-                        waMsg = `🎉 *¡TU ENTRADA HA SIDO APROBADA! - EL QUILOMBO* 🇦🇷🔥\n¡Hola ${r.buyer_name}! Tu preventa ha sido validada y aprobada por el equipo de El Quilombo 💜\n\n🎟️ *Entrada:* ${r.quantity}x ${r.tier_name}\n🪪 *Titular:* ${r.buyer_name} (${r.buyer_dni})\n🔢 *Código Único de Acceso:* #${r.ticket_code}\n📍 *Lugar:* Rock & Riff (La Viña) - antiguo Oleo Gastrobar (asi aparece en google)\n🗺️ *Ubicación / Cómo llegar:* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8\n🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM\n\n*(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).*\n¡Presentalo al llegar y preparate para la fiesta más picante de Valencia! 🇦🇷🔥`;
+                        waMsg = `🎉 *¡TU ENTRADA HA SIDO APROBADA! - EL QUILOMBO* 🇦🇷🔥\n¡Hola ${r.buyer_name}! Tu entrada ha sido validada y aprobada por el equipo de El Quilombo 💜\n\n🎟️ *Entrada:* ${r.quantity}x ${r.tier_name}\n🪪 *Titular:* ${r.buyer_name} (${r.buyer_dni})\n🔢 *Código Único de Acceso:* #${r.ticket_code}\n📍 *Lugar:* Rock & Riff (La Viña) - antiguo Oleo Gastrobar (asi aparece en google)\n🗺️ *Ubicación / Cómo llegar:* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8\n🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM\n\n*(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).*\n¡Presentalo al llegar y preparate para la fiesta más picante de Valencia! 🇦🇷🔥`;
                       } else if (status === 'cash') {
-                        waMsg = `🎟️ *¡TU ENTRADA ESTÁ RESERVADA (PAGO EN EFECTIVO)! - EL QUILOMBO* 🇦🇷🔥\n¡Hola ${r.buyer_name}! Tu preventa ha sido asegurada por el equipo de El Quilombo 💜\n\n🎟️ *Entrada:* ${r.quantity}x ${r.tier_name}\n🪪 *Titular:* ${r.buyer_name} (${r.buyer_dni})\n🔢 *Código Único de Acceso:* #${r.ticket_code}\n💵 *Monto en Efectivo Comprometido:* $${r.total_usd} USD (Ref: Bs. ${r.total_ref_bs})\n📍 *Lugar:* Rock & Riff (La Viña) - antiguo Oleo Gastrobar (asi aparece en google)\n🗺️ *Ubicación / Cómo llegar:* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8\n🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM\n\n*(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).* Recuerda llevar el monto exacto en efectivo en puerta. ¡Nos vemos en la fiesta más picante de Valencia! 🇦🇷🔥`;
+                        waMsg = `🎟️ *¡TU ENTRADA ESTÁ RESERVADA (PAGO EN EFECTIVO)! - EL QUILOMBO* 🇦🇷🔥\n¡Hola ${r.buyer_name}! Tu entrada ha sido asegurada por el equipo de El Quilombo 💜\n\n🎟️ *Entrada:* ${r.quantity}x ${r.tier_name}\n🪪 *Titular:* ${r.buyer_name} (${r.buyer_dni})\n🔢 *Código Único de Acceso:* #${r.ticket_code}\n💵 *Monto en Efectivo Comprometido:* $${r.total_usd} USD (Ref: Bs. ${r.total_ref_bs})\n📍 *Lugar:* Rock & Riff (La Viña) - antiguo Oleo Gastrobar (asi aparece en google)\n🗺️ *Ubicación / Cómo llegar:* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8\n🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM\n\n*(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).* Recuerda llevar el monto exacto en efectivo en puerta. ¡Nos vemos en la fiesta más picante de Valencia! 🇦🇷🔥`;
                       } else {
-                        waMsg = `¡Hola ${r.buyer_name}! Te escribimos del equipo de El Quilombo 🇦🇷🔥 con respecto a tu preventa #${r.ticket_code} ($${r.total_usd} USD). ¿Deseas concretar tu pago para validar tu entrada?`;
+                        waMsg = `¡Hola ${r.buyer_name}! Te escribimos del equipo de El Quilombo 🇦🇷🔥 con respecto a tu reserva #${r.ticket_code} ($${r.total_usd} USD). ¿Deseas concretar tu pago para validar tu entrada?`;
                       }
                       const waLinks = getAllWhatsappChatUrls(r.buyer_phone, waMsg);
                       const waLink = waLinks[0]?.url || getWhatsappChatUrl(r.buyer_phone, waMsg);
@@ -1979,11 +1979,11 @@ export default function OrganizadorPage() {
                   const status = getReservationStatus(r);
                   let waMsg = '';
                   if (status === 'paid') {
-                    waMsg = `🎉 *¡TU ENTRADA HA SIDO APROBADA! - EL QUILOMBO* 🇦🇷🔥\n¡Hola ${r.buyer_name}! Tu preventa ha sido validada y aprobada por el equipo de El Quilombo 💜\n\n🎟️ *Entrada:* ${r.quantity}x ${r.tier_name}\n🪪 *Titular:* ${r.buyer_name} (${r.buyer_dni})\n🔢 *Código Único de Acceso:* #${r.ticket_code}\n📍 *Lugar:* Rock & Riff (La Viña) - antiguo Oleo Gastrobar (asi aparece en google)\n🗺️ *Ubicación / Cómo llegar:* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8\n🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM\n\n*(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).*\n¡Presentalo al llegar y preparate para la fiesta más picante de Valencia! 🇦🇷🔥`;
+                    waMsg = `🎉 *¡TU ENTRADA HA SIDO APROBADA! - EL QUILOMBO* 🇦🇷🔥\n¡Hola ${r.buyer_name}! Tu entrada ha sido validada y aprobada por el equipo de El Quilombo 💜\n\n🎟️ *Entrada:* ${r.quantity}x ${r.tier_name}\n🪪 *Titular:* ${r.buyer_name} (${r.buyer_dni})\n🔢 *Código Único de Acceso:* #${r.ticket_code}\n📍 *Lugar:* Rock & Riff (La Viña) - antiguo Oleo Gastrobar (asi aparece en google)\n🗺️ *Ubicación / Cómo llegar:* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8\n🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM\n\n*(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).*\n¡Presentalo al llegar y preparate para la fiesta más picante de Valencia! 🇦🇷🔥`;
                   } else if (status === 'cash') {
-                    waMsg = `🎟️ *¡TU ENTRADA ESTÁ RESERVADA (PAGO EN EFECTIVO)! - EL QUILOMBO* 🇦🇷🔥\n¡Hola ${r.buyer_name}! Tu preventa ha sido asegurada por el equipo de El Quilombo 💜\n\n🎟️ *Entrada:* ${r.quantity}x ${r.tier_name}\n🪪 *Titular:* ${r.buyer_name} (${r.buyer_dni})\n🔢 *Código Único de Acceso:* #${r.ticket_code}\n💵 *Monto en Efectivo Comprometido:* $${r.total_usd} USD (Ref: Bs. ${r.total_ref_bs})\n📍 *Lugar:* Rock & Riff (La Viña) - antiguo Oleo Gastrobar (asi aparece en google)\n🗺️ *Ubicación / Cómo llegar:* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8\n🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM\n\n*(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).* Recuerda llevar el monto exacto en efectivo en puerta. ¡Nos vemos en la fiesta más picante de Valencia! 🇦🇷🔥`;
+                    waMsg = `🎟️ *¡TU ENTRADA ESTÁ RESERVADA (PAGO EN EFECTIVO)! - EL QUILOMBO* 🇦🇷🔥\n¡Hola ${r.buyer_name}! Tu entrada ha sido asegurada por el equipo de El Quilombo 💜\n\n🎟️ *Entrada:* ${r.quantity}x ${r.tier_name}\n🪪 *Titular:* ${r.buyer_name} (${r.buyer_dni})\n🔢 *Código Único de Acceso:* #${r.ticket_code}\n💵 *Monto en Efectivo Comprometido:* $${r.total_usd} USD (Ref: Bs. ${r.total_ref_bs})\n📍 *Lugar:* Rock & Riff (La Viña) - antiguo Oleo Gastrobar (asi aparece en google)\n🗺️ *Ubicación / Cómo llegar:* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8\n🗓️ *Fecha:* Viernes 09 de Octubre • 8:00 PM\n\n*(Te adjunto aquí tu boleto oficial con código QR generado en el sistema).* Recuerda llevar el monto exacto en efectivo en puerta. ¡Nos vemos en la fiesta más picante de Valencia! 🇦🇷🔥`;
                   } else {
-                    waMsg = `¡Hola ${r.buyer_name}! Te escribimos del equipo de El Quilombo 🇦🇷🔥 con respecto a tu preventa #${r.ticket_code} ($${r.total_usd} USD). ¿Deseas concretar tu pago para validar tu entrada?`;
+                    waMsg = `¡Hola ${r.buyer_name}! Te escribimos del equipo de El Quilombo 🇦🇷🔥 con respecto a tu reserva #${r.ticket_code} ($${r.total_usd} USD). ¿Deseas concretar tu pago para validar tu entrada?`;
                   }
                   const waLinks = getAllWhatsappChatUrls(r.buyer_phone, waMsg);
                   const waLink = waLinks[0]?.url || getWhatsappChatUrl(r.buyer_phone, waMsg);

@@ -6,9 +6,9 @@ window.QuilomboTicketing = (function() {
   const tiers = {
     general: {
       id: 'general',
-      name: 'Pase General (Preventa 1)',
-      priceUSD: 10,
-      badge: 'Early Bird',
+      name: 'Pase General Oficial',
+      priceUSD: 15,
+      badge: 'Entrada Oficial',
       description: 'Acceso general al evento + sticker pack exclusivo + trago de bienvenida'
     },
     vip: {

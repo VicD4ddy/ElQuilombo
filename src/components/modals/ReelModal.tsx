@@ -198,7 +198,7 @@ export default function ReelModal({ isOpen, onClose }: ReelModalProps) {
             className="btn-modal-fomo-cta"
             onClick={handleGoToTickets}
           >
-            <span>🔥 Apartar Preventa $10 (Quedan Pocas)</span>
+            <span>🔥 Apartar Entrada $15 (Últimos Cupos)</span>
             <span>→</span>
           </button>
         </div>

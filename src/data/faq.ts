@@ -21,7 +21,7 @@ export const FAQS: FaqItem[] = [
   },
   {
     question: '¿Cuál es el precio de las entradas?',
-    answer: 'El Pase Preventa Oficial tiene un costo preferencial de $10 USD (o su equivalente en Bolívares). En puerta la noche del evento tendrá un costo de $15 USD sujeto a aforo restante. ¡Asegurá tu preventa!',
+    answer: 'El Pase General Oficial tiene un costo de $15 USD (o su equivalente en Bolívares a tasa oficial). Podés asegurar tu boleto digital desde esta web antes de llegar a Rock & Riff para agilizar tu acceso.',
   },
   {
     question: '¿Cuál es el código de vestimenta (Dress Code)?',

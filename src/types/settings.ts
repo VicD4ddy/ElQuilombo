@@ -63,7 +63,7 @@ export const DEFAULT_EVENT_SETTINGS: EventSettings = {
   venueAddress: 'Rock & Riff (antiguo Oleo Gastrobar) - Urb. La Viña, Valencia, Carabobo',
   officialWhatsapp: '58412882460',
   organizerPin: '5401385',
-  priceGeneral: 10,
+  priceGeneral: 15,
   priceVip: 20,
   maxCapacity: 350,
   ticketSubtitle: 'ARGENTO PARTY',

@@ -60,7 +60,7 @@ export default function AdminTicketPreview({
           ? 'cash'
           : 'pending';
 
-      const tierName = r.tier_name || (r.tier_id === 'vip' ? 'Pase VIP Quilombo' : 'Pase Preventa');
+      const tierName = r.tier_name || (r.tier_id === 'vip' ? 'Pase VIP Quilombo' : 'Pase General Oficial');
       const qty = Number(r.quantity) || 1;
       const totalUSD = Number(r.total_usd) || 0;
       const totalRefBs = r.total_ref_bs || '0';
@@ -460,7 +460,7 @@ export default function AdminTicketPreview({
           {/* Attendee Personalized Header */}
           <div style={{ textAlign: 'center', marginBottom: '0.25rem' }}>
             <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--neon-purple-light)', fontWeight: 800 }}>
-              PREVENTA OFICIAL VALIDADA
+              PASE OFICIAL VALIDADO
             </span>
             <h2 style={{ fontFamily: 'var(--font-title)', fontSize: '1.4rem', fontWeight: 900, color: '#fff', margin: '0.2rem 0' }}>
               {ticketData.buyerName}

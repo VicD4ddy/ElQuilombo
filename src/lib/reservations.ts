@@ -251,7 +251,7 @@ export async function processReservation(
         success: true,
         isExisting: true,
         order: existingOrder,
-        message: `¡Ya tenías una preventa registrada con tu cédula (${normalizedDni})! Aquí está tu boleto digital.`,
+        message: `¡Ya tenías una entrada registrada con tu cédula (${normalizedDni})! Aquí está tu boleto digital.`,
       };
     }
 
@@ -359,7 +359,7 @@ export async function processReservation(
       success: true,
       isExisting: false,
       order: createdOrder,
-      message: '¡Tu preventa ha sido apartada con éxito en El Quilombo!',
+      message: '¡Tu entrada ha sido apartada con éxito en El Quilombo!',
     };
   } catch (err: any) {
     console.error('Supabase reservation error:', err);

@@ -237,13 +237,13 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
       <div className="container">
         <ScrollReveal3D direction="up">
           <div className="section-header">
-            <span className="section-pill badge-3d-float">Fase de Preventa Oficial</span>
+            <span className="section-pill badge-3d-float">Entradas Oficiales</span>
             <h2 className="section-title">
               ELEGÍ TU <span className="text-gradient">TIPO DE ENTRADA</span>{' '}
               <span className="badge-3d-float" style={{ display: 'inline-block', verticalAlign: 'middle' }}>🎟️</span>
             </h2>
             <p className="section-subtitle">
-              Entradas limitadas para el <strong>Viernes 09 de Octubre en Rock &amp; Riff</strong>. Asegurá tu preventa a $10 USD antes de que suba a $15 USD en puerta.
+              Entradas para hoy <strong>Viernes 09 de Octubre en Rock &amp; Riff</strong> a precio oficial de $15 USD.
             </p>
           </div>
         </ScrollReveal3D>
@@ -265,11 +265,11 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
                   transform: 'translateX(-50%) translateZ(20px)',
                 }}
               >
-                🔥 PREVENTA OFICIAL (AHORRO $5)
+                🔥 PASE GENERAL OFICIAL
               </div>
               <div className="ticket-header" style={{ transform: 'translateZ(15px)' }}>
                 <h3 className="ticket-name">{TICKET_TIERS.general.name}</h3>
-                <div className="ticket-sub">⚡ Preventa Limitada ($15 en puerta)</div>
+                <div className="ticket-sub">⚡ Entrada Oficial • Rock &amp; Riff</div>
               </div>
               <div className="ticket-price-box" style={{ transform: 'translateZ(25px)' }}>
                 <span className="ticket-currency">$</span>
@@ -304,7 +304,7 @@ export default function TicketingSection({ onGenerateTicket }: TicketingSectionP
         <ScrollReveal3D direction="up" delayMs={150}>
           <div className="reservation-box" id="reserva">
             <div className="res-header">
-              <h3 className="res-title">APARTÁ TU ENTRADA EN PREVENTA</h3>
+              <h3 className="res-title">APARTÁ TU ENTRADA OFICIAL</h3>
               <p className="res-subtitle">
                 Completá tus datos para generar tu <strong>Ticket Digital con Código QR</strong> y confirmar tu reserva directamente por WhatsApp.
               </p>

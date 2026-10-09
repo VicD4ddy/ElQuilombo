@@ -83,7 +83,7 @@ export const PAYMENT_METHODS: Record<string, PaymentDetail> = {
       { label: 'Moneda Aceptada', value: 'USD Efectivo o Bolívares (Tasa BCV)', copyable: false },
       { label: 'Ubicación Google Maps', value: 'antiguo Oleo Gastrobar', copyValue: 'https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8', copyable: true },
     ],
-    note: '💡 Tu preventa queda apartada en el sistema. Llevá el monto exacto en efectivo el día del evento en taquilla.',
+    note: '💡 Tu entrada queda asegurada en el sistema. Llevá el monto exacto en efectivo al llegar a la taquilla de Rock & Riff.',
     instructions: 'Completá tu reserva para generar tu código y boleto digital. El pago se efectúa directamente en la puerta de Rock & Riff.',
   },
 };

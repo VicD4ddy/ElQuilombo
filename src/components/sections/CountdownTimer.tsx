@@ -55,7 +55,7 @@ export default function CountdownTimer() {
       <div className="countdown-grid">
         <div className="countdown-unit">
           <div className="countdown-number" id="cd-days">
-            {isClient ? format2Digits(timeLeft.days) : '16'}
+            {isClient ? format2Digits(timeLeft.days) : '00'}
           </div>
           <div className="countdown-type">Días</div>
         </div>

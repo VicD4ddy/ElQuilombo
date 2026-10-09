@@ -150,7 +150,7 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated, isOrgani
   // Pre-filled WhatsApp message for Organizers (Payment Coordination & Approval)
   const organizersMessage = isCashCommitted
     ? `⚡ *RESERVA EN EFECTIVO - EL QUILOMBO* 💵🇦🇷🔥
-¡Hola organizadores de El Quilombo! Acabo de apartar mi preventa para pagar en efectivo en taquilla:
+¡Hola organizadores de El Quilombo! Acabo de apartar mi entrada para pagar en efectivo en taquilla:
 
 🎫 *Código de Reserva:* #${currentOrder.ticketCode}
 👤 *Titular:* ${currentOrder.buyerName}
@@ -165,7 +165,7 @@ export default function TicketQrModal({ order, onClose, onOrderUpdated, isOrgani
 
 Ya cuento con mi código de reserva generado. Llevo el monto en efectivo el día del evento en taquilla para ingresar. ¡Muchas gracias! 🔥`
     : `⚡ *RESERVA Y PAGO - EL QUILOMBO* 💜
-¡Hola organizadores de El Quilombo! Acabo de apartar mi preventa 🇦🇷🔥:
+¡Hola organizadores de El Quilombo! Acabo de apartar mi entrada 🇦🇷🔥:
 
 🎫 *Código de Reserva:* #${currentOrder.ticketCode}
 👤 *Titular:* ${currentOrder.buyerName}
@@ -191,7 +191,7 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
 
   const waApprovedOrganizerMessage = isCashCommitted
     ? `🎟️ *¡TU ENTRADA ESTÁ RESERVADA (PAGO EN EFECTIVO)! - EL QUILOMBO* 🇦🇷🔥
-¡Hola ${currentOrder.buyerName}! Tu preventa ha sido asegurada por el equipo de El Quilombo 💜
+¡Hola ${currentOrder.buyerName}! Tu entrada ha sido asegurada por el equipo de El Quilombo 💜
 
 🎟️ *Entrada:* ${currentOrder.quantity}x ${currentOrder.tier.name}
 🪪 *Titular:* ${currentOrder.buyerName} (${currentOrder.buyerDni})
@@ -205,7 +205,7 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
 ⚠️ *Recuerda tener preparado tu monto exacto en efectivo al llegar a la puerta.*
 ¡Presentalo al llegar y preparate para la fiesta más picante de Valencia! 🇦🇷🔥`
     : `🎉 *¡TU ENTRADA HA SIDO APROBADA! - EL QUILOMBO* 🇦🇷🔥
-¡Hola ${currentOrder.buyerName}! Tu preventa ha sido validada y aprobada por el equipo de El Quilombo 💜
+¡Hola ${currentOrder.buyerName}! Tu entrada ha sido validada y aprobada por el equipo de El Quilombo 💜
 
 🎟️ *Entrada:* ${currentOrder.quantity}x ${currentOrder.tier.name}
 🪪 *Titular:* ${currentOrder.buyerName} (${currentOrder.buyerDni})
@@ -219,7 +219,7 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
 
   const waClientMessage = isCashCommitted
     ? `⚡ *RESERVA EN EFECTIVO - EL QUILOMBO* 💵🇦🇷🔥
-¡Hola equipo de @elquilombo.vzla! Aparté mi preventa para pagar en efectivo en taquilla:
+¡Hola equipo de @elquilombo.vzla! Aparté mi entrada para pagar en efectivo en taquilla:
 
 🎫 *Código:* #${currentOrder.ticketCode}
 👤 *Titular:* ${currentOrder.buyerName}
@@ -234,7 +234,7 @@ Ya cuento con los datos de pago (${currentOrder.paymentMethod}). Les adjunto aqu
 
 ¡Nos vemos en Rock & Riff el viernes 09 de octubre! 🇦🇷🔥
 📍 *Ubicación (antiguo Oleo Gastrobar):* https://maps.app.goo.gl/u3Q8guMx3PVEw4Vc8`
-    : `⚡ *RESERVA PREVENTA - EL QUILOMBO* 💜
+    : `⚡ *RESERVA DE ENTRADA - EL QUILOMBO* 💜
 ¡Hola equipo de @elquilombo.vzla! Quiero confirmar mi entrada:
 
 🎫 *Código:* #${currentOrder.ticketCode}

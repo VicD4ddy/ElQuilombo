@@ -280,14 +280,14 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
             {/* Poster Price Blocks */}
             <div className="poster-prices-container" style={{ justifyContent: 'flex-start', margin: '1rem 0' }}>
               <div className="poster-price-box highlight">
-                <span className="price-label">PREVENTA</span>
-                <div className="price-amount">$10 USD</div>
-                <span style={{ fontSize: '0.75rem', color: 'var(--neon-cyan)', fontWeight: 700 }}>Entradas Limitadas</span>
+                <span className="price-label">ENTRADA GENERAL</span>
+                <div className="price-amount">$15 USD</div>
+                <span style={{ fontSize: '0.75rem', color: 'var(--neon-cyan)', fontWeight: 700 }}>¡Hoy en Rock &amp; Riff!</span>
               </div>
               <div className="poster-price-box">
-                <span className="price-label" style={{ background: '#4a0e80' }}>EN PUERTA</span>
-                <div className="price-amount" style={{ color: '#94a3b8' }}>$15 USD</div>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-subtle)' }}>Noche del evento</span>
+                <span className="price-label" style={{ background: '#3b1263' }}>PREVENTA</span>
+                <div className="price-amount" style={{ color: '#64748b', textDecoration: 'line-through' }}>$10 USD</div>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-subtle)' }}>Finalizada</span>
               </div>
             </div>
 
@@ -302,7 +302,7 @@ export default function HeroSection({ onOpenReel }: HeroSectionProps) {
             {/* Hero Action Buttons */}
             <div className="hero-actions">
               <a href="#entradas" className="btn-primary btn-3d-tactile">
-                <span>🔥 Apartar Preventa $10</span>
+                <span>🔥 Asegurar Entrada $15</span>
                 <span>→</span>
               </a>
               <a href="#lineup" className="btn-secondary">

@@ -50,7 +50,7 @@ export async function POST(request: Request) {
         tier: {
           id: existing.tier_id,
           name: existing.tier_name,
-          priceUSD: Math.round(existing.total_usd / existing.quantity) || 10,
+          priceUSD: Math.round(existing.total_usd / existing.quantity) || 15,
           features: [],
         },
         quantity: existing.quantity,
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
         success: true,
         isExisting: true,
         order: existingOrder,
-        message: `¡Ya tenías una preventa registrada con tu cédula (${normalizedDni})! Aquí está tu boleto digital.`,
+        message: `¡Ya tenías una entrada registrada con tu cédula (${normalizedDni})! Aquí está tu boleto digital.`,
       });
     }
 
@@ -97,9 +97,9 @@ export async function POST(request: Request) {
       buyer_phone: orderData.buyerPhone.trim(),
       buyer_email: orderData.buyerEmail ? orderData.buyerEmail.trim() : '',
       tier_id: orderData.tier?.id || 'general',
-      tier_name: orderData.tier?.name || 'Pase Preventa Oficial',
+      tier_name: orderData.tier?.name || 'Pase General Oficial',
       quantity: orderData.quantity || 1,
-      total_usd: orderData.totalUSD || 10,
+      total_usd: orderData.totalUSD || 15,
       total_ref_bs: parsedRefBs,
       payment_method: orderData.paymentMethod || 'Pago Móvil',
       favorite_artist: orderData.favoriteArtist ? orderData.favoriteArtist.trim() : 'Milo J / Trueno',
@@ -151,7 +151,7 @@ export async function POST(request: Request) {
       success: true,
       isExisting: false,
       order: createdOrder,
-      message: '¡Tu preventa ha sido apartada con éxito en El Quilombo!',
+      message: '¡Tu entrada ha sido apartada con éxito en El Quilombo!',
     });
   } catch (error: any) {
     console.error('[API/Reservations] Error crítico en creación de reserva:', error);

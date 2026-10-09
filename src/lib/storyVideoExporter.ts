@@ -248,7 +248,7 @@ export async function exportStoryVideo(
       ctx.textAlign = 'center';
       ctx.fillStyle = '#ffffff';
       ctx.font = '900 19px sans-serif';
-      ctx.fillText(`PREVENTA OFICIAL • ${order.quantity} ${order.quantity > 1 ? 'ENTRADAS' : 'ENTRADA'}`, width / 2, cardY + 59);
+      ctx.fillText(`ENTRADA OFICIAL • ${order.quantity} ${order.quantity > 1 ? 'ENTRADAS' : 'ENTRADA'}`, width / 2, cardY + 59);
       ctx.restore();
 
       // Event Info Inside Ticket

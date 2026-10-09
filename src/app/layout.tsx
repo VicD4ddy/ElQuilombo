@@ -17,9 +17,9 @@ const SITE_URL =
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: 'El Quilombo • La Fiesta Temática Argentina en Valencia | Preventa Oficial',
+  title: 'El Quilombo • La Fiesta Temática Argentina en Valencia | Entradas Oficiales',
   description:
-    'Asegurá tu entrada para El Quilombo en Rock & Riff, La Viña, Valencia. Lo mejor del trap, freestyle y cultura urbana argentina. Viernes 09 de Octubre.',
+    'Asegurá tu entrada para El Quilombo en Rock & Riff, La Viña, Valencia. Lo mejor del trap, freestyle y cultura urbana argentina. ¡Hoy Viernes 09 de Octubre! Entradas oficiales $15 USD.',
   keywords: [
     'El Quilombo',
     'Fiesta Argentina Valencia',
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     'Duki',
     'Ca7riel y Paco',
     'Valencia Venezuela',
-    'Preventa Entradas',
+    'Entradas Oficiales',
   ],
   authors: [{ name: 'El Quilombo Team' }, { name: 'Vicdaddy.js', url: 'https://www.instagram.com/Vicdaddy.js/' }],
   openGraph: {
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     url: SITE_URL,
     title: 'El Quilombo • La Fiesta Temática Argentina en Valencia',
     description:
-      'Vení a vivir la noche más picante del trap, freestyle y cultura argentina en Rock & Riff, La Viña. Viernes 09 de Octubre. Preventa oficial activa $10 USD.',
+      'Vení a vivir la noche más picante del trap, freestyle y cultura argentina en Rock & Riff, La Viña. ¡Hoy Viernes 09 de Octubre! Entradas oficiales $15 USD.',
     siteName: 'El Quilombo',
     images: [
       {
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'El Quilombo • La Fiesta Temática Argentina en Valencia',
     description:
-      'Vení a vivir la noche más picante del trap, freestyle y cultura argentina en Rock & Riff, La Viña. Viernes 09 de Octubre. Preventa oficial activa $10 USD.',
+      'Vení a vivir la noche más picante del trap, freestyle y cultura argentina en Rock & Riff, La Viña. ¡Hoy Viernes 09 de Octubre! Entradas oficiales $15 USD.',
     images: [`${SITE_URL}/assets/img/el-quilombo-seo.png`],
   },
   icons: {

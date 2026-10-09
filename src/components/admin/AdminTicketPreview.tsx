@@ -1,5 +1,7 @@
 'use client';
 
+import QRCode from 'qrcode';
+
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { EventSettings } from '../../types/settings';
 import { MEMES, MemeSticker } from '../../data/memes';
@@ -123,68 +125,29 @@ export default function AdminTicketPreview({
     setSelectedMemeIndex((prev) => (prev + 1) % MEMES.length);
   };
 
-  // Procedural QR Code Canvas Generator
+  // Official Standard QR Code Generator
   useEffect(() => {
     if (!canvasRef.current) return;
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const code = ticketData.ticketCode || '';
+    if (!code) return;
 
-    const size = 260;
-    canvas.width = size;
-    canvas.height = size;
-
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, size, size);
-
-    let seed = 0;
-    const code = ticketData.ticketCode;
-    for (let i = 0; i < code.length; i++) {
-      seed = (seed * 31 + code.charCodeAt(i)) & 0xffffffff;
-    }
-    const random = () => {
-      seed = (seed * 1664525 + 1013904223) & 0xffffffff;
-      return (seed >>> 0) / 4294967296;
-    };
-
-    const modules = 21;
-    const cellSize = Math.floor(size / modules);
-    const offset = Math.floor((size - cellSize * modules) / 2);
-
-    ctx.fillStyle = '#06050a';
-
-    const drawFinder = (r: number, c: number) => {
-      for (let i = 0; i < 7; i++) {
-        for (let j = 0; j < 7; j++) {
-          const isBorder = i === 0 || i === 6 || j === 0 || j === 6;
-          const isCore = i >= 2 && i <= 4 && j >= 2 && j <= 4;
-          if (isBorder || isCore) {
-            ctx.fillRect(offset + (c + j) * cellSize, offset + (r + i) * cellSize, cellSize, cellSize);
-          }
-        }
+    QRCode.toCanvas(
+      canvas,
+      code,
+      {
+        width: 260,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#ffffff'
+        },
+        errorCorrectionLevel: 'M'
+      },
+      (error) => {
+        if (error) console.error('Error generating admin ticket QR code:', error);
       }
-    };
-
-    drawFinder(0, 0);
-    drawFinder(0, modules - 7);
-    drawFinder(modules - 7, 0);
-
-    for (let r = 0; r < modules; r++) {
-      for (let c = 0; c < modules; c++) {
-        if ((r < 8 && c < 8) || (r < 8 && c >= modules - 8) || (r >= modules - 8 && c < 8)) {
-          continue;
-        }
-        if (r === 6 || c === 6) {
-          if ((r + c) % 2 === 0) {
-            ctx.fillRect(offset + c * cellSize, offset + r * cellSize, cellSize, cellSize);
-          }
-          continue;
-        }
-        if (random() > 0.46) {
-          ctx.fillRect(offset + c * cellSize, offset + r * cellSize, cellSize, cellSize);
-        }
-      }
-    }
+    );
   }, [ticketData.ticketCode]);
 
   return (

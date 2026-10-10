@@ -9,14 +9,14 @@ window.QuilomboTicketing = (function() {
       name: 'Pase General Oficial',
       priceUSD: 15,
       badge: 'Entrada Oficial',
-      description: 'Acceso general al evento + sticker pack exclusivo + trago de bienvenida'
+      description: 'Acceso general al evento + dinámicas y After Party'
     },
     vip: {
       id: 'vip',
       name: 'Pase VIP Quilombo',
       priceUSD: 20,
       badge: 'Más Popular',
-      description: 'Acceso express sin cola + zona VIP preferencial + 2 tragos / copa temática + acceso al After'
+      description: 'Acceso express sin cola + zona VIP preferencial + acceso al After'
     }
   };
 

@@ -20,12 +20,10 @@ export const TICKET_TIERS: Record<'general' | 'vip', TicketTier> = {
     name: 'Pase General Oficial',
     priceUSD: 15,
     badge: '¡Hoy en Rock & Riff!',
-    description: 'Acceso general al evento en Rock & Riff + sticker pack exclusivo + trago de bienvenida',
+    description: 'Acceso general al evento en Rock & Riff + dinámicas y After Party',
     features: [
       'Acceso general a Rock & Riff',
       'Precio oficial $15 USD (Precio en Puerta)',
-      '1 Trago de bienvenida de cortesía',
-      'Sticker Pack oficial de El Quilombo',
       'Acceso confirmado a dinámicas y After Party',
     ],
   },
@@ -38,7 +36,6 @@ export const TICKET_TIERS: Record<'general' | 'vip', TicketTier> = {
     features: [
       'Entrada Express sin cola',
       'Zona preferencial segundo piso (sujeto a aforo)',
-      '2 Tragos oficiales o vaso coleccionable',
       'Acceso exclusivo al After Party extendido',
     ],
   },
